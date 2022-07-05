@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.opmode;
+package org.firstinspires.ftc.teamcode.drive.opmode2;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -19,7 +19,7 @@ import java.util.List;
 
 @Config
 @Autonomous(group = "drive")
-public class TrackWidthTuner2 extends LinearOpMode {
+public class MecanumTrackWidthTuner extends LinearOpMode {
 
     public static final File TRACK_WIDTH_DIR =
             new File(LoggingUtil.ROAD_RUNNER_FOLDER, "trackwidth");
@@ -34,11 +34,13 @@ public class TrackWidthTuner2 extends LinearOpMode {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        DcMotorEx leftFront, leftRear, rightRear, rightFront;
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        final DcMotorEx leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        final DcMotorEx leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
+        final DcMotorEx rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
+        final DcMotorEx rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+
+        // TODO: fail if the measurements are not in the right direction
+        // TODO: can the track width be measured by encoders?
 
         BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
