@@ -20,7 +20,8 @@ import org.firstinspires.ftc.teamcode.util.LynxFirmwareVersion;
 import org.firstinspires.ftc.teamcode.util.RawEncoder;
 
 public final class MecanumDrive {
-    public static double IN_PER_TICK = 0;
+    public static double FORWARD_IN_PER_TICK = 0;
+    public static double LATERAL_IN_PER_TICK = 1;
     public static double TRACK_WIDTH_TICKS = 0;
 
     public final MecanumKinematics kinematics;
@@ -55,20 +56,20 @@ public final class MecanumDrive {
 
             MecanumKinematics.WheelIncrements<Time> incrs = new MecanumKinematics.WheelIncrements<>(
                     new DualNum<>(new double[] {
-                            IN_PER_TICK * (leftFrontPosVel.position - lastLeftFrontPos),
-                            IN_PER_TICK * leftFrontPosVel.velocity,
+                            FORWARD_IN_PER_TICK * (leftFrontPosVel.position - lastLeftFrontPos),
+                            FORWARD_IN_PER_TICK * leftFrontPosVel.velocity,
                     }),
                     new DualNum<>(new double[] {
-                            IN_PER_TICK * (leftRearPosVel.position - lastLeftRearPos),
-                            IN_PER_TICK * leftRearPosVel.velocity,
+                            FORWARD_IN_PER_TICK * (leftRearPosVel.position - lastLeftRearPos),
+                            FORWARD_IN_PER_TICK * leftRearPosVel.velocity,
                     }),
                     new DualNum<>(new double[] {
-                            IN_PER_TICK * (rightRearPosVel.position - lastRightRearPos),
-                            IN_PER_TICK * rightRearPosVel.velocity,
+                            FORWARD_IN_PER_TICK * (rightRearPosVel.position - lastRightRearPos),
+                            FORWARD_IN_PER_TICK * rightRearPosVel.velocity,
                     }),
                     new DualNum<>(new double[] {
-                            IN_PER_TICK * (rightFrontPosVel.position - lastRightFrontPos),
-                            IN_PER_TICK * rightFrontPosVel.velocity,
+                            FORWARD_IN_PER_TICK * (rightFrontPosVel.position - lastRightFrontPos),
+                            FORWARD_IN_PER_TICK * rightFrontPosVel.velocity,
                     })
             );
 
@@ -88,7 +89,9 @@ public final class MecanumDrive {
     public Transform2 txRobotWorld;
 
     public MecanumDrive(HardwareMap hardwareMap, Transform2 txRobotWorld) {
-        kinematics = new MecanumKinematics(IN_PER_TICK * TRACK_WIDTH_TICKS);
+        kinematics = new MecanumKinematics(
+                FORWARD_IN_PER_TICK * TRACK_WIDTH_TICKS,
+                FORWARD_IN_PER_TICK / LATERAL_IN_PER_TICK);
 
         LynxFirmwareVersion.throwIfAnyModulesBelowVersion(hardwareMap,
                 new LynxFirmwareVersion(1, 8, 2));

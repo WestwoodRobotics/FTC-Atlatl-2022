@@ -16,10 +16,8 @@ import java.util.List;
 
 // FIXME: which group, if any?
 @TeleOp(group = "drive")
-public final class RampLogger extends LinearOpMode {
-    private static double power(double seconds) {
-        return Math.min(0.2 * seconds, 0.9);
-    }
+public final class AccelLogger extends LinearOpMode {
+    private static final double POWER = 0.8;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -56,13 +54,14 @@ public final class RampLogger extends LinearOpMode {
         waitForStart();
 
         MidpointTimer t = new MidpointTimer();
+        for (DcMotorEx m : motors) {
+            m.setPower(POWER);
+        }
+
         while (opModeIsActive()) {
             for (int i = 0; i < motors.size(); i++) {
-                double power = power(t.seconds());
-                motors.get(i).setPower(power);
-
                 data.powerTimes.get(i).add(t.addSplit());
-                data.powers.get(i).add(power);
+                data.powers.get(i).add(POWER);
             }
 
             data.voltages.add(view.voltageSensor.getVoltage());
@@ -79,6 +78,6 @@ public final class RampLogger extends LinearOpMode {
             m.setPower(0);
         }
 
-        TuningFiles.save(TuningFiles.FileType.RAMP, data);
+        TuningFiles.save(TuningFiles.FileType.ACCEL, data);
     }
 }

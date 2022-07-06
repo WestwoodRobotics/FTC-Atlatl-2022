@@ -64,6 +64,13 @@ public class TrackWidthLogger extends LinearOpMode {
             data.angVelTimes.add(t.addSplit());
         }
 
+        for (DcMotorEx m : view.leftMotors) {
+            m.setPower(0);
+        }
+        for (DcMotorEx m : view.rightMotors) {
+            m.setPower(0);
+        }
+
         TuningFiles.save(TuningFiles.FileType.TRACK_WIDTH, data);
     }
 }

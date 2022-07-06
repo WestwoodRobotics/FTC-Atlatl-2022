@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.util;
 
-public class MidpointTimer {
+public final class MidpointTimer {
     private final long beginTs = System.nanoTime();
     private long lastTime;
 
