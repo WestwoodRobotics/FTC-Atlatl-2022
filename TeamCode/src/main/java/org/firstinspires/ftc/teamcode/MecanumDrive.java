@@ -11,6 +11,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.util.BNO055Wrapper;
 import org.firstinspires.ftc.teamcode.util.Encoder;
@@ -26,7 +27,8 @@ public final class MecanumDrive {
 
     public final DcMotorEx leftFront, leftRear, rightRear, rightFront;
 
-    // TODO: complete
+    public final VoltageSensor voltageSensor;
+
     public class DriveLocalizer implements Localizer {
         public final Encoder leftFront, leftRear, rightRear, rightFront;
 
@@ -110,6 +112,8 @@ public final class MecanumDrive {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         baseImu.initialize(parameters);
         imu = new BNO055Wrapper(baseImu);
+
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         // TODO: change motor encoder directions
 

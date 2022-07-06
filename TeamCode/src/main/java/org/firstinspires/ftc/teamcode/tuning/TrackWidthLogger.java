@@ -1,23 +1,20 @@
 package org.firstinspires.ftc.teamcode.tuning;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Rotation2;
 import com.acmerobotics.roadrunner.Transform2;
 import com.acmerobotics.roadrunner.Vector2;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.util.Encoder;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.util.Encoder;
+import org.firstinspires.ftc.teamcode.util.MidpointTimer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-@Config
-@Autonomous(group = "drive")
+@TeleOp(group = "drive")
 // FIXME: capture angular velocity data from all axes and help the user figure out any remapping
 public class TrackWidthLogger extends LinearOpMode {
     private static double power(double seconds) {
@@ -26,26 +23,8 @@ public class TrackWidthLogger extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Object drive = new MecanumDrive(hardwareMap, new Transform2(new Vector2(0, 0), Rotation2.exp(0)));
-        DriveView view = new DriveView(drive);
-
-        // FIXME: maybe just move this to view anyway
-        final List<Encoder> leftEncs, rightEncs;
-        if (drive instanceof MecanumDrive) {
-            MecanumDrive md = (MecanumDrive) drive;
-            if (md.localizer instanceof MecanumDrive.DriveLocalizer) {
-                MecanumDrive.DriveLocalizer dl = (MecanumDrive.DriveLocalizer) md.localizer;
-                leftEncs = Arrays.asList(dl.leftFront, dl.leftRear);
-                rightEncs = Arrays.asList(dl.rightFront, dl.rightRear);
-            } else {
-                // TODO: error
-                throw new RuntimeException();
-            }
-        }
-        // TODO: handle tank
-        else {
-            throw new RuntimeException();
-        }
+        DriveView view = new DriveView(new MecanumDrive(hardwareMap,
+                new Transform2(new Vector2(0, 0), Rotation2.exp(0))));
 
         class Data {
             final String type = view.type;
@@ -56,14 +35,14 @@ public class TrackWidthLogger extends LinearOpMode {
             final List<List<Integer>> rightEncVels = new ArrayList<>();
         }
         Data data = new Data();
-        for (Encoder e : leftEncs) {
+        for (Encoder e : view.leftEncs) {
             data.leftEncVels.add(new ArrayList<>());
         }
-        for (Encoder e : rightEncs) {
+        for (Encoder e : view.rightEncs) {
             data.rightEncVels.add(new ArrayList<>());
         }
 
-        ElapsedTime t = new ElapsedTime();
+        MidpointTimer t = new MidpointTimer();
         while (opModeIsActive()) {
             for (DcMotorEx m : view.leftMotors) {
                 m.setPower(-power(t.seconds()));
@@ -72,23 +51,17 @@ public class TrackWidthLogger extends LinearOpMode {
                 m.setPower(power(t.seconds()));
             }
 
-            double t0 = t.seconds();
-
-            for (int i = 0; i < leftEncs.size(); i++) {
-                data.leftEncVels.get(i).add(leftEncs.get(i).getPositionAndVelocity().velocity);
+            t.addSplit();
+            for (int i = 0; i < view.leftEncs.size(); i++) {
+                data.leftEncVels.get(i).add(view.leftEncs.get(i).getPositionAndVelocity().velocity);
             }
-            for (int i = 0; i < rightEncs.size(); i++) {
-                data.rightEncVels.get(i).add(rightEncs.get(i).getPositionAndVelocity().velocity);
+            for (int i = 0; i < view.rightEncs.size(); i++) {
+                data.rightEncVels.get(i).add(view.rightEncs.get(i).getPositionAndVelocity().velocity);
             }
-
-            double t1 = t.seconds();
+            data.encVelTimes.add(t.addSplit());
 
             data.angVels.add(view.imu.getHeadingVelocity());
-
-            double t2 = t.seconds();
-
-            data.encVelTimes.add(0.5 * (t0 + t1));
-            data.angVelTimes.add(0.5 * (t1 + t2));
+            data.angVelTimes.add(t.addSplit());
         }
 
         TuningFiles.save(TuningFiles.FileType.TRACK_WIDTH, data);

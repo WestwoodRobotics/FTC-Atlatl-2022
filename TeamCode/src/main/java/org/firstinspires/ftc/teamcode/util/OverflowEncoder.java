@@ -19,13 +19,13 @@ public final class OverflowEncoder implements Encoder {
         return input;
     }
 
-    private final RawEncoder e;
+    public final RawEncoder encoder;
 
     private int lastPosition;
     private final ElapsedTime lastUpdate;
 
     public OverflowEncoder(RawEncoder e) {
-        this.e = e;
+        encoder = e;
 
         lastPosition = e.getPositionAndVelocity().position;
         lastUpdate = new ElapsedTime();
@@ -33,7 +33,7 @@ public final class OverflowEncoder implements Encoder {
 
     @Override
     public PositionVelocityPair getPositionAndVelocity() {
-        PositionVelocityPair p = e.getPositionAndVelocity();
+        PositionVelocityPair p = encoder.getPositionAndVelocity();
         double dt = lastUpdate.seconds();
         double velocityEstimate = (p.position - lastPosition) / dt;
 
@@ -48,6 +48,6 @@ public final class OverflowEncoder implements Encoder {
 
     @Override
     public DcMotorController getController() {
-        return e.getController();
+        return encoder.getController();
     }
 }

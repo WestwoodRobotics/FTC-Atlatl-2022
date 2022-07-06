@@ -29,7 +29,9 @@ public final class TuningFiles {
     private static WebHandlerManager whm; // guarded by ioLock
 
     public enum FileType {
-        TRACK_WIDTH("trackwidth");
+        TRACK_WIDTH("trackwidth"),
+        RAMP("feedforward/ramp"),
+        ACCEL("feedforward/accel");
 
         public final String name;
 

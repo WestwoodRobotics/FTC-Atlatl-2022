@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode.tuning;
 
+import com.acmerobotics.roadrunner.Rotation2;
+import com.acmerobotics.roadrunner.Transform2;
+import com.acmerobotics.roadrunner.Vector2;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
 import java.util.List;
@@ -19,7 +23,7 @@ import java.util.List;
 // TODO: public class Tune0_ForwardPush extends ...?
 @TeleOp
 public final class ForwardPushTest extends LinearOpMode {
-    private static double avgPos(List<Encoder> es) {
+    private static double avgPos(List<? extends Encoder> es) {
         double avgPos = 0;
         for (Encoder e : es) {
             avgPos += e.getPositionAndVelocity().position;
@@ -29,7 +33,9 @@ public final class ForwardPushTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        final DriveView view = new DriveView(null);
+        DriveView view = new DriveView(new MecanumDrive(hardwareMap,
+                new Transform2(new Vector2(0, 0), Rotation2.exp(0))));
+
         for (DcMotorEx m : view.leftMotors) {
             m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
@@ -39,9 +45,9 @@ public final class ForwardPushTest extends LinearOpMode {
 
         waitForStart();
 
-        double initAvgPos = avgPos(view.parEncoders);
+        double initAvgPos = avgPos(view.parEncs);
         while (opModeIsActive()) {
-            telemetry.addData("ticks traveled", avgPos(view.parEncoders) - initAvgPos);
+            telemetry.addData("ticks traveled", avgPos(view.parEncs) - initAvgPos);
             telemetry.update();
         }
     }
