@@ -1,19 +1,13 @@
 package org.firstinspires.ftc.teamcode.drive.opmode2;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.util.RobotLog;
-
-import org.firstinspires.ftc.teamcode.util.LoggingUtil;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,15 +70,5 @@ public class MecanumTrackWidthTuner extends LinearOpMode {
             data.angVelTimes.add(0.5e-9 * (t2 + t3));
         }
 
-        try {
-            new ObjectMapper(new JsonFactory())
-                    .writerWithDefaultPrettyPrinter()
-                    .writeValue(new File(TRACK_WIDTH_DIR,
-                                    System.currentTimeMillis() + ".json"),
-                            data);
-        } catch (IOException e) {
-            RobotLog.setGlobalErrorMsg(new RuntimeException(e),
-                    "unable to write track width data");
-        }
     }
 }

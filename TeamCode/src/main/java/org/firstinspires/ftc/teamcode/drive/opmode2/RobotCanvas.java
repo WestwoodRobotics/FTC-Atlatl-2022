@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode.util;
+package org.firstinspires.ftc.teamcode.drive.opmode2;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.roadrunner.Transform2;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.path.Path;
@@ -10,12 +11,17 @@ import java.util.List;
 /**
  * Set of helper functions for drawing Road Runner paths and trajectories on dashboard canvases.
  */
-public class DashboardUtil {
-    private static final double DEFAULT_RESOLUTION = 2.0; // distance units; presumed inches
-    private static final double ROBOT_RADIUS = 9; // in
+public final class RobotCanvas {
+//    private static final double DEFAULT_RESOLUTION = 2.0; // distance units; presumed inches
+//    private static final double ROBOT_RADIUS = 9; // in
 
+    public final Canvas canvas;
 
-    public static void drawPoseHistory(Canvas canvas, List<Pose2d> poseHistory) {
+    public RobotCanvas(Canvas c) {
+        canvas = c;
+    }
+
+    public void drawPoseHistory(List<Transform2> poseHistory) {
         double[] xPoints = new double[poseHistory.size()];
         double[] yPoints = new double[poseHistory.size()];
         for (int i = 0; i < poseHistory.size(); i++) {
@@ -26,7 +32,7 @@ public class DashboardUtil {
         canvas.strokePolyline(xPoints, yPoints);
     }
 
-    public static void drawSampledPath(Canvas canvas, Path path, double resolution) {
+    public void drawSampledPath(Canvas canvas, Path path, double resolution) {
         int samples = (int) Math.ceil(path.length() / resolution);
         double[] xPoints = new double[samples];
         double[] yPoints = new double[samples];
