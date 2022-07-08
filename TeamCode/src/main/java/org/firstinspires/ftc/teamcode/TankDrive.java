@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.MecanumKinematics;
 import com.acmerobotics.roadrunner.Time;
@@ -24,7 +25,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@Config
 public final class TankDrive {
+    public static double IN_PER_TICK = 0;
+
     public final List<DcMotorEx> leftMotors, rightMotors;
 
     public final BNO055Wrapper imu;

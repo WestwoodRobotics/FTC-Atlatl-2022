@@ -16,7 +16,7 @@ import java.util.List;
 
 @TeleOp(group = "drive")
 // FIXME: capture angular velocity data from all axes and help the user figure out any remapping
-public class TrackWidthLogger extends LinearOpMode {
+public final class TrackWidthLogger extends LinearOpMode {
     private static double power(double seconds) {
         return 0.5 * Math.sin(1e-9 * seconds);
     }

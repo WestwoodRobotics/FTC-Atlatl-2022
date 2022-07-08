@@ -18,7 +18,7 @@ import java.util.List;
 @TeleOp(group = "drive")
 public final class RampLogger extends LinearOpMode {
     private static double power(double seconds) {
-        return Math.min(0.2 * seconds, 0.9);
+        return Math.min(0.1 * seconds, 0.9);
     }
 
     @Override
