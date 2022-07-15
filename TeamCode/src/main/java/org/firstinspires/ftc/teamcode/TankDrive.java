@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.DualNum;
-import com.acmerobotics.roadrunner.MecanumKinematics;
+import com.acmerobotics.roadrunner.TankKinematics;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Transform2;
 import com.acmerobotics.roadrunner.Twist2;
@@ -28,6 +28,9 @@ import java.util.List;
 @Config
 public final class TankDrive {
     public static double IN_PER_TICK = 0;
+    public static double TRACK_WIDTH_TICKS = 0;
+
+    public final TankKinematics kinematics;
 
     public final List<DcMotorEx> leftMotors, rightMotors;
 
@@ -41,62 +44,75 @@ public final class TankDrive {
     public class DriveLocalizer implements Localizer {
         public final List<Encoder> leftEncs, rightEncs;
 
-        private final List<Integer> lastLeftPosList = new ArrayList<>(), lastRightPosList = new ArrayList<>();
+        private double lastLeftPos, lastRightPos;
 
         public DriveLocalizer() {
-            List<Encoder> leftEncs = new ArrayList<>(), rightEncs = new ArrayList<>();
-            for (DcMotorEx m : leftMotors) {
-                Encoder e = new RawEncoder(m);
-                leftEncs.add(e);
-                lastLeftPosList.add(e.getPositionAndVelocity().position);
-            }
-            for (DcMotorEx m : rightMotors) {
-                Encoder e = new RawEncoder(m);
-                rightEncs.add(e);
-                lastRightPosList.add(e.getPositionAndVelocity().position);
+            {
+                List<Encoder> leftEncs = new ArrayList<>();
+                for (DcMotorEx m : leftMotors) {
+                    Encoder e = new RawEncoder(m);
+                    leftEncs.add(e);
+                    lastLeftPos += e.getPositionAndVelocity().position;
+                }
+                lastLeftPos /= leftEncs.size();
+                this.leftEncs = Collections.unmodifiableList(leftEncs);
             }
 
-            this.leftEncs = Collections.unmodifiableList(leftEncs);
-            this.rightEncs = Collections.unmodifiableList(rightEncs);
+            {
+                List<Encoder> rightEncs = new ArrayList<>();
+                for (DcMotorEx m : rightMotors) {
+                    Encoder e = new RawEncoder(m);
+                    rightEncs.add(e);
+                    lastRightPos += e.getPositionAndVelocity().position;
+                }
+                lastRightPos /= rightEncs.size();
+                this.rightEncs = Collections.unmodifiableList(rightEncs);
+            }
         }
 
         // TODO: finish
         @Override
         public Twist2IncrementDual<Time> updateAndGetIncr() {
-            Encoder.PositionVelocityPair leftFrontPosVel = leftFront.getPositionAndVelocity();
-            Encoder.PositionVelocityPair leftRearPosVel = leftRear.getPositionAndVelocity();
-            Encoder.PositionVelocityPair rightRearPosVel = rightRear.getPositionAndVelocity();
-            Encoder.PositionVelocityPair rightFrontPosVel = rightFront.getPositionAndVelocity();
+            double meanLeftPos = 0.0, meanLeftVel = 0.0;
+            for (Encoder e : leftEncs) {
+                Encoder.PositionVelocityPair p = e.getPositionAndVelocity();
+                meanLeftPos += p.position;
+                meanLeftVel += p.velocity;
+            }
+            meanLeftPos /= leftEncs.size();
+            meanLeftVel /= leftEncs.size();
 
-            MecanumKinematics.WheelIncrements<Time> incrs = new MecanumKinematics.WheelIncrements<>(
+            double meanRightPos = 0.0, meanRightVel = 0.0;
+            for (Encoder e : rightEncs) {
+                Encoder.PositionVelocityPair p = e.getPositionAndVelocity();
+                meanRightPos += p.position;
+                meanRightVel += p.velocity;
+            }
+            meanRightPos /= rightEncs.size();
+            meanRightVel /= rightEncs.size();
+
+            // TODO: fix
+            TankKinematics.WheelIncrements<Time> incrs = new TankKinematics.WheelIncrements<>(
                     new DualNum<>(new double[] {
-                            IN_PER_TICK * (leftFrontPosVel.position - lastLeftFrontPos),
-                            IN_PER_TICK * leftFrontPosVel.velocity,
+                            IN_PER_TICK * (meanLeftPos - lastLeftPos),
+                            IN_PER_TICK * meanLeftVel
                     }),
                     new DualNum<>(new double[] {
-                            IN_PER_TICK * (leftRearPosVel.position - lastLeftRearPos),
-                            IN_PER_TICK * leftRearPosVel.velocity,
-                    }),
-                    new DualNum<>(new double[] {
-                            IN_PER_TICK * (rightRearPosVel.position - lastRightRearPos),
-                            IN_PER_TICK * rightRearPosVel.velocity,
-                    }),
-                    new DualNum<>(new double[] {
-                            IN_PER_TICK * (rightFrontPosVel.position - lastRightFrontPos),
-                            IN_PER_TICK * rightFrontPosVel.velocity,
+                            IN_PER_TICK * (meanRightPos - lastRightPos),
+                            IN_PER_TICK * meanRightVel,
                     })
             );
 
-            lastLeftFrontPos = leftFrontPosVel.position;
-            lastLeftRearPos = leftRearPosVel.position;
-            lastRightRearPos = rightRearPosVel.position;
-            lastRightFrontPos = rightFrontPosVel.position;
+            lastLeftPos = meanLeftPos;
+            lastRightPos = meanRightPos;
 
             return kinematics.forward(incrs);
         }
     }
 
     public TankDrive(HardwareMap hardwareMap, Transform2 txRobotWorld) {
+        kinematics = new TankKinematics(IN_PER_TICK * TRACK_WIDTH_TICKS);
+
         LynxFirmwareVersion.throwIfAnyModulesBelowVersion(hardwareMap,
                 new LynxFirmwareVersion(1, 8, 2));
 
