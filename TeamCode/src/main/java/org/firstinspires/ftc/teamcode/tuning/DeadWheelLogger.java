@@ -16,8 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @TeleOp(group = "drive")
-// FIXME: capture angular velocity data from all axes and help the user figure out any remapping
-public final class TrackWidthLogger extends LinearOpMode {
+// TODO: finish this
+// TODO: can we get feedforward ramp data from this and the track width tuner?
+public final class DeadWheelLogger extends LinearOpMode {
     private static double power(double seconds) {
         return 0.5 * Math.sin(1e-9 * seconds);
     }
@@ -32,18 +33,18 @@ public final class TrackWidthLogger extends LinearOpMode {
             final List<Double> angVelTimes = new ArrayList<>();
             final List<List<Double>> angVels = new ArrayList<>();
             final List<Double> encVelTimes = new ArrayList<>();
-            final List<List<Integer>> leftEncVels = new ArrayList<>();
-            final List<List<Integer>> rightEncVels = new ArrayList<>();
+            final List<List<Integer>> parEncVels = new ArrayList<>();
+            final List<List<Integer>> perpEncVels = new ArrayList<>();
         }
         Data data = new Data();
         for (int i = 0; i < 3; i++) {
             data.angVels.add(new ArrayList<>());
         }
-        for (Encoder e : view.leftEncs) {
-            data.leftEncVels.add(new ArrayList<>());
+        for (Encoder e : view.parEncs) {
+            data.parEncVels.add(new ArrayList<>());
         }
-        for (Encoder e : view.rightEncs) {
-            data.rightEncVels.add(new ArrayList<>());
+        for (Encoder e : view.perpEncs) {
+            data.perpEncVels.add(new ArrayList<>());
         }
 
         MidpointTimer t = new MidpointTimer();
@@ -56,11 +57,11 @@ public final class TrackWidthLogger extends LinearOpMode {
             }
 
             t.addSplit();
-            for (int i = 0; i < view.leftEncs.size(); i++) {
-                data.leftEncVels.get(i).add(view.leftEncs.get(i).getPositionAndVelocity().velocity);
+            for (int i = 0; i < view.parEncs.size(); i++) {
+                data.parEncVels.get(i).add(view.parEncs.get(i).getPositionAndVelocity().velocity);
             }
-            for (int i = 0; i < view.rightEncs.size(); i++) {
-                data.rightEncVels.get(i).add(view.rightEncs.get(i).getPositionAndVelocity().velocity);
+            for (int i = 0; i < view.perpEncs.size(); i++) {
+                data.perpEncVels.get(i).add(view.perpEncs.get(i).getPositionAndVelocity().velocity);
             }
             data.encVelTimes.add(t.addSplit());
 
@@ -78,6 +79,6 @@ public final class TrackWidthLogger extends LinearOpMode {
             m.setPower(0);
         }
 
-        TuningFiles.save(TuningFiles.FileType.TRACK_WIDTH, data);
+        TuningFiles.save(TuningFiles.FileType.DEAD_WHEELS, data);
     }
 }

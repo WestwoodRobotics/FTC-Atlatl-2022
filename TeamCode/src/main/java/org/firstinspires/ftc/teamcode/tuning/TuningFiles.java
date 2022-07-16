@@ -30,6 +30,7 @@ public final class TuningFiles {
 
     public enum FileType {
         TRACK_WIDTH("trackwidth"),
+        DEAD_WHEELS("deadwheels"),
         RAMP("feedforward/ramp"),
         ACCEL("feedforward/accel");
 

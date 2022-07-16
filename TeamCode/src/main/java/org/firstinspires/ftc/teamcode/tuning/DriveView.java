@@ -22,8 +22,9 @@ import java.util.List;
 final class DriveView {
     public final List<DcMotorEx> leftMotors, rightMotors;
 
-    // invariant: (leftEncs.isEmpty() && rightEncs.isEmpty()) || parEncs.isEmpty()
-    public final List<RawEncoder> leftEncs, rightEncs, parEncs;
+    // invariant: (leftEncs.isEmpty() && rightEncs.isEmpty()) ||
+    //                  (parEncs.isEmpty() && perpEncs.isEmpty())
+    public final List<RawEncoder> leftEncs, rightEncs, parEncs, perpEncs;
 
     public final BNO055Wrapper imu;
 
@@ -68,21 +69,25 @@ final class DriveView {
         if (localizer instanceof TwoDeadWheelLocalizer) {
             TwoDeadWheelLocalizer l2 = (TwoDeadWheelLocalizer) localizer;
             parEncs = Collections.singletonList(unwrap(l2.par));
+            perpEncs = Collections.singletonList(unwrap(l2.perp));
             leftEncs = Collections.emptyList();
             rightEncs = Collections.emptyList();
         } else if (localizer instanceof ThreeDeadWheelLocalizer) {
             ThreeDeadWheelLocalizer l3 = (ThreeDeadWheelLocalizer) localizer;
             parEncs = Arrays.asList(unwrap(l3.par0), unwrap(l3.par1));
+            perpEncs = Collections.singletonList(unwrap(l3.perp));
             leftEncs = Collections.emptyList();
             rightEncs = Collections.emptyList();
         } else if (localizer instanceof MecanumDrive.DriveLocalizer) {
             MecanumDrive.DriveLocalizer dl = (MecanumDrive.DriveLocalizer) localizer;
             parEncs = Collections.emptyList();
+            perpEncs = Collections.emptyList();
             leftEncs = Arrays.asList(unwrap(dl.leftFront), unwrap(dl.leftRear));
             rightEncs = Arrays.asList(unwrap(dl.rightFront), unwrap(dl.rightRear));
         } else if (localizer instanceof TankDrive.DriveLocalizer) {
             TankDrive.DriveLocalizer dl = (TankDrive.DriveLocalizer) localizer;
             parEncs = Collections.emptyList();
+            perpEncs = Collections.emptyList();
             leftEncs = new ArrayList<>();
             for (Encoder e : dl.leftEncs) {
                 leftEncs.add(unwrap(e));
