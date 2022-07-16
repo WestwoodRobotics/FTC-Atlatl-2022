@@ -37,11 +37,14 @@ public final class AccelLogger extends LinearOpMode {
         class Data {
             final List<List<Double>> powerTimes = new ArrayList<>();
             final List<List<Double>> powers = new ArrayList<>();
+
             final List<Double> voltageTimes = new ArrayList<>();
             final List<Double> voltages = new ArrayList<>();
+
             final List<Double> encVelTimes = new ArrayList<>();
             final List<List<Integer>> encVels = new ArrayList<>();
         }
+
         Data data = new Data();
         for (DcMotorEx m : motors) {
             data.powerTimes.add(new ArrayList<>());

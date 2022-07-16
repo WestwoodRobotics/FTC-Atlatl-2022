@@ -17,10 +17,10 @@ import java.util.List;
 
 @TeleOp(group = "drive")
 // TODO: finish this
-// TODO: can we get feedforward ramp data from this and the track width tuner?
-public final class DeadWheelLogger extends LinearOpMode {
+public final class RampDeadWheelLogger extends LinearOpMode {
+    // TODO: control the power function with parameters
     private static double power(double seconds) {
-        return 0.5 * Math.sin(1e-9 * seconds);
+        return Math.min(0.1 * seconds, 0.9);
     }
 
     @Override
@@ -30,8 +30,10 @@ public final class DeadWheelLogger extends LinearOpMode {
 
         class Data {
             final String type = view.type;
+
             final List<Double> angVelTimes = new ArrayList<>();
             final List<List<Double>> angVels = new ArrayList<>();
+
             final List<Double> encVelTimes = new ArrayList<>();
             final List<List<Integer>> parEncVels = new ArrayList<>();
             final List<List<Integer>> perpEncVels = new ArrayList<>();
