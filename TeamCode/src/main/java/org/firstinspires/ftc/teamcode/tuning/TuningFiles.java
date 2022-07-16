@@ -29,9 +29,8 @@ public final class TuningFiles {
     private static WebHandlerManager whm; // guarded by ioLock
 
     public enum FileType {
-        TRACK_WIDTH("trackwidth"),
         DEAD_WHEELS("deadwheels"),
-        RAMP("feedforward/ramp"),
+        TRACK_WIDTH_RAMP("trackwidthramp"),
         ACCEL("feedforward/accel");
 
         public final String name;
