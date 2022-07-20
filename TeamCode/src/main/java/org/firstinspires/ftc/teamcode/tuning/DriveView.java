@@ -21,10 +21,12 @@ import java.util.List;
 
 final class DriveView {
     public final List<DcMotorEx> leftMotors, rightMotors;
+    public final List<DcMotorEx> motors;
 
     // invariant: (leftEncs.isEmpty() && rightEncs.isEmpty()) ||
     //                  (parEncs.isEmpty() && perpEncs.isEmpty())
     public final List<RawEncoder> leftEncs, rightEncs, parEncs, perpEncs;
+    public final List<RawEncoder> forwardEncs;
 
     public final BNO055Wrapper imu;
 
@@ -107,5 +109,16 @@ final class DriveView {
                 throw new IllegalArgumentException("all encoders must be attached to the same hub");
             }
         }
+
+        List<DcMotorEx> motors = new ArrayList<>();
+        motors.addAll(leftMotors);
+        motors.addAll(rightMotors);
+        this.motors = Collections.unmodifiableList(motors);
+
+        List<RawEncoder> forwardEncs = new ArrayList<>();
+        forwardEncs.addAll(leftEncs);
+        forwardEncs.addAll(rightEncs);
+        forwardEncs.addAll(parEncs);
+        this.forwardEncs = Collections.unmodifiableList(forwardEncs);
     }
 }

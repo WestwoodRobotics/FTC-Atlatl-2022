@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+  <head>
+    <title>RR Acceleration Regression</title>
+
+    <style>
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.content {
+  max-width: 600px;
+  margin: auto;
+}
+
+.bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+fieldset {
+  display: flex;
+  justify-content: space-between;
+}
+    </style>
+
+    <script src="/tuning/plotly-2.12.1.min.js"></script>
+
+    <!-- https://tom-alexander.github.io/regression-js/ -->
+    <script src="/tuning/regression-2.0.1.min.js"></script>
+
+    <!-- <script src="/tuning/common.js"></script> -->
+    <script src="common.js"></script>
+  </head>
+  <body>
+    <div class="content">
+      <h1>RR Acceleration Regression</h1>
+      <p></p>
+
+      <fieldset>
+        <legend>Feedforward Parameters</legend>
+        <div>
+          kV: <input id="kv" type="text" />
+        </div>
+        <div>
+          kS: <input id="ks" type="text" />
+        </div>
+        <input id="update" type="button" value="update" />
+      </fieldset>
+      
+      <div id="accelChart">Loading...</div>
+    </div>
+
+    <script>
+// https://en.wikipedia.org/wiki/Five-point_stencil
+function numDeriv(xs) {
+  function get(i) {
+    if (i < 0) return xs[0];
+    if (i >= xs.length) return xs[xs.length - 1];
+    return xs[i];
+  }
+
+  return xs.map((_, i) =>
+    get(i - 2) - 8 * get(i - 1) + 8 * get(i + 1) - get(i + 2));
+}
+
+const accelChartDiv = document.getElementById('accelChart');
+fetch('/tuning/accel/latest.json')
+  .then(res => {
+    if (res.ok) {
+      return res.json();
+    } else {
+      accelChartDiv.innerText = 'No data files found';
+      throw new Error();
+    }
+  })
+  .then(data => {
+    const setParams = (function() {
+      const forwardEncVels = data.forwardEncVels.map((vs, i) => 
+        fixVels(data.encTimes, data.forwardEncPositions[i], vs));
+      const as = forwardEncVels.flatMap(vs => numDeriv(vs));
+
+      const setAccelData = newLinearRegressionChart(
+        accelChartDiv,
+        [], [],
+        {title: 'Acceleration Regression', slope: 'kA'}
+      );
+
+      return (kV, kS) => setAccelData(as, data.powers.flatMap(
+        (ps, i) => ps.map((p, j) => p * data.voltages[j] - kS - kV * forwardEncVels[i][j])));
+    })();
+
+    const kvInput = document.getElementById('kv');
+    const ksInput = document.getElementById('ks');
+    document.getElementById('update').addEventListener('click', () => {
+      setParams(parseFloat(kvInput.value), parseFloat(ksInput.value));
+    });
+  })
+  .catch(console.log.bind(console));
+    </script>
+  </body>
+</html>

@@ -16,16 +16,20 @@ import java.util.List;
 
 // FIXME: which group, if any?
 @TeleOp(group = "drive")
-public final class AccelLogger extends LinearOpMode {
-    private static final double POWER = 0.8;
+public final class ForwardRampLogger extends LinearOpMode {
+    // TODO: control the power function with parameters
+    private static double power(double seconds) {
+        return Math.min(0.1 * seconds, 0.9);
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
         DriveView view = new DriveView(new MecanumDrive(hardwareMap,
                 new Transform2(new Vector2(0, 0), Rotation2.exp(0))));
 
-        // FIXME: log current
         class Data {
+            final String type = view.type;
+
             final List<List<Double>> powerTimes = new ArrayList<>();
             final List<List<Double>> powers = new ArrayList<>();
 
@@ -50,14 +54,13 @@ public final class AccelLogger extends LinearOpMode {
         waitForStart();
 
         MidpointTimer t = new MidpointTimer();
-        for (DcMotorEx m : view.motors) {
-            m.setPower(POWER);
-        }
-
         while (opModeIsActive()) {
             for (int i = 0; i < view.motors.size(); i++) {
+                double power = power(t.seconds());
+                view.motors.get(i).setPower(power);
+
+                data.powers.get(i).add(power);
                 data.powerTimes.get(i).add(t.addSplit());
-                data.powers.get(i).add(POWER);
             }
 
             data.voltages.add(view.voltageSensor.getVoltage());
@@ -75,6 +78,6 @@ public final class AccelLogger extends LinearOpMode {
             m.setPower(0);
         }
 
-        TuningFiles.save(TuningFiles.FileType.ACCEL, data);
+        TuningFiles.save(TuningFiles.FileType.FORWARD_RAMP, data);
     }
 }

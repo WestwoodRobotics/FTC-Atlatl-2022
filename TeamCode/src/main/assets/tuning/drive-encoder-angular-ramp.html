@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+  <head>
+    <title>RR Drive Encoder Angular Ramp Regression</title>
+
+    <style>
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.content {
+  max-width: 600px;
+  margin: auto;
+}
+
+.bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+    </style>
+
+    <script src="/tuning/plotly-2.12.1.min.js"></script>
+
+    <!-- https://tom-alexander.github.io/regression-js/ -->
+    <script src="/tuning/regression-2.0.1.min.js"></script>
+
+    <!-- <script src="/tuning/common.js"></script> -->
+    <script src="common.js"></script>
+  </head>
+  <body>
+    <div class="content">
+      <h1>RR Drive Encoder Angular Ramp Regression</h1>
+      <p></p> 
+      
+      <div id="rampChart">Loading...</div>
+      <div id="trackWidthChart"></div>
+    </div>
+
+    <script>
+const rampChartDiv = document.getElementById('rampChart');
+fetch('/tuning/angular-ramp/latest.json')
+  .then(res => {
+    if (res.ok) {
+      return res.json();
+    } else {
+      rampChartDiv.innerText = 'No data files found';
+      throw new Error();
+    }
+  })
+  .then(data => {
+    const leftEncVels = data.leftEncVels.map((vs, i) =>
+          fixVels(data.encTimes, data.leftEncPositions[i], vs));
+    const rightEncVels = data.rightEncVels.map((vs, i) =>
+          fixVels(data.encTimes, data.rightEncPositions[i], vs));
+
+    newLinearRegressionChart(
+      rampChartDiv,
+      [
+        ...leftEncVels.flatMap(vs => vs.map(v => -v)), 
+        ...rightEncVels.flatMap(vs => vs),
+      ],
+      [
+        ...data.leftPowers.flatMap(ps => ps.map((p, i) => -p * data.voltages[i])),
+        ...data.rightPowers.flatMap(ps => ps.map((p, i) => p * data.voltages[i])),
+      ],
+      {title: 'Ramp Regression', slope: 'kV', intercept: 'kS'}
+    );
+
+    const [_, angVels] = data.angVels.reduce((acc, vsArg) => {
+      const vs = vsArg.map(v => Math.abs(v));
+      const maxV = vs.reduce((acc, v) => Math.max(acc, v), 0);
+      const [accMaxV, _] = acc;
+      if (maxV >= accMaxV) {
+        return [maxV, vs];
+      }
+      return acc;
+    }, [0, []]);
+
+    newLinearRegressionChart(
+      document.getElementById('trackWidthChart'),
+      angVels,
+      angVels.map((_, i) => 
+        (leftEncVels.reduce((acc, vs) => acc - vs[i], 0)
+          + rightEncVels.reduce((acc, vs) => acc + vs[i], 0))
+          / (data.leftEncVels.length + data.rightEncVels.length)
+          * (data.type === 'mecanum' ? 1 : 2)
+      ),
+      {title: 'Track Width Regression', slope: 'track width'}
+    );
+  })
+  .catch(console.log.bind(console));
+    </script>
+  </body>
+</html>

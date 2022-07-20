@@ -17,8 +17,7 @@ import java.util.List;
 
 // FIXME: which group, if any?
 @TeleOp(group = "drive")
-public final class TrackWidthRampLogger extends LinearOpMode {
-    // TODO: control the power function with parameters
+public final class AngularRampLogger extends LinearOpMode {
     private static double power(double seconds) {
         return Math.min(0.1 * seconds, 0.9);
     }
@@ -28,11 +27,6 @@ public final class TrackWidthRampLogger extends LinearOpMode {
         DriveView view = new DriveView(new MecanumDrive(hardwareMap,
                 new Transform2(new Vector2(0, 0), Rotation2.exp(0))));
 
-        // Regression 1: per wheel, commanded voltage against encoder linear velocity
-        //   requires powers, voltages, positions, and velocities
-        // Regression 2: per robot, encoder angular velocity against IMU angular velocity (roughly)
-        //   requires positions, encoder velocities, and IMU angular velocities
-        // TODO: log current to improve Regression 1?
         class Data {
             final String type = view.type;
 
@@ -50,6 +44,10 @@ public final class TrackWidthRampLogger extends LinearOpMode {
             final List<List<Integer>> leftEncVels = new ArrayList<>();
             final List<List<Integer>> rightEncPositions = new ArrayList<>();
             final List<List<Integer>> rightEncVels = new ArrayList<>();
+            final List<List<Integer>> parEncPositions = new ArrayList<>();
+            final List<List<Integer>> parEncVels = new ArrayList<>();
+            final List<List<Integer>> perpEncPositions = new ArrayList<>();
+            final List<List<Integer>> perpEncVels = new ArrayList<>();
 
             final List<Double> angVelTimes = new ArrayList<>();
             final List<List<Double>> angVels = new ArrayList<>();
@@ -71,6 +69,14 @@ public final class TrackWidthRampLogger extends LinearOpMode {
         for (Encoder e : view.rightEncs) {
             data.rightEncPositions.add(new ArrayList<>());
             data.rightEncVels.add(new ArrayList<>());
+        }
+        for (Encoder e : view.parEncs) {
+            data.parEncPositions.add(new ArrayList<>());
+            data.parEncVels.add(new ArrayList<>());
+        }
+        for (Encoder e : view.perpEncs) {
+            data.perpEncPositions.add(new ArrayList<>());
+            data.perpEncVels.add(new ArrayList<>());
         }
         for (int i = 0; i < 3; i++) {
             data.angVels.add(new ArrayList<>());
@@ -109,6 +115,16 @@ public final class TrackWidthRampLogger extends LinearOpMode {
                 data.rightEncPositions.get(i).add(p.position);
                 data.rightEncVels.get(i).add(p.velocity);
             }
+            for (int i = 0; i < view.parEncs.size(); i++) {
+                Encoder.PositionVelocityPair p = view.parEncs.get(i).getPositionAndVelocity();
+                data.parEncPositions.get(i).add(p.position);
+                data.parEncVels.get(i).add(p.velocity);
+            }
+            for (int i = 0; i < view.perpEncs.size(); i++) {
+                Encoder.PositionVelocityPair p = view.perpEncs.get(i).getPositionAndVelocity();
+                data.perpEncPositions.get(i).add(p.position);
+                data.perpEncVels.get(i).add(p.velocity);
+            }
             data.encTimes.add(t.addSplit());
 
             AngularVelocity av = view.imu.getAngularVelocity();
@@ -118,13 +134,10 @@ public final class TrackWidthRampLogger extends LinearOpMode {
             data.angVelTimes.add(t.addSplit());
         }
 
-        for (DcMotorEx m : view.leftMotors) {
-            m.setPower(0);
-        }
-        for (DcMotorEx m : view.rightMotors) {
+        for (DcMotorEx m : view.motors) {
             m.setPower(0);
         }
 
-        TuningFiles.save(TuningFiles.FileType.TRACK_WIDTH_RAMP, data);
+        TuningFiles.save(TuningFiles.FileType.ANGULAR_RAMP, data);
     }
 }

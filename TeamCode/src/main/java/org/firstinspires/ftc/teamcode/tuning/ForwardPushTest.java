@@ -36,18 +36,15 @@ public final class ForwardPushTest extends LinearOpMode {
         DriveView view = new DriveView(new MecanumDrive(hardwareMap,
                 new Transform2(new Vector2(0, 0), Rotation2.exp(0))));
 
-        for (DcMotorEx m : view.leftMotors) {
-            m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        }
-        for (DcMotorEx m : view.rightMotors) {
+        for (DcMotorEx m : view.motors) {
             m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
 
         waitForStart();
 
-        double initAvgPos = avgPos(view.parEncs);
+        double initAvgPos = avgPos(view.forwardEncs);
         while (opModeIsActive()) {
-            telemetry.addData("ticks traveled", avgPos(view.parEncs) - initAvgPos);
+            telemetry.addData("ticks traveled", avgPos(view.forwardEncs) - initAvgPos);
             telemetry.update();
         }
     }
