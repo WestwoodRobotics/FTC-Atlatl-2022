@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode.tuning;
 
-import com.acmerobotics.roadrunner.Rotation2;
-import com.acmerobotics.roadrunner.Transform2;
-import com.acmerobotics.roadrunner.Vector2;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
@@ -14,17 +10,14 @@ import org.firstinspires.ftc.teamcode.util.MidpointTimer;
 import java.util.ArrayList;
 import java.util.List;
 
-// FIXME: which group, if any?
-@TeleOp(group = "drive")
 public final class AccelLogger extends LinearOpMode {
     private static final double POWER = 0.8;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        DriveView view = new DriveView(new MecanumDrive(hardwareMap,
-                new Transform2(new Vector2(0, 0), Rotation2.exp(0))));
+        // TODO: fill in drive instance
+        DriveView view = new DriveView(new MecanumDrive(hardwareMap));
 
-        // FIXME: log current
         class Data {
             final List<List<Double>> powerTimes = new ArrayList<>();
             final List<List<Double>> powers = new ArrayList<>();
@@ -56,8 +49,8 @@ public final class AccelLogger extends LinearOpMode {
 
         while (opModeIsActive()) {
             for (int i = 0; i < view.motors.size(); i++) {
-                data.powerTimes.get(i).add(t.addSplit());
                 data.powers.get(i).add(POWER);
+                data.powerTimes.get(i).add(t.addSplit());
             }
 
             data.voltages.add(view.voltageSensor.getVoltage());

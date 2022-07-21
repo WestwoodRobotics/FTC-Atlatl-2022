@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.MecanumKinematics;
+import com.acmerobotics.roadrunner.Rotation2;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Transform2;
 import com.acmerobotics.roadrunner.Twist2;
 import com.acmerobotics.roadrunner.Twist2IncrementDual;
+import com.acmerobotics.roadrunner.Vector2;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -85,10 +87,9 @@ public final class MecanumDrive {
     public final BNO055Wrapper imu;
 
     public final Localizer localizer = new DriveLocalizer();
-    // TODO: should this state be explicitly threaded by client op modes?
-    public Transform2 txRobotWorld;
+    public Transform2 txRobotWorld = new Transform2(new Vector2(0, 0), Rotation2.exp(0));
 
-    public MecanumDrive(HardwareMap hardwareMap, Transform2 txRobotWorld) {
+    public MecanumDrive(HardwareMap hardwareMap) {
         kinematics = new MecanumKinematics(
                 FORWARD_IN_PER_TICK * TRACK_WIDTH_TICKS,
                 FORWARD_IN_PER_TICK / LATERAL_IN_PER_TICK);
@@ -121,8 +122,6 @@ public final class MecanumDrive {
         // TODO: change motor encoder directions
 
 //        localizer = new ThreeDeadWheelLocalizer(hardwareMap);
-
-        this.txRobotWorld = txRobotWorld;
     }
 
     public Twist2 updatePoseEstimateAndGetActualVel() {

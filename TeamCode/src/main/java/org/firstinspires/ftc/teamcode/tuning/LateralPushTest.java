@@ -1,15 +1,11 @@
 package org.firstinspires.ftc.teamcode.tuning;
 
-import com.acmerobotics.roadrunner.Rotation2;
-import com.acmerobotics.roadrunner.Transform2;
-import com.acmerobotics.roadrunner.Vector2;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-// FIXME: is this useful?
 @TeleOp
 public final class LateralPushTest extends LinearOpMode {
     private static double lateralSum(MecanumDrive.DriveLocalizer dl) {
@@ -22,8 +18,7 @@ public final class LateralPushTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        MecanumDrive drive = new MecanumDrive(hardwareMap,
-                new Transform2(new Vector2(0, 0), Rotation2.exp(0)));
+        MecanumDrive drive = new MecanumDrive(hardwareMap);
 
         MecanumDrive.DriveLocalizer dl = (MecanumDrive.DriveLocalizer) drive.localizer;
 

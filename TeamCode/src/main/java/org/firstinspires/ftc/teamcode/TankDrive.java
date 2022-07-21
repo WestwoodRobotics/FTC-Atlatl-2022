@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.DualNum;
+import com.acmerobotics.roadrunner.Rotation2;
 import com.acmerobotics.roadrunner.TankKinematics;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Transform2;
 import com.acmerobotics.roadrunner.Twist2;
 import com.acmerobotics.roadrunner.Twist2IncrementDual;
+import com.acmerobotics.roadrunner.Vector2;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -39,7 +41,7 @@ public final class TankDrive {
     public final VoltageSensor voltageSensor;
 
     public final Localizer localizer;
-    public Transform2 txRobotWorld;
+    public Transform2 txRobotWorld = new Transform2(new Vector2(0, 0), Rotation2.exp(0));
 
     public class DriveLocalizer implements Localizer {
         public final List<Encoder> leftEncs, rightEncs;
@@ -110,7 +112,7 @@ public final class TankDrive {
         }
     }
 
-    public TankDrive(HardwareMap hardwareMap, Transform2 txRobotWorld) {
+    public TankDrive(HardwareMap hardwareMap) {
         kinematics = new TankKinematics(IN_PER_TICK * TRACK_WIDTH_TICKS);
 
         LynxFirmwareVersion.throwIfAnyModulesBelowVersion(hardwareMap,
@@ -141,7 +143,6 @@ public final class TankDrive {
         // TODO: change motor encoder directions
 
         localizer = new ThreeDeadWheelLocalizer(hardwareMap);
-        this.txRobotWorld = txRobotWorld;
     }
 
     public Twist2 updatePoseEstimateAndGetActualVel() {

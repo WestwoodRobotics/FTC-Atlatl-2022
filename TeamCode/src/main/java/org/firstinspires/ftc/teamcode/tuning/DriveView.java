@@ -65,7 +65,7 @@ final class DriveView {
 
             localizer = td.localizer;
         } else {
-            throw new RuntimeException();
+            throw new AssertionError();
         }
 
         if (localizer instanceof TwoDeadWheelLocalizer) {
@@ -99,15 +99,7 @@ final class DriveView {
                 rightEncs.add(unwrap(e));
             }
         } else {
-            throw new RuntimeException();
-        }
-
-        DcMotorController c1 = parEncs.get(0).getController();
-        for (Encoder e : parEncs) {
-            DcMotorController c2 = e.getController();
-            if (c1 != c2) {
-                throw new IllegalArgumentException("all encoders must be attached to the same hub");
-            }
+            throw new AssertionError();
         }
 
         List<DcMotorEx> motors = new ArrayList<>();
@@ -120,5 +112,17 @@ final class DriveView {
         forwardEncs.addAll(rightEncs);
         forwardEncs.addAll(parEncs);
         this.forwardEncs = Collections.unmodifiableList(forwardEncs);
+
+        List<RawEncoder> allEncs = new ArrayList<>();
+        allEncs.addAll(forwardEncs);
+        allEncs.addAll(perpEncs);
+
+        DcMotorController c1 = allEncs.get(0).getController();
+        for (Encoder e : allEncs) {
+            DcMotorController c2 = e.getController();
+            if (c1 != c2) {
+                throw new IllegalArgumentException("all encoders must be attached to the same hub");
+            }
+        }
     }
 }

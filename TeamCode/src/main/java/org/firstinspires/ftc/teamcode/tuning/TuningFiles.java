@@ -40,6 +40,10 @@ public final class TuningFiles {
         }
     }
 
+    private TuningFiles() {
+
+    }
+
     private static File getFileTypeDir(FileType ty) {
         return new File(ROOT, ty.name);
     }

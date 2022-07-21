@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode.tuning;
 
-import com.acmerobotics.roadrunner.Rotation2;
-import com.acmerobotics.roadrunner.Transform2;
-import com.acmerobotics.roadrunner.Vector2;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
@@ -15,8 +11,6 @@ import org.firstinspires.ftc.teamcode.util.MidpointTimer;
 import java.util.ArrayList;
 import java.util.List;
 
-// FIXME: which group, if any?
-@TeleOp(group = "drive")
 public final class AngularRampLogger extends LinearOpMode {
     private static double power(double seconds) {
         return Math.min(0.1 * seconds, 0.9);
@@ -24,8 +18,8 @@ public final class AngularRampLogger extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        DriveView view = new DriveView(new MecanumDrive(hardwareMap,
-                new Transform2(new Vector2(0, 0), Rotation2.exp(0))));
+        // TODO: fill in drive instance
+        DriveView view = new DriveView(new MecanumDrive(hardwareMap));
 
         class Data {
             final String type = view.type;
