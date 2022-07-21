@@ -4,14 +4,10 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.util.Encoder;
-
 public final class RawEncoder implements Encoder {
     private final DcMotorEx m;
     public DcMotorSimple.Direction direction = DcMotorSimple.Direction.FORWARD;
 
-    // TODO: add parameter for overflow
-    // should overflow correction be enabled by default?
     public RawEncoder(DcMotorEx m) {
         this.m = m;
     }

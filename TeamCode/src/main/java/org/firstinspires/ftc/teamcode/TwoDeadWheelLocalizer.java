@@ -16,11 +16,8 @@ import org.firstinspires.ftc.teamcode.util.RawEncoder;
 
 @Config
 public final class TwoDeadWheelLocalizer implements Localizer {
-    // measured in ticks
-    public static double PAR_Y = 0.0;
-    public static double PERP_X = 0.0;
-
-    public static double IN_PER_TICK = 0.0;
+    public static double PAR_Y_TICKS = 0.0;
+    public static double PERP_X_TICKS = 0.0;
 
     public final Encoder par, perp;
     public final BNO055Wrapper imu;
@@ -28,7 +25,9 @@ public final class TwoDeadWheelLocalizer implements Localizer {
     private int lastParPos, lastPerpPos;
     private Rotation2 lastHeading;
 
-    public TwoDeadWheelLocalizer(HardwareMap hardwareMap, BNO055Wrapper imu) {
+    private final double inPerTick;
+
+    public TwoDeadWheelLocalizer(HardwareMap hardwareMap, BNO055Wrapper imu, double inPerTick) {
         par = new RawEncoder(hardwareMap.get(DcMotorEx.class, "par"));
         perp = new RawEncoder(hardwareMap.get(DcMotorEx.class, "perp"));
         this.imu = imu;
@@ -36,39 +35,30 @@ public final class TwoDeadWheelLocalizer implements Localizer {
         lastParPos = par.getPositionAndVelocity().position;
         lastPerpPos = perp.getPositionAndVelocity().position;
         lastHeading = imu.getHeading();
+
+        this.inPerTick = inPerTick;
     }
 
     public Twist2IncrementDual<Time> updateAndGetIncr() {
-        double parPosDelta, perpPosDelta, headingDelta;
-        double parVel, perpVel, headingVel;
+        Encoder.PositionVelocityPair parPosVel = par.getPositionAndVelocity();
+        Encoder.PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
+        Rotation2 heading = imu.getHeading();
 
-        {
-            Encoder.PositionVelocityPair parPosVel = par.getPositionAndVelocity();
-            Encoder.PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
-            Rotation2 heading = imu.getHeading();
+        int parPosDelta = parPosVel.position - lastParPos;
+        int perpPosDelta = perpPosVel.position - lastPerpPos;
+        double headingDelta = heading.minus(lastHeading);
 
-            parPosDelta = IN_PER_TICK * (parPosVel.position - lastParPos);
-            perpPosDelta = IN_PER_TICK * (perpPosVel.position - lastPerpPos);
-            headingDelta = heading.minus(lastHeading);
+        double headingVel = imu.getHeadingVelocity();
 
-            lastParPos = parPosVel.position;
-            lastPerpPos = perpPosVel.position;
-            lastHeading = heading;
-
-            parVel = IN_PER_TICK * parPosVel.velocity;
-            perpVel = IN_PER_TICK * perpPosVel.velocity;
-            headingVel = imu.getHeadingVelocity();
-        }
-
-        return new Twist2IncrementDual<>(
+        Twist2IncrementDual<Time> twistIncr = new Twist2IncrementDual<>(
                 new Vector2Dual<>(
                         new DualNum<>(new double[] {
-                                parPosDelta - PAR_Y * headingDelta,
-                                parVel - PAR_Y * headingVel,
+                                inPerTick * (parPosDelta - PAR_Y_TICKS * headingDelta),
+                                inPerTick * (parPosVel.velocity - PAR_Y_TICKS * headingVel),
                         }),
                         new DualNum<>(new double[] {
-                                perpPosDelta - PERP_X * headingDelta,
-                                perpVel - PERP_X * headingVel,
+                                inPerTick * (perpPosDelta - PERP_X_TICKS * headingDelta),
+                                inPerTick * (perpPosVel.velocity - PERP_X_TICKS * headingVel),
                         })
                 ),
                 new DualNum<>(new double[] {
@@ -76,5 +66,11 @@ public final class TwoDeadWheelLocalizer implements Localizer {
                         headingVel,
                 })
         );
+
+        lastParPos = parPosVel.position;
+        lastPerpPos = perpPosVel.position;
+        lastHeading = heading;
+
+        return twistIncr;
     }
 }

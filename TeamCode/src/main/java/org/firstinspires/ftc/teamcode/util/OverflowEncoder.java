@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public final class OverflowEncoder implements Encoder {
-    // encoder velocities are sent as 16-bit uints
+    // encoder velocities are sent as 16-bit ints
     // by the time they reach here, they are widened into an int and possibly negated
     private static final int CPS_STEP = 0x10000;
 

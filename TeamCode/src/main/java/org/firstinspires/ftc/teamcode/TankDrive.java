@@ -40,7 +40,7 @@ public final class TankDrive {
 
     public final VoltageSensor voltageSensor;
 
-    public final Localizer localizer;
+    public final Localizer localizer = new DriveLocalizer();
     public Transform2 txRobotWorld = new Transform2(new Vector2(0, 0), Rotation2.exp(0));
 
     public class DriveLocalizer implements Localizer {
@@ -72,7 +72,6 @@ public final class TankDrive {
             }
         }
 
-        // TODO: finish
         @Override
         public Twist2IncrementDual<Time> updateAndGetIncr() {
             double meanLeftPos = 0.0, meanLeftVel = 0.0;
@@ -93,7 +92,6 @@ public final class TankDrive {
             meanRightPos /= rightEncs.size();
             meanRightVel /= rightEncs.size();
 
-            // TODO: fix
             TankKinematics.WheelIncrements<Time> incrs = new TankKinematics.WheelIncrements<>(
                     new DualNum<>(new double[] {
                             IN_PER_TICK * (meanLeftPos - lastLeftPos),
@@ -139,10 +137,6 @@ public final class TankDrive {
         imu = new BNO055Wrapper(baseImu);
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
-
-        // TODO: change motor encoder directions
-
-        localizer = new ThreeDeadWheelLocalizer(hardwareMap);
     }
 
     public Twist2 updatePoseEstimateAndGetActualVel() {

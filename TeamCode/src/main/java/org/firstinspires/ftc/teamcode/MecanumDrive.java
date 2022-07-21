@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.MecanumKinematics;
 import com.acmerobotics.roadrunner.Rotation2;
@@ -21,6 +22,7 @@ import org.firstinspires.ftc.teamcode.util.Localizer;
 import org.firstinspires.ftc.teamcode.util.LynxFirmwareVersion;
 import org.firstinspires.ftc.teamcode.util.RawEncoder;
 
+@Config
 public final class MecanumDrive {
     public static double FORWARD_IN_PER_TICK = 0;
     public static double LATERAL_IN_PER_TICK = 1;
@@ -31,6 +33,11 @@ public final class MecanumDrive {
     public final DcMotorEx leftFront, leftRear, rightRear, rightFront;
 
     public final VoltageSensor voltageSensor;
+
+    public final BNO055Wrapper imu;
+
+    public final Localizer localizer = new DriveLocalizer();
+    public Transform2 txRobotWorld = new Transform2(new Vector2(0, 0), Rotation2.exp(0));
 
     public class DriveLocalizer implements Localizer {
         public final Encoder leftFront, leftRear, rightRear, rightFront;
@@ -84,11 +91,6 @@ public final class MecanumDrive {
         }
     }
 
-    public final BNO055Wrapper imu;
-
-    public final Localizer localizer = new DriveLocalizer();
-    public Transform2 txRobotWorld = new Transform2(new Vector2(0, 0), Rotation2.exp(0));
-
     public MecanumDrive(HardwareMap hardwareMap) {
         kinematics = new MecanumKinematics(
                 FORWARD_IN_PER_TICK * TRACK_WIDTH_TICKS,
@@ -118,10 +120,6 @@ public final class MecanumDrive {
         imu = new BNO055Wrapper(baseImu);
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
-
-        // TODO: change motor encoder directions
-
-//        localizer = new ThreeDeadWheelLocalizer(hardwareMap);
     }
 
     public Twist2 updatePoseEstimateAndGetActualVel() {
