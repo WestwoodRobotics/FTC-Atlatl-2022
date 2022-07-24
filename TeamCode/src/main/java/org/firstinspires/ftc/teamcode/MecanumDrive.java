@@ -145,52 +145,46 @@ public final class MecanumDrive {
         public final PosePath path;
         public final TimeProfile profile;
 
+        private double beginTs;
+
         public FollowTrajectoryAction(PosePath path, TimeProfile profile) {
             this.path = path;
             this.profile = profile;
         }
 
-        public final class FollowLoopAction implements Action {
-            public final double beginTimestamp;
-
-            public FollowLoopAction(double beginTimestamp) {
-                this.beginTimestamp = beginTimestamp;
-            }
-
-            @Override
-            public Action step() {
-                double t = clock() - beginTimestamp;
-                if (t >= profile.duration) {
-                    leftFront.setPower(0);
-                    leftBack.setPower(0);
-                    rightBack.setPower(0);
-                    rightFront.setPower(0);
-
-                    return null;
-                }
-
-                DualNum<Time> x = profile.get(clock() - beginTimestamp);
-                Transform2Dual<Time> txWorldTarget = path.get(x.value(), 3).reparam(x);
-
-                Twist2 robotVelRobot = updatePoseEstimateAndGetActualVel();
-
-                Twist2Dual<Time> command = new HolonomicController(0, 0, 0, 0, 0, 0)
-                        .compute(txWorldTarget, pose, robotVelRobot);
-
-                MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
-                double voltage = voltageSensor.getVoltage();
-                leftFront.setPower(feedforward.compute(wheelVels.leftFront) / voltage);
-                leftBack.setPower(feedforward.compute(wheelVels.leftBack) / voltage);
-                rightBack.setPower(feedforward.compute(wheelVels.rightBack) / voltage);
-                rightFront.setPower(feedforward.compute(wheelVels.rightFront) / voltage);
-
-                return this;
-            }
+        @Override
+        public void init() {
+            beginTs = clock();
         }
 
         @Override
-        public Action step() {
-            return new FollowLoopAction(clock()).step();
+        public boolean loop() {
+            double t = clock() - beginTs;
+            if (t >= profile.duration) {
+                leftFront.setPower(0);
+                leftBack.setPower(0);
+                rightBack.setPower(0);
+                rightFront.setPower(0);
+
+                return false;
+            }
+
+            DualNum<Time> x = profile.get(clock() - beginTs);
+            Transform2Dual<Time> txWorldTarget = path.get(x.value(), 3).reparam(x);
+
+            Twist2 robotVelRobot = updatePoseEstimateAndGetActualVel();
+
+            Twist2Dual<Time> command = new HolonomicController(0, 0, 0, 0, 0, 0)
+                    .compute(txWorldTarget, pose, robotVelRobot);
+
+            MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
+            double voltage = voltageSensor.getVoltage();
+            leftFront.setPower(feedforward.compute(wheelVels.leftFront) / voltage);
+            leftBack.setPower(feedforward.compute(wheelVels.leftBack) / voltage);
+            rightBack.setPower(feedforward.compute(wheelVels.rightBack) / voltage);
+            rightFront.setPower(feedforward.compute(wheelVels.rightFront) / voltage);
+
+            return true;
         }
     }
 
@@ -219,6 +213,10 @@ public final class MecanumDrive {
     }
     public SafePathBuilder pathBuilder(Transform2 beginPose, double beginTangent) {
         return new SafePathBuilder(beginPose, beginTangent, 1e-6);
+    }
+
+    public Action.BaseBuilder actionBuilder() {
+        return new Action.BaseBuilder();
     }
 
     public Action followPath(PosePath path, VelConstraintFun vf, AccelConstraintFun af) {
