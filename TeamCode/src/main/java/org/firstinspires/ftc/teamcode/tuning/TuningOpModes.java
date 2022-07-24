@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
 import java.util.Arrays;
 import java.util.List;
 
-public class TuningOpModes {
+public final class TuningOpModes {
     public static final String GROUP = "quickstart";
     public static final boolean DISABLED = false;
 

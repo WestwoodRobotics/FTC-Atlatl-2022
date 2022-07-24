@@ -109,7 +109,7 @@ public interface Action {
     }
 }
 
-class SleepAction implements Action {
+final class SleepAction implements Action {
     public final double duration;
     private double endTs;
 
@@ -128,7 +128,7 @@ class SleepAction implements Action {
     }
 }
 
-class ParallelAction implements Action {
+final class ParallelAction implements Action {
     public final List<Action> actions;
     private List<Action> remaining;
 
@@ -159,7 +159,7 @@ class ParallelAction implements Action {
     }
 }
 
-class SequentialAction implements Action {
+final class SequentialAction implements Action {
     public final List<Action> actions;
     private int index;
     private boolean needsInit = true;

@@ -44,15 +44,18 @@ public final class MecanumDrive {
     public static double LATERAL_IN_PER_TICK = 1;
     public static double TRACK_WIDTH_TICKS = 0;
 
-    // TODO: could be static, though that renders dash ineffective
+    public static double kS = 0;
+    public static double kV = 0;
+    public static double kA = 0;
+
     public final MecanumKinematics kinematics = new MecanumKinematics(
             FORWARD_IN_PER_TICK * TRACK_WIDTH_TICKS,
             FORWARD_IN_PER_TICK / LATERAL_IN_PER_TICK);
 
-    public final MotorFeedforward feedforward = new MotorFeedforward(0, 0, 0);
+    public final MotorFeedforward feedforward = new MotorFeedforward(kS, kV, kA);
 
-    public final VelConstraintFun defaultVelConstraint = kinematics.new WheelVelConstraintFun(0);
-    public final AccelConstraintFun defaultAccelConstraint = new ProfileAccelConstraintFun(-0, 0);
+    public final VelConstraintFun defaultVelConstraint = kinematics.new WheelVelConstraintFun(50);
+    public final AccelConstraintFun defaultAccelConstraint = new ProfileAccelConstraintFun(-30, 50);
 
     public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
 
