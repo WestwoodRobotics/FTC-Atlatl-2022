@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.AccelConstraintFun;
 import com.acmerobotics.roadrunner.Arclength;
+import com.acmerobotics.roadrunner.CancelableProfile;
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.HolonomicController;
 import com.acmerobotics.roadrunner.MecanumKinematics;
@@ -143,13 +144,15 @@ public final class MecanumDrive {
 
     public final class FollowTrajectoryAction implements Action {
         public final PosePath path;
-        public final TimeProfile profile;
 
-        private double beginTs;
+        private final CancelableProfile cancelableProfile;
+        private TimeProfile profile;
+        private double beginTs, beginDisp;
 
-        public FollowTrajectoryAction(PosePath path, TimeProfile profile) {
+        public FollowTrajectoryAction(PosePath path, CancelableProfile profile) {
             this.path = path;
-            this.profile = profile;
+            cancelableProfile = profile;
+            this.profile = new TimeProfile(cancelableProfile.baseProfile);
         }
 
         @Override
@@ -169,8 +172,8 @@ public final class MecanumDrive {
                 return false;
             }
 
-            DualNum<Time> x = profile.get(clock() - beginTs);
-            Transform2Dual<Time> txWorldTarget = path.get(x.value(), 3).reparam(x);
+            DualNum<Time> x = profile.get(t);
+            Transform2Dual<Time> txWorldTarget = path.get(beginDisp + x.value(), 3).reparam(x);
 
             Twist2 robotVelRobot = updatePoseEstimateAndGetActualVel();
 
@@ -185,6 +188,17 @@ public final class MecanumDrive {
             rightFront.setPower(feedforward.compute(wheelVels.rightFront) / voltage);
 
             return true;
+        }
+
+        public void cancel() {
+            if (beginDisp != 0) {
+                throw new IllegalStateException();
+            }
+
+            double t = clock() - beginTs;
+            beginDisp = profile.get(t).get(0);
+            beginTs += t;
+            profile = new TimeProfile(cancelableProfile.cancel(beginDisp));
         }
     }
 
@@ -219,11 +233,11 @@ public final class MecanumDrive {
         return new Action.BaseBuilder();
     }
 
-    public Action followPath(PosePath path, VelConstraintFun vf, AccelConstraintFun af) {
+    public FollowTrajectoryAction followPath(PosePath path, VelConstraintFun vf, AccelConstraintFun af) {
         return new FollowTrajectoryAction(path,
-                new TimeProfile(Profiles.profile(path, 0, vf, af, 0.25)));
+                Profiles.profile(path, 0, vf, af, 0.25));
     }
-    public Action followPath(PosePath path) {
+    public FollowTrajectoryAction followPath(PosePath path) {
         return followPath(path, defaultVelConstraint, defaultAccelConstraint);
     }
 }
