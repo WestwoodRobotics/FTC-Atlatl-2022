@@ -1,14 +1,29 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.AccelConstraintFun;
+import com.acmerobotics.roadrunner.Arclength;
 import com.acmerobotics.roadrunner.DualNum;
+import com.acmerobotics.roadrunner.HolonomicController;
 import com.acmerobotics.roadrunner.MecanumKinematics;
+import com.acmerobotics.roadrunner.MotorFeedforward;
+import com.acmerobotics.roadrunner.PosePath;
+import com.acmerobotics.roadrunner.Position2;
+import com.acmerobotics.roadrunner.PositionPath;
+import com.acmerobotics.roadrunner.PositionPathBuilder;
+import com.acmerobotics.roadrunner.ProfileAccelConstraintFun;
+import com.acmerobotics.roadrunner.Profiles;
 import com.acmerobotics.roadrunner.Rotation2;
+import com.acmerobotics.roadrunner.SafePathBuilder;
+import com.acmerobotics.roadrunner.SafePosePathBuilder;
 import com.acmerobotics.roadrunner.Time;
+import com.acmerobotics.roadrunner.TimeProfile;
 import com.acmerobotics.roadrunner.Transform2;
+import com.acmerobotics.roadrunner.Transform2Dual;
 import com.acmerobotics.roadrunner.Twist2;
+import com.acmerobotics.roadrunner.Twist2Dual;
 import com.acmerobotics.roadrunner.Twist2IncrementDual;
-import com.acmerobotics.roadrunner.Vector2;
+import com.acmerobotics.roadrunner.VelConstraintFun;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -28,16 +43,24 @@ public final class MecanumDrive {
     public static double LATERAL_IN_PER_TICK = 1;
     public static double TRACK_WIDTH_TICKS = 0;
 
-    public final MecanumKinematics kinematics;
+    // TODO: could be static, though that renders dash ineffective
+    public final MecanumKinematics kinematics = new MecanumKinematics(
+            FORWARD_IN_PER_TICK * TRACK_WIDTH_TICKS,
+            FORWARD_IN_PER_TICK / LATERAL_IN_PER_TICK);
 
-    public final DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    public final MotorFeedforward feedforward = new MotorFeedforward(0, 0, 0);
+
+    public final VelConstraintFun defaultVelConstraint = kinematics.new WheelVelConstraintFun(0);
+    public final AccelConstraintFun defaultAccelConstraint = new ProfileAccelConstraintFun(-0, 0);
+
+    public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
 
     public final VoltageSensor voltageSensor;
 
     public final BNO055Wrapper imu;
 
     public final Localizer localizer = new DriveLocalizer();
-    public Transform2 txRobotWorld = new Transform2(new Vector2(0, 0), Rotation2.exp(0));
+    public Transform2 pose = new Transform2(0, 0, 0);
 
     public class DriveLocalizer implements Localizer {
         public final Encoder leftFront, leftRear, rightRear, rightFront;
@@ -46,8 +69,8 @@ public final class MecanumDrive {
 
         public DriveLocalizer() {
             leftFront = new RawEncoder(MecanumDrive.this.leftFront);
-            leftRear = new RawEncoder(MecanumDrive.this.leftRear);
-            rightRear = new RawEncoder(MecanumDrive.this.rightRear);
+            leftRear = new RawEncoder(MecanumDrive.this.leftBack);
+            rightRear = new RawEncoder(MecanumDrive.this.rightBack);
             rightFront = new RawEncoder(MecanumDrive.this.rightFront);
 
             lastLeftFrontPos = leftFront.getPositionAndVelocity().position;
@@ -64,22 +87,22 @@ public final class MecanumDrive {
             Encoder.PositionVelocityPair rightFrontPosVel = rightFront.getPositionAndVelocity();
 
             MecanumKinematics.WheelIncrements<Time> incrs = new MecanumKinematics.WheelIncrements<>(
-                    new DualNum<>(new double[] {
-                            FORWARD_IN_PER_TICK * (leftFrontPosVel.position - lastLeftFrontPos),
-                            FORWARD_IN_PER_TICK * leftFrontPosVel.velocity,
-                    }),
-                    new DualNum<>(new double[] {
-                            FORWARD_IN_PER_TICK * (leftRearPosVel.position - lastLeftRearPos),
-                            FORWARD_IN_PER_TICK * leftRearPosVel.velocity,
-                    }),
-                    new DualNum<>(new double[] {
-                            FORWARD_IN_PER_TICK * (rightRearPosVel.position - lastRightRearPos),
-                            FORWARD_IN_PER_TICK * rightRearPosVel.velocity,
-                    }),
-                    new DualNum<>(new double[] {
-                            FORWARD_IN_PER_TICK * (rightFrontPosVel.position - lastRightFrontPos),
-                            FORWARD_IN_PER_TICK * rightFrontPosVel.velocity,
-                    })
+                    new DualNum<Time>(new double[] {
+                            leftFrontPosVel.position - lastLeftFrontPos,
+                            leftFrontPosVel.velocity,
+                    }).times(FORWARD_IN_PER_TICK),
+                    new DualNum<Time>(new double[] {
+                            leftRearPosVel.position - lastLeftRearPos,
+                            leftRearPosVel.velocity,
+                    }).times(FORWARD_IN_PER_TICK),
+                    new DualNum<Time>(new double[] {
+                            rightRearPosVel.position - lastRightRearPos,
+                            rightRearPosVel.velocity,
+                    }).times(FORWARD_IN_PER_TICK),
+                    new DualNum<Time>(new double[] {
+                            rightFrontPosVel.position - lastRightFrontPos,
+                            rightFrontPosVel.velocity,
+                    }).times(FORWARD_IN_PER_TICK)
             );
 
             lastLeftFrontPos = leftFrontPosVel.position;
@@ -92,10 +115,6 @@ public final class MecanumDrive {
     }
 
     public MecanumDrive(HardwareMap hardwareMap) {
-        kinematics = new MecanumKinematics(
-                FORWARD_IN_PER_TICK * TRACK_WIDTH_TICKS,
-                FORWARD_IN_PER_TICK / LATERAL_IN_PER_TICK);
-
         LynxFirmwareVersion.throwIfAnyModulesBelowVersion(hardwareMap,
                 new LynxFirmwareVersion(1, 8, 2));
 
@@ -104,13 +123,13 @@ public final class MecanumDrive {
         }
 
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
+        leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
+        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
         rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         BNO055IMU baseImu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -122,9 +141,91 @@ public final class MecanumDrive {
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
     }
 
+    public final class FollowTrajectoryAction implements Action {
+        public final PosePath path;
+        public final TimeProfile profile;
+
+        public FollowTrajectoryAction(PosePath path, TimeProfile profile) {
+            this.path = path;
+            this.profile = profile;
+        }
+
+        public final class FollowLoopAction implements Action {
+            public final double beginTimestamp;
+
+            public FollowLoopAction(double beginTimestamp) {
+                this.beginTimestamp = beginTimestamp;
+            }
+
+            @Override
+            public Action step() {
+                double t = clock() - beginTimestamp;
+                if (t >= profile.duration) {
+                    leftFront.setPower(0);
+                    leftBack.setPower(0);
+                    rightBack.setPower(0);
+                    rightFront.setPower(0);
+
+                    return null;
+                }
+
+                DualNum<Time> x = profile.get(clock() - beginTimestamp);
+                Transform2Dual<Time> txWorldTarget = path.get(x.value(), 3).reparam(x);
+
+                Twist2 robotVelRobot = updatePoseEstimateAndGetActualVel();
+
+                Twist2Dual<Time> command = new HolonomicController(0, 0, 0, 0, 0, 0)
+                        .compute(txWorldTarget, pose, robotVelRobot);
+
+                MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
+                double voltage = voltageSensor.getVoltage();
+                leftFront.setPower(feedforward.compute(wheelVels.leftFront) / voltage);
+                leftBack.setPower(feedforward.compute(wheelVels.leftBack) / voltage);
+                rightBack.setPower(feedforward.compute(wheelVels.rightBack) / voltage);
+                rightFront.setPower(feedforward.compute(wheelVels.rightFront) / voltage);
+
+                return this;
+            }
+        }
+
+        @Override
+        public Action step() {
+            return new FollowLoopAction(clock()).step();
+        }
+    }
+
     public Twist2 updatePoseEstimateAndGetActualVel() {
         Twist2IncrementDual<Time> incr = localizer.updateAndGetIncr();
-        txRobotWorld = txRobotWorld.plus(incr.value());
+        pose = pose.plus(incr.value());
         return incr.velocity().value();
+    }
+
+    public PositionPathBuilder posPathBuilder(Position2 beginPos, Rotation2 beginTangent) {
+        return new PositionPathBuilder(beginPos, beginTangent, 1e-6);
+    }
+    public PositionPathBuilder posPathBuilder(Position2 beginPos, double beginTangent) {
+        return new PositionPathBuilder(beginPos, beginTangent, 1e-6);
+    }
+
+    public SafePosePathBuilder posePathBuilder(PositionPath<Arclength> path, Rotation2 beginHeading) {
+        return new SafePosePathBuilder(path, beginHeading);
+    }
+    public SafePosePathBuilder posePathBuilder(PositionPath<Arclength> path, double beginHeading) {
+        return new SafePosePathBuilder(path, beginHeading);
+    }
+
+    public SafePathBuilder pathBuilder(Transform2 beginPose, Rotation2 beginTangent) {
+        return new SafePathBuilder(beginPose, beginTangent, 1e-6);
+    }
+    public SafePathBuilder pathBuilder(Transform2 beginPose, double beginTangent) {
+        return new SafePathBuilder(beginPose, beginTangent, 1e-6);
+    }
+
+    public Action followPath(PosePath path, VelConstraintFun vf, AccelConstraintFun af) {
+        return new FollowTrajectoryAction(path,
+                new TimeProfile(Profiles.profile(path, 0, vf, af, 0.25)));
+    }
+    public Action followPath(PosePath path) {
+        return followPath(path, defaultVelConstraint, defaultAccelConstraint);
     }
 }

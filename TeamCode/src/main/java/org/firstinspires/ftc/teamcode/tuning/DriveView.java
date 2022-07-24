@@ -48,8 +48,8 @@ final class DriveView {
             type = "mecanum";
 
             MecanumDrive md = (MecanumDrive) d;
-            leftMotors = Arrays.asList(md.leftFront, md.leftRear);
-            rightMotors = Arrays.asList(md.rightFront, md.rightRear);
+            leftMotors = Arrays.asList(md.leftFront, md.leftBack);
+            rightMotors = Arrays.asList(md.rightFront, md.rightBack);
             imu = md.imu;
             voltageSensor = md.voltageSensor;
 
@@ -58,8 +58,8 @@ final class DriveView {
             type = "tank";
 
             TankDrive td = (TankDrive) d;
-            leftMotors = Collections.unmodifiableList(td.leftMotors);
-            rightMotors = Collections.unmodifiableList(td.rightMotors);
+            leftMotors = td.leftMotors;
+            rightMotors = td.rightMotors;
             imu = td.imu;
             voltageSensor = td.voltageSensor;
 
@@ -102,16 +102,14 @@ final class DriveView {
             throw new AssertionError();
         }
 
-        List<DcMotorEx> motors = new ArrayList<>();
+        motors = new ArrayList<>();
         motors.addAll(leftMotors);
         motors.addAll(rightMotors);
-        this.motors = Collections.unmodifiableList(motors);
 
-        List<RawEncoder> forwardEncs = new ArrayList<>();
+        forwardEncs = new ArrayList<>();
         forwardEncs.addAll(leftEncs);
         forwardEncs.addAll(rightEncs);
         forwardEncs.addAll(parEncs);
-        this.forwardEncs = Collections.unmodifiableList(forwardEncs);
 
         List<RawEncoder> allEncs = new ArrayList<>();
         allEncs.addAll(forwardEncs);
