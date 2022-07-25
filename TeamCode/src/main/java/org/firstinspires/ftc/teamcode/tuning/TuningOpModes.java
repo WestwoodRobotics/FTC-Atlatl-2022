@@ -27,7 +27,8 @@ public final class TuningOpModes {
                 AngularVelocity.class,
                 ForwardPushTest.class,
                 ForwardRampLogger.class,
-                LateralPushTest.class
+                LateralPushTest.class,
+                SplineTest.class
         );
 
         for (Class<?> o : opModes) {
