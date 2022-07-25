@@ -2,7 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.DualNum;
+import com.acmerobotics.roadrunner.Position2;
+import com.acmerobotics.roadrunner.PositionPathBuilder;
 import com.acmerobotics.roadrunner.Rotation2;
+import com.acmerobotics.roadrunner.TangentPath;
 import com.acmerobotics.roadrunner.TankKinematics;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Transform2;
@@ -143,5 +146,64 @@ public final class TankDrive {
         Twist2IncrementDual<Time> incr = localizer.updateAndGetIncr();
         txRobotWorld = txRobotWorld.plus(incr.value());
         return incr.velocity().value();
+    }
+
+    public static class PathBuilder {
+        private final PositionPathBuilder posPathBuilder;
+        private final double offset;
+
+        private PathBuilder(PositionPathBuilder posPathBuilder, double tanOffset) {
+            this.posPathBuilder = posPathBuilder;
+            this.offset = tanOffset;
+        }
+
+        public PathBuilder(Position2 beginPos, Rotation2 beginTangent, boolean reversed, double eps) {
+            this(new PositionPathBuilder(beginPos, beginTangent, eps), reversed ? Math.PI : 0);
+        }
+        public PathBuilder(Position2 beginPos, double beginTangent, boolean reversed, double eps) {
+            this(beginPos, Rotation2.exp(beginTangent), reversed, eps);
+        }
+        public PathBuilder(Position2 beginPos, Rotation2 beginTangent, double eps) {
+            this(beginPos, beginTangent, false, eps);
+        }
+        public PathBuilder(Position2 beginPos, double beginTangent, double eps) {
+            this(beginPos, Rotation2.exp(beginTangent), eps);
+        }
+
+        public PathBuilder forward(double dist) {
+            return new PathBuilder(posPathBuilder.forward(dist), offset);
+        }
+
+        public PathBuilder lineToX(double posX) {
+            return new PathBuilder(posPathBuilder.lineToX(posX), offset);
+        }
+
+        public PathBuilder lineToY(double posY) {
+            return new PathBuilder(posPathBuilder.lineToY(posY), offset);
+        }
+
+        public PathBuilder splineTo(Position2 pos, Rotation2 tangent) {
+            return new PathBuilder(posPathBuilder.splineTo(pos, tangent), offset);
+        }
+        public PathBuilder splineTo(Position2 pos, double tangent) {
+            return splineTo(pos, Rotation2.exp(tangent));
+        }
+
+        public TangentPath build() {
+            return new TangentPath(posPathBuilder.build(), offset);
+        }
+    }
+
+    public PathBuilder pathBuilder(Position2 beginPos, Rotation2 beginTangent, boolean reversed) {
+        return new PathBuilder(beginPos, beginTangent, reversed, 1e-6);
+    }
+    public PathBuilder pathBuilder(Position2 beginPos, double beginTangent, boolean reversed) {
+        return new PathBuilder(beginPos, Rotation2.exp(beginTangent), reversed, 1e-6);
+    }
+    public PathBuilder pathBuilder(Position2 beginPos, Rotation2 beginTangent) {
+        return pathBuilder(beginPos, beginTangent, false);
+    }
+    public PathBuilder pathBuilder(Position2 beginPos, double beginTangent) {
+        return pathBuilder(beginPos, Rotation2.exp(beginTangent), false);
     }
 }
