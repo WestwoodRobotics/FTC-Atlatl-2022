@@ -66,6 +66,8 @@ public final class TankDrive {
     public final Localizer localizer = new DriveLocalizer();
     public Transform2 pose = new Transform2(new Vector2(0, 0), Rotation2.exp(0));
 
+    public final double inPerTick = IN_PER_TICK;
+
     public class DriveLocalizer implements Localizer {
         public final List<Encoder> leftEncs, rightEncs;
 
@@ -119,11 +121,11 @@ public final class TankDrive {
                     new DualNum<Time>(new double[] {
                             meanLeftPos - lastLeftPos,
                             meanLeftVel
-                    }).times(IN_PER_TICK),
+                    }).times(inPerTick),
                     new DualNum<Time>(new double[] {
                             meanRightPos - lastRightPos,
                             meanRightVel,
-                    }).times(IN_PER_TICK)
+                    }).times(inPerTick)
             );
 
             lastLeftPos = meanLeftPos;

@@ -66,6 +66,8 @@ public final class MecanumDrive {
     public final Localizer localizer = new DriveLocalizer();
     public Transform2 pose = new Transform2(0, 0, 0);
 
+    public final double inPerTick = FORWARD_IN_PER_TICK;
+
     public class DriveLocalizer implements Localizer {
         public final Encoder leftFront, leftRear, rightRear, rightFront;
 
@@ -94,19 +96,19 @@ public final class MecanumDrive {
                     new DualNum<Time>(new double[] {
                             leftFrontPosVel.position - lastLeftFrontPos,
                             leftFrontPosVel.velocity,
-                    }).times(FORWARD_IN_PER_TICK),
+                    }).times(inPerTick),
                     new DualNum<Time>(new double[] {
                             leftRearPosVel.position - lastLeftRearPos,
                             leftRearPosVel.velocity,
-                    }).times(FORWARD_IN_PER_TICK),
+                    }).times(inPerTick),
                     new DualNum<Time>(new double[] {
                             rightRearPosVel.position - lastRightRearPos,
                             rightRearPosVel.velocity,
-                    }).times(FORWARD_IN_PER_TICK),
+                    }).times(inPerTick),
                     new DualNum<Time>(new double[] {
                             rightFrontPosVel.position - lastRightFrontPos,
                             rightFrontPosVel.velocity,
-                    }).times(FORWARD_IN_PER_TICK)
+                    }).times(inPerTick)
             );
 
             lastLeftFrontPos = leftFrontPosVel.position;

@@ -52,14 +52,14 @@ public final class TwoDeadWheelLocalizer implements Localizer {
 
         Twist2IncrementDual<Time> twistIncr = new Twist2IncrementDual<>(
                 new Vector2Dual<>(
-                        new DualNum<>(new double[] {
-                                inPerTick * (parPosDelta - PAR_Y_TICKS * headingDelta),
-                                inPerTick * (parPosVel.velocity - PAR_Y_TICKS * headingVel),
-                        }),
-                        new DualNum<>(new double[] {
-                                inPerTick * (perpPosDelta - PERP_X_TICKS * headingDelta),
-                                inPerTick * (perpPosVel.velocity - PERP_X_TICKS * headingVel),
-                        })
+                        new DualNum<Time>(new double[] {
+                                parPosDelta - PAR_Y_TICKS * headingDelta,
+                                parPosVel.velocity - PAR_Y_TICKS * headingVel,
+                        }).times(inPerTick),
+                        new DualNum<Time>(new double[] {
+                                perpPosDelta - PERP_X_TICKS * headingDelta,
+                                perpPosVel.velocity - PERP_X_TICKS * headingVel,
+                        }).times(inPerTick)
                 ),
                 new DualNum<>(new double[] {
                         headingDelta,

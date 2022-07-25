@@ -20,9 +20,9 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
 
     public final Encoder par0, par1, perp;
 
-    private int lastPar0Pos, lastPar1Pos, lastPerpPos;
+    public final double inPerTick;
 
-    private final double inPerTick;
+    private int lastPar0Pos, lastPar1Pos, lastPerpPos;
 
     public ThreeDeadWheelLocalizer(HardwareMap hardwareMap, double inPerTick) {
         par0 = new RawEncoder(hardwareMap.get(DcMotorEx.class, "par0"));
@@ -47,14 +47,14 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
 
         Twist2IncrementDual<Time> twistIncr = new Twist2IncrementDual<>(
                 new Vector2Dual<>(
-                        new DualNum<>(new double[] {
-                                inPerTick * (PAR0_Y_TICKS * par1PosDelta - PAR1_Y_TICKS * par0PosDelta) / (PAR0_Y_TICKS - PAR1_Y_TICKS),
-                                inPerTick * (PAR0_Y_TICKS * par1PosVel.velocity - PAR1_Y_TICKS * par0PosVel.velocity) / (PAR0_Y_TICKS - PAR1_Y_TICKS),
-                        }),
-                        new DualNum<>(new double[] {
-                                inPerTick * (PERP_X_TICKS / (PAR0_Y_TICKS - PAR1_Y_TICKS) * (par1PosDelta - par0PosDelta) + perpPosDelta),
-                                inPerTick * (PERP_X_TICKS / (PAR0_Y_TICKS - PAR1_Y_TICKS) * (par1PosVel.velocity - par0PosVel.velocity) + perpPosVel.velocity),
-                        })
+                        new DualNum<Time>(new double[] {
+                                (PAR0_Y_TICKS * par1PosDelta - PAR1_Y_TICKS * par0PosDelta) / (PAR0_Y_TICKS - PAR1_Y_TICKS),
+                                (PAR0_Y_TICKS * par1PosVel.velocity - PAR1_Y_TICKS * par0PosVel.velocity) / (PAR0_Y_TICKS - PAR1_Y_TICKS),
+                        }).times(inPerTick),
+                        new DualNum<Time>(new double[] {
+                                (PERP_X_TICKS / (PAR0_Y_TICKS - PAR1_Y_TICKS) * (par1PosDelta - par0PosDelta) + perpPosDelta),
+                                (PERP_X_TICKS / (PAR0_Y_TICKS - PAR1_Y_TICKS) * (par1PosVel.velocity - par0PosVel.velocity) + perpPosVel.velocity),
+                        }).times(inPerTick)
                 ),
                 new DualNum<>(new double[] {
                         (par0PosDelta - par1PosDelta) / (PAR0_Y_TICKS - PAR1_Y_TICKS),
