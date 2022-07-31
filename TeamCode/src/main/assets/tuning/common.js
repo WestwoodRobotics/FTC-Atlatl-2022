@@ -9,56 +9,65 @@ function fitLinearWithScaling(xs, ys) {
   return [m * yNorm / xNorm, b * yNorm];
 }
 
-function numDeriv(xs, ys) {
+// no output for first pair
+function numDerivOnline(xs, ys) {
   if (xs.length !== ys.length) {
-    throw new Error();
+    throw new Error(`${xs.length} !== ${ys.length}`);
   }
 
-  const derivs = [];
-  for (let i = 0; i + 2 < xs.length; i++) {
-    derivs.push((ys[i + 2] - ys[i]) / (xs[i + 2] - xs[i]));
-  }
+  return ys
+    .slice(1)
+    .map((y, i) => (y - ys[i]) / (xs[i + 1] - xs[i]));
+}
 
-  if (xs.length >= 2) {
-    derivs.unshift(derivs[0]);
-  }
-  
-  if (xs.length >= 1) {
-    derivs.push(derivs[derivs.length - 1]);
-  }
-
-  return derivs;
+// no output for first or last pair
+function numDerivOffline(xs, ys) {
+  return ys
+    .slice(2)
+    .map((y, i) => (y - ys[i]) / (xs[i + 2] - xs[i]));
 }
 
 const CPS_STEP = 0x10000;
 
 function inverseOverflow(input, estimate) {
-  let i = 0;
+  if (!input && input !== 0) {
+    return input;
+  }
+
+  if (input % 4 !== 0) {
+    throw new Error(`${input} % 4 !== 0`);
+  }
+
+  // get close with numerical estimate
   while (Math.abs(estimate - input) > CPS_STEP / 2.0) {
     if (input < estimate) {
       input += CPS_STEP;
     } else {
       input -= CPS_STEP;
     }
-    i++;
   }
+
+  // snap to nearest multiple of 20
+  while (input % 20 !== 0) {
+    if (input % 20 > 10) {
+      input -= CPS_STEP;
+    } else {
+      input += CPS_STEP;
+    }
+  }
+
   return input;
 }
 
+// no output for first or last pair
 function fixVels(ts, xs, vs) {
-  const estimates = numDeriv(ts, xs);
-  const vs2 = [];
-  for (let i = 0; i < estimates.length; i++) {
-    vs2.push(inverseOverflow(vs[i], estimates[i]));
-  }
-  console.log(vs.map((v, i) => [v, vs2[i]]));
-  return vs2;
+  return numDerivOffline(ts, xs).map((est, i) => inverseOverflow(vs[i + 1], est));
 }
 
 // data comes in pairs
 function newLinearRegressionChart(container, xs, ys, options, onChange) {
   if (xs.length !== ys.length) {
-    throw new Error();
+    throw new Error(`${xs.length} !== ${ys.length}`);
   }
 
   // cribbed from https://plotly.com/javascript/plotlyjs-events/#select-event
@@ -192,6 +201,10 @@ function newLinearRegressionChart(container, xs, ys, options, onChange) {
   container.appendChild(chartDiv);
 
   return function(xsNew, ysNew) {
+    if (xsNew.length !== ysNew.length) {
+      throw new Error(`${xsNew.length} !== ${ysNew.length}`);
+    }
+
     xs = xsNew;
     ys = ysNew;
     mask = xs.map(() => true);

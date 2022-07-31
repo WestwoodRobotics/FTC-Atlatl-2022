@@ -53,18 +53,6 @@ fieldset {
     </div>
 
     <script>
-// https://en.wikipedia.org/wiki/Five-point_stencil
-function numDeriv(xs) {
-  function get(i) {
-    if (i < 0) return xs[0];
-    if (i >= xs.length) return xs[xs.length - 1];
-    return xs[i];
-  }
-
-  return xs.map((_, i) =>
-    get(i - 2) - 8 * get(i - 1) + 8 * get(i + 1) - get(i + 2));
-}
-
 const accelChartDiv = document.getElementById('accelChart');
 fetch('/tuning/accel/latest.json')
   .then(res => {
@@ -79,7 +67,7 @@ fetch('/tuning/accel/latest.json')
     const setParams = (function() {
       const forwardEncVels = data.forwardEncVels.map((vs, i) => 
         fixVels(data.encTimes, data.forwardEncPositions[i], vs));
-      const as = forwardEncVels.flatMap(vs => numDeriv(vs));
+      const as = forwardEncVels.flatMap(vs => numDerivOffline(data.encTimes, vs));
 
       const setAccelData = newLinearRegressionChart(
         accelChartDiv,
@@ -87,8 +75,19 @@ fetch('/tuning/accel/latest.json')
         {title: 'Acceleration Regression', slope: 'kA'}
       );
 
-      return (kV, kS) => setAccelData(as, data.powers.flatMap(
-        (ps, i) => ps.map((p, j) => p * data.voltages[j] - kS - kV * forwardEncVels[i][j])));
+      return (kV, kS) => {
+        const vs = data.powers.flatMap((ps, i) => {
+          const voltages = ps.map((p, j) => {
+            const explainedVoltage = kS + kV * forwardEncVels[i][j];
+            const totalVoltage = p * data.voltages[j]; 
+            return totalVoltage - explainedVoltage;
+          });
+          
+          return voltages.slice(2, voltages.length - 2);
+        });
+        
+        setAccelData(as, vs);
+      };
     })();
 
     const kvInput = document.getElementById('kv');

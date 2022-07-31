@@ -61,13 +61,19 @@ fetch('/tuning/angular-ramp/latest.json')
         ...rightEncVels.flatMap(vs => vs),
       ],
       [
-        ...data.leftPowers.flatMap(ps => ps.map((p, i) => -p * data.voltages[i])),
-        ...data.rightPowers.flatMap(ps => ps.map((p, i) => p * data.voltages[i])),
+        ...data.leftPowers.flatMap(ps => {
+          const psNew = ps.map((p, i) => -p * data.voltages[i]);
+          return psNew.slice(1, psNew.length - 1);
+        }),
+        ...data.rightPowers.flatMap(ps => {
+          const psNew = ps.map((p, i) => p * data.voltages[i]);
+          return psNew.slice(1, psNew.length - 1);
+        }),
       ],
       {title: 'Ramp Regression', slope: 'kV', intercept: 'kS'}
     );
 
-    const [_, angVels] = data.angVels.reduce((acc, vsArg) => {
+    const p = data.angVels.reduce((acc, vsArg) => {
       const vs = vsArg.map(v => Math.abs(v));
       const maxV = vs.reduce((acc, v) => Math.max(acc, v), 0);
       const [accMaxV, _] = acc;
@@ -76,6 +82,7 @@ fetch('/tuning/angular-ramp/latest.json')
       }
       return acc;
     }, [0, []]);
+    const angVels = p[1].slice(1, p[1].length - 1);
 
     newLinearRegressionChart(
       document.getElementById('trackWidthChart'),

@@ -75,12 +75,12 @@ fetch('/tuning/angular-ramp/latest.json')
       }
       return acc;
     }, [0, []]);
-
+    
     const deadWheelCharts = document.getElementById('deadWheelCharts');
     data.parEncVels.forEach((vs, i) => {
       const div = document.createElement('div');
       newLinearRegressionChart(div, 
-        angVels,
+        angVels.slice(1, angVels.length - 1),
         fixVels(data.encTimes, data.parEncPositions[i], vs),
         {title: `Parallel Wheel ${i} Regression`, slope: 'y-position'});
       deadWheelCharts.appendChild(div);
@@ -88,7 +88,7 @@ fetch('/tuning/angular-ramp/latest.json')
     data.perpEncVels.forEach((vs, i) => {
       const div = document.createElement('div');
       newLinearRegressionChart(div, 
-        angVels,
+        angVels.slice(1, angVels.length - 1),
         fixVels(data.encTimes, data.perpEncPositions[i], vs),
         {title: `Perpendicular Wheel ${i} Regression`, slope: 'x-position'});
       deadWheelCharts.appendChild(div);
