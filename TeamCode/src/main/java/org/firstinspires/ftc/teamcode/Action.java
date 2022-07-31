@@ -74,6 +74,10 @@ public interface Action {
         public SeqBuilder<T> sleep(double duration) {
             return add(new SleepAction(duration));
         }
+
+        public SeqBuilder<T> instant(InstantAction.Fun f) {
+            return add(new InstantAction(f));
+        }
     }
 
     class ParBuilder<T extends Builder<T>> implements Builder<ParBuilder<T>> {
@@ -106,6 +110,10 @@ public interface Action {
         public ParBuilder<T> sleep(double duration) {
             return add(new SleepAction(duration));
         }
+
+        public ParBuilder<T> instant(InstantAction.Fun f) {
+            return add(new InstantAction(f));
+        }
     }
 }
 
@@ -125,6 +133,28 @@ final class SleepAction implements Action {
     @Override
     public boolean loop() {
         return clock() <= endTs;
+    }
+}
+
+final class InstantAction implements Action {
+    public interface Fun {
+        void run();
+    }
+
+    public final Fun f;
+
+    public InstantAction(Fun f) {
+        this.f = f;
+    }
+
+    @Override
+    public void init() {
+        f.run();
+    }
+
+    @Override
+    public boolean loop() {
+        return false;
     }
 }
 

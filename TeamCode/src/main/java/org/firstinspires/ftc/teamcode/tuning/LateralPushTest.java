@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode.tuning;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@TeleOp
 public final class LateralPushTest extends LinearOpMode {
     private static double lateralSum(MecanumDrive.DriveLocalizer dl) {
         return 0.25 * (

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.tuning;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -10,7 +9,6 @@ import org.firstinspires.ftc.teamcode.util.Encoder;
 
 import java.util.List;
 
-@TeleOp
 public final class ForwardPushTest extends LinearOpMode {
     private static double avgPos(List<? extends Encoder> es) {
         double avgPos = 0;
