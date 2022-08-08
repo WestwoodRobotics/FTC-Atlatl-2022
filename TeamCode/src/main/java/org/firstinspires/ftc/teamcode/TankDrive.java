@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.AccelConstraintFun;
 import com.acmerobotics.roadrunner.CancelableProfile;
 import com.acmerobotics.roadrunner.DualNum;
@@ -169,19 +171,34 @@ public final class TankDrive {
         private TimeProfile profile;
         private double beginTs, beginDisp;
 
+        private boolean active;
+        private double[] xPoints, yPoints;
+
         public FollowTrajectoryAction(PosePath path, CancelableProfile profile) {
             this.path = path;
             cancelableProfile = profile;
             this.profile = new TimeProfile(cancelableProfile.baseProfile);
+
+            List<Double> disps = com.acmerobotics.roadrunner.Math.range(
+                    0, path.length(), (int) Math.ceil(path.length() / 2));
+            xPoints = new double[disps.size()];
+            yPoints = new double[disps.size()];
+            for (int i = 0; i < disps.size(); i++) {
+                Transform2 t = path.get(disps.get(i), 1).value();
+                xPoints[i] = t.trans.x;
+                yPoints[i] = t.trans.y;
+            }
         }
 
         @Override
         public void init() {
             beginTs = clock();
+
+            active = true;
         }
 
         @Override
-        public boolean loop() {
+        public boolean loop(TelemetryPacket p) {
             double t = clock() - beginTs;
             if (t >= profile.duration) {
                 for (DcMotorEx m : leftMotors) {
@@ -211,6 +228,16 @@ public final class TankDrive {
                 m.setPower(feedforward.compute(wheelVels.right) / voltage);
             }
 
+            p.put("x", pose.trans.x);
+            p.put("y", pose.trans.y);
+            p.put("heading (deg)", Math.toDegrees(pose.rot.log()));
+
+            // TODO: dedupe with controller compute()?
+            Transform2 error = txWorldTarget.value().inverse().times(pose);
+            p.put("xError", error.trans.x);
+            p.put("yError", error.trans.y);
+            p.put("headingError (deg)", Math.toDegrees(error.rot.log()));
+
             return true;
         }
 
@@ -223,6 +250,13 @@ public final class TankDrive {
             beginDisp = profile.get(t).get(0);
             beginTs += t;
             profile = new TimeProfile(cancelableProfile.cancel(beginDisp));
+        }
+
+        @Override
+        public void draw(Canvas c) {
+            c.setStrokeWidth(1);
+            c.setStroke(active ? "#4CAF50FF" : "#4CAF507A");
+            c.strokePolyline(xPoints, yPoints);
         }
     }
 

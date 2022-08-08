@@ -1,16 +1,33 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public interface Action {
     void init();
-    boolean loop();
+    boolean loop(TelemetryPacket p);
+
+    default void draw(Canvas c) {
+
+    }
 
     default void runBlocking() {
         init();
-        while (loop());
+
+        boolean b = true;
+        while (b) {
+            TelemetryPacket p = new TelemetryPacket();
+
+            draw(p.fieldOverlay());
+            b = loop(p);
+
+            FtcDashboard.getInstance().sendTelemetryPacket(p);
+        }
     }
 
     default double clock() {
@@ -131,7 +148,7 @@ final class SleepAction implements Action {
     }
 
     @Override
-    public boolean loop() {
+    public boolean loop(TelemetryPacket p) {
         return clock() <= endTs;
     }
 }
@@ -153,7 +170,7 @@ final class InstantAction implements Action {
     }
 
     @Override
-    public boolean loop() {
+    public boolean loop(TelemetryPacket p) {
         return false;
     }
 }
@@ -175,10 +192,10 @@ final class ParallelAction implements Action {
     }
 
     @Override
-    public boolean loop() {
+    public boolean loop(TelemetryPacket p) {
         List<Action> newRem = new ArrayList<>(remaining);
         for (Action a : remaining) {
-            if (a.loop()) {
+            if (a.loop(p)) {
                 newRem.add(a);
             }
         }
@@ -186,6 +203,13 @@ final class ParallelAction implements Action {
         remaining = newRem;
 
         return remaining.size() > 0;
+    }
+
+    @Override
+    public void draw(Canvas c) {
+        for (Action a : actions) {
+            draw(c);
+        }
     }
 }
 
@@ -203,7 +227,7 @@ final class SequentialAction implements Action {
     }
 
     @Override
-    public boolean loop() {
+    public boolean loop(TelemetryPacket p) {
         if (index >= actions.size()) {
             return false;
         }
@@ -215,11 +239,18 @@ final class SequentialAction implements Action {
             needsInit = false;
         }
 
-        if (!a.loop()) {
+        if (!a.loop(p)) {
             index++;
             needsInit = true;
         }
 
         return true;
+    }
+
+    @Override
+    public void draw(Canvas c) {
+        for (Action a : actions) {
+            draw(c);
+        }
     }
 }
