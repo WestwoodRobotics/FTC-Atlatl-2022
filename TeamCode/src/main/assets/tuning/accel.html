@@ -38,6 +38,8 @@ fieldset {
       <h1>RR Acceleration Regression</h1>
       <p></p>
 
+      <div id="download"></div>
+
       <fieldset>
         <legend>Feedforward Parameters</legend>
         <div>
@@ -97,6 +99,15 @@ latestButton.addEventListener('click', function() {
   fetch('/tuning/accel/latest.json')
     .then(res => {
       if (res.ok) {
+        const filename = res.headers.get('X-Filename');
+
+        const a = document.createElement('a');
+        a.innerText = 'Download';
+        a.href = `/tuning/forward-ramp/${filename}`;
+        a.download = `forward-ramp-${filename}`;
+
+        document.getElementById('download').appendChild(a);
+
         return res.json();
       } else {
         document.getElementById('accelChart').innerText = 'No data files found';

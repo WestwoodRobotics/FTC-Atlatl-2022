@@ -32,6 +32,8 @@ body {
     <div class="content">
       <h1>RR Drive Encoder Angular Ramp Regression</h1>
       <p></p> 
+
+      <div id="download"></div>
       
       <div id="rampChart">
         <p>
@@ -97,6 +99,15 @@ latestButton.addEventListener('click', function() {
   fetch('/tuning/angular-ramp/latest.json')
     .then(res => {
       if (res.ok) {
+        const filename = res.headers.get('X-Filename');
+
+        const a = document.createElement('a');
+        a.innerText = 'Download';
+        a.href = `/tuning/forward-ramp/${filename}`;
+        a.download = `forward-ramp-${filename}`;
+
+        document.getElementById('download').appendChild(a);
+
         return res.json();
       } else {
         document.getElementById('trackWidthChart').innerText = 'No data files found';
