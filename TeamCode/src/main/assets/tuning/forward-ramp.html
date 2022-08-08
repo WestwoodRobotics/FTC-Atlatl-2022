@@ -32,35 +32,57 @@ body {
     <div class="content">
       <h1>RR Forward Ramp Regression</h1>
       <p></p> 
-      
-      <div id="rampChart">Loading...</div>
+
+      <div id="rampChart">
+        <p>
+          <button id="latest">Latest</button>
+          <input id="browse" type="file" accept="application/json">
+        </p>
+      </div>
     </div>
 
     <script>
-const rampChartDiv = document.getElementById('rampChart');
-fetch('/tuning/forward-ramp/latest.json')
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    } else {
-      rampChartDiv.innerText = 'No data files found';
-      throw new Error();
-    }
-  })
-  .then(data => {
-    const forwardEncVels = data.forwardEncVels.flatMap((vs, i) => 
-      fixVels(data.encTimes, data.forwardEncPositions[i], vs));
-    const appliedVoltages = data.forwardEncVels.flatMap(vs =>
-      data.voltages.map((v, i) => 
-        data.powers.reduce((acc, ps) => Math.max(acc, ps[i]), 0) * v));
+function loadRegression(data) {
+  const forwardEncVels = data.forwardEncVels.flatMap((vs, i) => 
+    fixVels(data.encTimes, data.forwardEncPositions[i], vs));
+  const appliedVoltages = data.forwardEncVels.flatMap(vs => {
+    const voltages = data.voltages.map((v, i) => 
+      data.powers.reduce((acc, ps) => Math.max(acc, ps[i]), 0) * v);
 
-    newLinearRegressionChart(
-      rampChartDiv,
-      forwardEncVels, appliedVoltages,
-      {title: 'Ramp Regression', slope: 'kV', intercept: 'kS'}
-    );
-  })
-  .catch(console.log.bind(console));
+    return voltages.slice(1, voltages.length - 1);
+  });
+
+  newLinearRegressionChart(
+    document.getElementById('rampChart'),
+    forwardEncVels, appliedVoltages,
+    {title: 'Ramp Regression', slope: 'kV', intercept: 'kS'}
+  );
+}
+
+const latestButton = document.getElementById('latest');
+latestButton.addEventListener('click', function() {
+  fetch('/tuning/forward-ramp/latest.json')
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      } else {
+        document.getElementById('rampChart').innerText = 'No data files found';
+        throw new Error();
+      }
+    })
+    .then(loadRegression)
+    .catch(console.log.bind(console));
+});
+
+const browseInput = document.getElementById('browse');
+browseInput.addEventListener('change', function(evt) {
+  const reader = new FileReader();
+  reader.onload = function() {
+    loadRegression(JSON.parse(reader.result.trim()));
+  };
+
+  reader.readAsText(browseInput.files[0]);
+});
     </script>
   </body>
 </html>

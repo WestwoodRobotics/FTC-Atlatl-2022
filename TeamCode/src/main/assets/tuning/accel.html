@@ -49,54 +49,73 @@ fieldset {
         <input id="update" type="button" value="update" />
       </fieldset>
       
-      <div id="accelChart">Loading...</div>
+      <div id="accelChart">
+        <p>
+          <button id="latest">Latest</button>
+          <input id="browse" type="file" accept="application/json">
+        </p>
+      </div>
     </div>
 
     <script>
-const accelChartDiv = document.getElementById('accelChart');
-fetch('/tuning/accel/latest.json')
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    } else {
-      accelChartDiv.innerText = 'No data files found';
-      throw new Error();
-    }
-  })
-  .then(data => {
-    const setParams = (function() {
-      const forwardEncVels = data.forwardEncVels.map((vs, i) => 
-        fixVels(data.encTimes, data.forwardEncPositions[i], vs));
-      const as = forwardEncVels.flatMap(vs => numDerivOffline(data.encTimes, vs));
+function loadRegression(data) {
+  const setParams = (function() {
+    const forwardEncVels = data.forwardEncVels.map((vs, i) => 
+      fixVels(data.encTimes, data.forwardEncPositions[i], vs));
+    const as = forwardEncVels.flatMap(vs => numDerivOffline(data.encTimes, vs));
 
-      const setAccelData = newLinearRegressionChart(
-        accelChartDiv,
-        [], [],
-        {title: 'Acceleration Regression', slope: 'kA'}
-      );
+    const setAccelData = newLinearRegressionChart(
+      document.getElementById('accelChart'),
+      [], [],
+      {title: 'Acceleration Regression', slope: 'kA'}
+    );
 
-      return (kV, kS) => {
-        const vs = data.powers.flatMap((ps, i) => {
-          const voltages = ps.map((p, j) => {
-            const explainedVoltage = kS + kV * forwardEncVels[i][j];
-            const totalVoltage = p * data.voltages[j]; 
-            return totalVoltage - explainedVoltage;
-          });
-          
-          return voltages.slice(2, voltages.length - 2);
+    return (kV, kS) => {
+      const vs = data.powers.flatMap((ps, i) => {
+        const voltages = ps.map((p, j) => {
+          const explainedVoltage = kS + kV * forwardEncVels[i][j];
+          const totalVoltage = p * data.voltages[j]; 
+          return totalVoltage - explainedVoltage;
         });
         
-        setAccelData(as, vs);
-      };
-    })();
+        return voltages.slice(2, voltages.length - 2);
+      });
+      
+      setAccelData(as, vs);
+    };
+  })();
 
-    const kvInput = document.getElementById('kv');
-    const ksInput = document.getElementById('ks');
-    document.getElementById('update').addEventListener('click', () => {
-      setParams(parseFloat(kvInput.value), parseFloat(ksInput.value));
-    });
-  })
-  .catch(console.log.bind(console));
+  const kvInput = document.getElementById('kv');
+  const ksInput = document.getElementById('ks');
+  document.getElementById('update').addEventListener('click', () => {
+    setParams(parseFloat(kvInput.value), parseFloat(ksInput.value));
+  });
+}
+
+const latestButton = document.getElementById('latest');
+latestButton.addEventListener('click', function() {
+  fetch('/tuning/accel/latest.json')
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      } else {
+        document.getElementById('accelChart').innerText = 'No data files found';
+        throw new Error();
+      }
+    })
+    .then(loadRegression)
+    .catch(console.log.bind(console));
+});
+
+const browseInput = document.getElementById('browse');
+browseInput.addEventListener('change', function(evt) {
+  const reader = new FileReader();
+  reader.onload = function() {
+    loadRegression(JSON.parse(reader.result.trim()));
+  };
+
+  reader.readAsText(browseInput.files[0]);
+});
     </script>
   </body>
 </html>

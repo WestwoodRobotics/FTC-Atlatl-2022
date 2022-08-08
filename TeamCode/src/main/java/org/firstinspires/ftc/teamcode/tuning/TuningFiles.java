@@ -152,9 +152,11 @@ public final class TuningFiles {
 
                     if (mostRecentFile != null) {
                         String mimeType = MimeTypesUtil.determineMimeType(mostRecentFile.getName());
-                        return NanoHTTPD.newChunkedResponse(NanoHTTPD.Response.Status.OK,
+                        final NanoHTTPD.Response res = NanoHTTPD.newChunkedResponse(NanoHTTPD.Response.Status.OK,
                                 mimeType,
                                 new FileInputStream(mostRecentFile));
+                        res.addHeader("X-Filename", mostRecentFile.getName());
+                        return res;
                     }
                 }
 

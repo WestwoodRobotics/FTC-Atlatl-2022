@@ -51,70 +51,91 @@ fieldset {
         <input id="update" type="button" value="update" />
       </fieldset>
     
-      <div id="trackWidthChart">Loading...</div>
+      <div id="trackWidthChart">
+        <p>
+          <button id="latest">Latest</button>
+          <input id="browse" type="file" accept="application/json">
+        </p>
+      </div>
     </div>
 
     <script>
-const trackWidthChartDiv = document.getElementById('trackWidthChart');
-fetch('/tuning/angular-ramp/latest.json')
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    } else {
-      trackWidthChartDiv.innerText = 'No data files found';
-      throw new Error();
+function loadRegression(data) {
+  console.log(data);
+
+  const [_, angVels] = data.angVels.reduce((acc, vsArg) => {
+    const vs = vsArg.map(v => Math.abs(v));
+    const maxV = vs.reduce((acc, v) => Math.max(acc, v), 0);
+    const [accMaxV, _] = acc;
+    if (maxV >= accMaxV) {
+      return [maxV, vs];
     }
-  })
-  .then(data => {
-    const [_, angVels] = data.angVels.reduce((acc, vsArg) => {
-      const vs = vsArg.map(v => Math.abs(v));
-      const maxV = vs.reduce((acc, v) => Math.max(acc, v), 0);
-      const [accMaxV, _] = acc;
-      if (maxV >= accMaxV) {
-        return [maxV, vs];
+    return acc;
+  }, [0, []]);
+  
+  const deadWheelCharts = document.getElementById('deadWheelCharts');
+  data.parEncVels.forEach((vs, i) => {
+    const div = document.createElement('div');
+    newLinearRegressionChart(div, 
+      angVels.slice(1, angVels.length - 1),
+      fixVels(data.encTimes, data.parEncPositions[i], vs),
+      {title: `Parallel Wheel ${i} Regression`, slope: 'y-position'});
+    deadWheelCharts.appendChild(div);
+  });
+  data.perpEncVels.forEach((vs, i) => {
+    const div = document.createElement('div');
+    newLinearRegressionChart(div, 
+      angVels.slice(1, angVels.length - 1),
+      fixVels(data.encTimes, data.perpEncPositions[i], vs),
+      {title: `Perpendicular Wheel ${i} Regression`, slope: 'x-position'});
+    deadWheelCharts.appendChild(div);
+  });
+
+  const setParams = (() => {
+    const appliedVoltages = data.voltages.map((v, i) => 
+      [...data.leftPowers, ...data.rightPowers].reduce((acc, ps) => Math.max(acc, ps[i]), 0) * v);
+
+    const setTrackWidthData = newLinearRegressionChart(
+      document.getElementById('trackWidthChart'),
+      [], [],
+      {title: 'Track Width Regression', slope: 'track width'}
+    );
+
+    return (kV, kS) => setTrackWidthData(angVels, appliedVoltages.map((v, i) => 
+      (v - kS) / kV * (data.type === 'mecanum' ? 2 : 1)));
+  })();
+
+  const kvInput = document.getElementById('kv');
+  const ksInput = document.getElementById('ks');
+  document.getElementById('update').addEventListener('click', () => {
+    setParams(parseFloat(kvInput.value), parseFloat(ksInput.value));
+  });
+}
+
+const latestButton = document.getElementById('latest');
+latestButton.addEventListener('click', function() {
+  fetch('/tuning/angular-ramp/latest.json')
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      } else {
+        document.getElementById('trackWidthChart').innerText = 'No data files found';
+        throw new Error();
       }
-      return acc;
-    }, [0, []]);
-    
-    const deadWheelCharts = document.getElementById('deadWheelCharts');
-    data.parEncVels.forEach((vs, i) => {
-      const div = document.createElement('div');
-      newLinearRegressionChart(div, 
-        angVels.slice(1, angVels.length - 1),
-        fixVels(data.encTimes, data.parEncPositions[i], vs),
-        {title: `Parallel Wheel ${i} Regression`, slope: 'y-position'});
-      deadWheelCharts.appendChild(div);
-    });
-    data.perpEncVels.forEach((vs, i) => {
-      const div = document.createElement('div');
-      newLinearRegressionChart(div, 
-        angVels.slice(1, angVels.length - 1),
-        fixVels(data.encTimes, data.perpEncPositions[i], vs),
-        {title: `Perpendicular Wheel ${i} Regression`, slope: 'x-position'});
-      deadWheelCharts.appendChild(div);
-    });
+    })
+    .then(loadRegression)
+    .catch(console.log.bind(console));
+});
 
-    const setParams = (() => {
-      const appliedVoltages = data.voltages.map((v, i) => 
-        [...data.leftPowers, ...data.rightPowers].reduce((acc, ps) => Math.max(acc, ps[i]), 0) * v);
+const browseInput = document.getElementById('browse');
+browseInput.addEventListener('change', function(evt) {
+  const reader = new FileReader();
+  reader.onload = function() {
+    loadRegression(JSON.parse(reader.result.trim()));
+  };
 
-      const setTrackWidthData = newLinearRegressionChart(
-        trackWidthChartDiv,
-        [], [],
-        {title: 'Track Width Regression', slope: 'track width'}
-      );
-
-      return (kV, kS) => setTrackWidthData(angVels, appliedVoltages.map((v, i) => 
-        (v - kS) / kV * (data.type === 'mecanum' ? 2 : 1)));
-    })();
-
-    const kvInput = document.getElementById('kv');
-    const ksInput = document.getElementById('ks');
-    document.getElementById('update').addEventListener('click', () => {
-      setParams(parseFloat(kvInput.value), parseFloat(ksInput.value));
-    });
-  })
-  .catch(console.log.bind(console));
+  reader.readAsText(browseInput.files[0]);
+});
     </script>
   </body>
 </html>
