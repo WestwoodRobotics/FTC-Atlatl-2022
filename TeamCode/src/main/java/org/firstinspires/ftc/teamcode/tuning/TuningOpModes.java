@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
 
 import java.util.Arrays;
@@ -19,16 +18,17 @@ public final class TuningOpModes {
     }
 
     @OpModeRegistrar
-    public void register(OpModeManager manager) {
+    public static void register(OpModeManager manager) {
         if (DISABLED) return;
 
         List<Class<?>> opModes = Arrays.asList(
                 AccelLogger.class,
-                AngularVelocity.class,
+                AngularRampLogger.class,
                 ForwardPushTest.class,
                 ForwardRampLogger.class,
                 LateralPushTest.class,
-                SplineTest.class
+                SplineTest.class,
+                MotorDirectionDebugger.class
         );
 
         for (Class<?> o : opModes) {
