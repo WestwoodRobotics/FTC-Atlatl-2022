@@ -41,6 +41,7 @@ import org.firstinspires.ftc.teamcode.util.RawEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 @Config
@@ -69,6 +70,8 @@ public final class TankDrive {
     public Transform2 pose = new Transform2(new Vector2(0, 0), Rotation2.exp(0));
 
     public final double inPerTick = IN_PER_TICK;
+
+    private final LinkedList<Transform2> poseHistory = new LinkedList<>();
 
     public class DriveLocalizer implements Localizer {
         public final List<Encoder> leftEncs, rightEncs;
@@ -238,6 +241,16 @@ public final class TankDrive {
             p.put("yError", error.trans.y);
             p.put("headingError (deg)", Math.toDegrees(error.rot.log()));
 
+            // only draw when active; only one drive action should be active at a time
+            Canvas c = p.fieldOverlay();
+            drawPoseHistory(c);
+
+            c.setStroke("#4CAF50");
+            drawRobot(c, txWorldTarget.value());
+
+            c.setStroke("#3F51B5");
+            drawRobot(c, pose);
+
             return true;
         }
 
@@ -263,7 +276,42 @@ public final class TankDrive {
     public Twist2 updatePoseEstimateAndGetActualVel() {
         Twist2IncrementDual<Time> incr = localizer.updateAndGetIncr();
         pose = pose.plus(incr.value());
+
+        poseHistory.add(pose);
+        while (poseHistory.size() > 100) {
+            poseHistory.removeFirst();
+        }
+
         return incr.velocity().value();
+    }
+
+    private void drawPoseHistory(Canvas c) {
+        double[] xPoints = new double[poseHistory.size()];
+        double[] yPoints = new double[poseHistory.size()];
+
+        int i = 0;
+        for (Transform2 t : poseHistory) {
+            xPoints[i] = t.trans.x;
+            yPoints[i] = t.trans.y;
+
+            i++;
+        }
+
+        c.setStrokeWidth(1);
+        c.setStroke("#3F51B5");
+        c.strokePolyline(xPoints, yPoints);
+    }
+
+    private static void drawRobot(Canvas c, Transform2 t) {
+        final double ROBOT_RADIUS = 9;
+
+        c.setStrokeWidth(1);
+        c.strokeCircle(t.trans.x, t.trans.y, ROBOT_RADIUS);
+
+        Vector2 halfv = t.rot.vec().times(0.5 * ROBOT_RADIUS);
+        Position2 p1 = t.trans.bind().plus(halfv);
+        Position2 p2 = p1.plus(halfv);
+        c.strokeLine(p1.x, p1.y, p2.x, p2.y);
     }
 
     public static class PathBuilder {

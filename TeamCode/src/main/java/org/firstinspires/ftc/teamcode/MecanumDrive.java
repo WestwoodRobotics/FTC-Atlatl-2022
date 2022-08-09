@@ -26,6 +26,7 @@ import com.acmerobotics.roadrunner.Transform2Dual;
 import com.acmerobotics.roadrunner.Twist2;
 import com.acmerobotics.roadrunner.Twist2Dual;
 import com.acmerobotics.roadrunner.Twist2IncrementDual;
+import com.acmerobotics.roadrunner.Vector2;
 import com.acmerobotics.roadrunner.VelConstraintFun;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -40,6 +41,7 @@ import org.firstinspires.ftc.teamcode.util.Localizer;
 import org.firstinspires.ftc.teamcode.util.LynxFirmwareVersion;
 import org.firstinspires.ftc.teamcode.util.RawEncoder;
 
+import java.util.LinkedList;
 import java.util.List;
 
 @Config
@@ -71,6 +73,8 @@ public final class MecanumDrive {
     public Transform2 pose = new Transform2(0, 0, 0);
 
     public final double inPerTick = FORWARD_IN_PER_TICK;
+
+    private final LinkedList<Transform2> poseHistory = new LinkedList<>();
 
     public class DriveLocalizer implements Localizer {
         public final Encoder leftFront, leftRear, rightRear, rightFront;
@@ -223,6 +227,16 @@ public final class MecanumDrive {
             p.put("yError", error.trans.y);
             p.put("headingError (deg)", Math.toDegrees(error.rot.log()));
 
+            // only draw when active; only one drive action should be active at a time
+            Canvas c = p.fieldOverlay();
+            drawPoseHistory(c);
+
+            c.setStroke("#4CAF50");
+            drawRobot(c, txWorldTarget.value());
+
+            c.setStroke("#3F51B5");
+            drawRobot(c, pose);
+
             return true;
         }
 
@@ -245,11 +259,45 @@ public final class MecanumDrive {
         }
     }
 
-    // TODO: should this be private?
-    public Twist2 updatePoseEstimateAndGetActualVel() {
+    private Twist2 updatePoseEstimateAndGetActualVel() {
         Twist2IncrementDual<Time> incr = localizer.updateAndGetIncr();
         pose = pose.plus(incr.value());
+
+        poseHistory.add(pose);
+        while (poseHistory.size() > 100) {
+            poseHistory.removeFirst();
+        }
+
         return incr.velocity().value();
+    }
+
+    private void drawPoseHistory(Canvas c) {
+        double[] xPoints = new double[poseHistory.size()];
+        double[] yPoints = new double[poseHistory.size()];
+
+        int i = 0;
+        for (Transform2 t : poseHistory) {
+            xPoints[i] = t.trans.x;
+            yPoints[i] = t.trans.y;
+
+            i++;
+        }
+
+        c.setStrokeWidth(1);
+        c.setStroke("#3F51B5");
+        c.strokePolyline(xPoints, yPoints);
+    }
+
+    private static void drawRobot(Canvas c, Transform2 t) {
+        final double ROBOT_RADIUS = 9;
+
+        c.setStrokeWidth(1);
+        c.strokeCircle(t.trans.x, t.trans.y, ROBOT_RADIUS);
+
+        Vector2 halfv = t.rot.vec().times(0.5 * ROBOT_RADIUS);
+        Position2 p1 = t.trans.bind().plus(halfv);
+        Position2 p2 = p1.plus(halfv);
+        c.strokeLine(p1.x, p1.y, p2.x, p2.y);
     }
 
     public PositionPathBuilder posPathBuilder(Position2 beginPos, Rotation2 beginTangent) {
