@@ -175,7 +175,7 @@ public final class TankDrive {
         private double beginTs, beginDisp;
 
         private boolean active;
-        private double[] xPoints, yPoints;
+        private final double[] xPoints, yPoints;
 
         public FollowTrajectoryAction(PosePath path, CancelableProfile profile) {
             this.path = path;

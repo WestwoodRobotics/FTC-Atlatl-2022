@@ -17,6 +17,7 @@ import com.acmerobotics.roadrunner.PositionPathBuilder;
 import com.acmerobotics.roadrunner.ProfileAccelConstraintFun;
 import com.acmerobotics.roadrunner.Profiles;
 import com.acmerobotics.roadrunner.Rotation2;
+import com.acmerobotics.roadrunner.Rotation2Dual;
 import com.acmerobotics.roadrunner.SafePathBuilder;
 import com.acmerobotics.roadrunner.SafePosePathBuilder;
 import com.acmerobotics.roadrunner.Time;
@@ -163,7 +164,7 @@ public final class MecanumDrive {
         private double beginTs, beginDisp;
 
         private boolean active;
-        private double[] xPoints, yPoints;
+        private final double[] xPoints, yPoints;
 
         public FollowTrajectoryAction(PosePath path, CancelableProfile profile) {
             this.path = path;
@@ -229,13 +230,6 @@ public final class MecanumDrive {
 
             // only draw when active; only one drive action should be active at a time
             Canvas c = p.fieldOverlay();
-            drawPoseHistory(c);
-
-            c.setStroke("#4CAF50");
-            drawRobot(c, txWorldTarget.value());
-
-            c.setStroke("#3F51B5");
-            drawRobot(c, pose);
 
             return true;
         }
@@ -256,6 +250,79 @@ public final class MecanumDrive {
             c.setStrokeWidth(1);
             c.setStroke(active ? "#4CAF50FF" : "#4CAF507A");
             c.strokePolyline(xPoints, yPoints);
+        }
+    }
+
+    public final class TurnAction implements Action {
+        private Transform2 beginPose;
+
+        private final TimeProfile profile;
+        private double beginTs;
+
+        private boolean active;
+
+        public TurnAction(Transform2 beginPose, double rot) {
+            // TODO: fill in constraints
+            this.beginPose = beginPose;
+            profile = new TimeProfile(Profiles.constantProfile(rot, 0, 0, 0, 0).baseProfile);
+        }
+
+        public TurnAction(Transform2 startPose, Rotation2 rot) {
+            this(startPose, rot.log());
+        }
+
+        @Override
+        public void init() {
+            beginTs = clock();
+
+            active = true;
+        }
+
+        @Override
+        public boolean loop(TelemetryPacket p) {
+            double t = clock() - beginTs;
+            if (t >= profile.duration) {
+                leftFront.setPower(0);
+                leftBack.setPower(0);
+                rightBack.setPower(0);
+                rightFront.setPower(0);
+
+                active = false;
+
+                return false;
+            }
+
+            DualNum<Time> x = profile.get(t);
+            Transform2Dual<Time> txWorldTarget = Rotation2Dual.exp(x).times(beginPose);
+
+            Twist2 robotVelRobot = updatePoseEstimateAndGetActualVel();
+
+            Twist2Dual<Time> command = new HolonomicController(0, 0, 0, 0, 0, 0)
+                    .compute(txWorldTarget, pose, robotVelRobot);
+
+            MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
+            double voltage = voltageSensor.getVoltage();
+            leftFront.setPower(feedforward.compute(wheelVels.leftFront) / voltage);
+            leftBack.setPower(feedforward.compute(wheelVels.leftBack) / voltage);
+            rightBack.setPower(feedforward.compute(wheelVels.rightBack) / voltage);
+            rightFront.setPower(feedforward.compute(wheelVels.rightFront) / voltage);
+
+            Canvas c = p.fieldOverlay();
+            drawPoseHistory(c);
+
+            c.setStroke("#4CAF50");
+            drawRobot(c, txWorldTarget.value());
+
+            c.setStroke("#3F51B5");
+            drawRobot(c, pose);
+
+            return true;
+        }
+
+        @Override
+        public void draw(Canvas c) {
+            c.setFill(active ? "#7C4DFFFF" : "#7C4DFF7A");
+            c.fillCircle(beginPose.trans.x, beginPose.trans.y, 2);
         }
     }
 
