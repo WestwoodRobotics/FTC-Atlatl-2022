@@ -14,6 +14,7 @@ import com.acmerobotics.roadrunner.PositionPathBuilder;
 import com.acmerobotics.roadrunner.ProfileAccelConstraintFun;
 import com.acmerobotics.roadrunner.Profiles;
 import com.acmerobotics.roadrunner.Rotation2;
+import com.acmerobotics.roadrunner.Rotation2Dual;
 import com.acmerobotics.roadrunner.TangentPath;
 import com.acmerobotics.roadrunner.TankKinematics;
 import com.acmerobotics.roadrunner.Time;
@@ -24,6 +25,7 @@ import com.acmerobotics.roadrunner.Twist2;
 import com.acmerobotics.roadrunner.Twist2Dual;
 import com.acmerobotics.roadrunner.Twist2IncrementDual;
 import com.acmerobotics.roadrunner.Vector2;
+import com.acmerobotics.roadrunner.Vector2Dual;
 import com.acmerobotics.roadrunner.VelConstraintFun;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -270,6 +272,87 @@ public final class TankDrive {
             c.setStrokeWidth(1);
             c.setStroke(active ? "#4CAF50FF" : "#4CAF507A");
             c.strokePolyline(xPoints, yPoints);
+        }
+    }
+
+    public final class TurnAction implements Action {
+        private Transform2 beginPose;
+
+        private final TimeProfile profile;
+        private double beginTs;
+
+        private boolean active;
+
+        public TurnAction(Transform2 beginPose, double rot) {
+            // TODO: fill in constraints
+            this.beginPose = beginPose;
+            profile = new TimeProfile(Profiles.constantProfile(rot, 0, 0, 0, 0).baseProfile);
+        }
+
+        public TurnAction(Transform2 startPose, Rotation2 rot) {
+            this(startPose, rot.log());
+        }
+
+        @Override
+        public void init() {
+            beginTs = clock();
+
+            active = true;
+        }
+
+        @Override
+        public boolean loop(TelemetryPacket p) {
+            double t = clock() - beginTs;
+            if (t >= profile.duration) {
+                for (DcMotorEx m : leftMotors) {
+                    m.setPower(0);
+                }
+                for (DcMotorEx m : rightMotors) {
+                    m.setPower(0);
+                }
+
+                active = false;
+
+                return false;
+            }
+
+            DualNum<Time> x = profile.get(t);
+
+            Twist2 robotVelRobot = updatePoseEstimateAndGetActualVel();
+
+            Rotation2Dual<Time> target = Rotation2Dual.<Time>constant(beginPose.rot, 3).plus(x);
+            Twist2Dual<Time> command = new Twist2Dual<>(
+                    Vector2Dual.constant(new Vector2(0, 0), 3),
+                    target.velocity().plus(
+                            0 * pose.rot.minus(target.value()) +
+                                    0 * (robotVelRobot.rotVel - target.velocity().value()))
+            );
+
+            TankKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
+            double voltage = voltageSensor.getVoltage();
+            for (DcMotorEx m : leftMotors) {
+                m.setPower(feedforward.compute(wheelVels.left) / voltage);
+            }
+            for (DcMotorEx m : rightMotors) {
+                m.setPower(feedforward.compute(wheelVels.right) / voltage);
+            }
+
+            Canvas c = p.fieldOverlay();
+            drawPoseHistory(c);
+
+            c.setStroke("#4CAF50");
+            drawRobot(c, new Transform2(beginPose.trans, beginPose.rot.plus(x.value())));
+
+            c.setStroke("#3F51B5");
+            drawRobot(c, pose);
+
+            return true;
+        }
+
+        @Override
+        public void draw(Canvas c) {
+            c.setFill(active ? "#7C4DFFFF" : "#7C4DFF7A");
+            c.fillCircle(beginPose.trans.x, beginPose.trans.y, 2);
         }
     }
 
