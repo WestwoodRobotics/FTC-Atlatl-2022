@@ -4,15 +4,16 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.AccelConstraintFun;
+import com.acmerobotics.roadrunner.Arclength;
 import com.acmerobotics.roadrunner.CancelableProfile;
 import com.acmerobotics.roadrunner.DualNum;
-import com.acmerobotics.roadrunner.HolonomicController;
 import com.acmerobotics.roadrunner.MotorFeedforward;
 import com.acmerobotics.roadrunner.PosePath;
 import com.acmerobotics.roadrunner.Position2;
 import com.acmerobotics.roadrunner.PositionPathBuilder;
 import com.acmerobotics.roadrunner.ProfileAccelConstraintFun;
 import com.acmerobotics.roadrunner.Profiles;
+import com.acmerobotics.roadrunner.RamseteController;
 import com.acmerobotics.roadrunner.Rotation2;
 import com.acmerobotics.roadrunner.Rotation2Dual;
 import com.acmerobotics.roadrunner.TangentPath;
@@ -54,6 +55,12 @@ public final class TankDrive {
     public static double kS = 0;
     public static double kV = 0;
     public static double kA = 0;
+
+    public static double RAMSETE_ZETA = 0.7; // 0 < \zeta < 1
+    public static double RAMSETE_BBAR = 2.0; // \bar{b} > 0
+
+    public static double TURN_GAIN = 0.0;
+    public static double TURN_VEL_GAIN = 0.0;
 
     public final TankKinematics kinematics = new TankKinematics(IN_PER_TICK * TRACK_WIDTH_TICKS);
 
@@ -217,12 +224,13 @@ public final class TankDrive {
             }
 
             DualNum<Time> x = profile.get(t);
-            Transform2Dual<Time> txWorldTarget = path.get(beginDisp + x.value(), 3).reparam(x);
 
-            Twist2 robotVelRobot = updatePoseEstimateAndGetActualVel();
+            Transform2Dual<Arclength> txWorldTarget = path.get(beginDisp + x.value(), 3);
 
-            Twist2Dual<Time> command = new HolonomicController(0, 0, 0, 0, 0, 0)
-                    .compute(txWorldTarget, pose, robotVelRobot);
+            updatePoseEstimateAndGetActualVel();
+
+            Twist2Dual<Time> command = new RamseteController(kinematics.trackWidth, RAMSETE_ZETA, RAMSETE_BBAR)
+                    .compute(x, txWorldTarget, pose);
 
             TankKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
             double voltage = voltageSensor.getVoltage();
@@ -276,7 +284,7 @@ public final class TankDrive {
     }
 
     public final class TurnAction implements Action {
-        private Transform2 beginPose;
+        private final Transform2 beginPose;
 
         private final TimeProfile profile;
         private double beginTs;
@@ -324,8 +332,9 @@ public final class TankDrive {
             Twist2Dual<Time> command = new Twist2Dual<>(
                     Vector2Dual.constant(new Vector2(0, 0), 3),
                     target.velocity().plus(
-                            0 * pose.rot.minus(target.value()) +
-                                    0 * (robotVelRobot.rotVel - target.velocity().value()))
+                            TURN_GAIN * pose.rot.minus(target.value()) +
+                            TURN_VEL_GAIN * (robotVelRobot.rotVel - target.velocity().value())
+                    )
             );
 
             TankKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);

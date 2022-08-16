@@ -55,6 +55,15 @@ public final class MecanumDrive {
     public static double kV = 0;
     public static double kA = 0;
 
+    // gains shared with turns
+    public static double AXIAL_GAIN = 0.0;
+    public static double LATERAL_GAIN = 0.0;
+    public static double HEADING_GAIN = 0.0;
+
+    public static double AXIAL_VEL_GAIN = 0.0;
+    public static double LATERAL_VEL_GAIN = 0.0;
+    public static double HEADING_VEL_GAIN = 0.0;
+
     public final MecanumKinematics kinematics = new MecanumKinematics(
             FORWARD_IN_PER_TICK * TRACK_WIDTH_TICKS,
             FORWARD_IN_PER_TICK / LATERAL_IN_PER_TICK);
@@ -208,7 +217,10 @@ public final class MecanumDrive {
 
             Twist2 robotVelRobot = updatePoseEstimateAndGetActualVel();
 
-            Twist2Dual<Time> command = new HolonomicController(0, 0, 0, 0, 0, 0)
+            Twist2Dual<Time> command = new HolonomicController(
+                    AXIAL_GAIN, LATERAL_GAIN, HEADING_GAIN,
+                    AXIAL_VEL_GAIN, LATERAL_VEL_GAIN, HEADING_VEL_GAIN
+            )
                     .compute(txWorldTarget, pose, robotVelRobot);
 
             MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
@@ -254,7 +266,7 @@ public final class MecanumDrive {
     }
 
     public final class TurnAction implements Action {
-        private Transform2 beginPose;
+        private final Transform2 beginPose;
 
         private final TimeProfile profile;
         private double beginTs;
@@ -297,7 +309,10 @@ public final class MecanumDrive {
 
             Twist2 robotVelRobot = updatePoseEstimateAndGetActualVel();
 
-            Twist2Dual<Time> command = new HolonomicController(0, 0, 0, 0, 0, 0)
+            Twist2Dual<Time> command = new HolonomicController(
+                    AXIAL_GAIN, LATERAL_GAIN, HEADING_GAIN,
+                    AXIAL_VEL_GAIN, LATERAL_VEL_GAIN, HEADING_VEL_GAIN
+            )
                     .compute(txWorldTarget, pose, robotVelRobot);
 
             MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);

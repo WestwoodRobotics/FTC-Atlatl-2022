@@ -48,8 +48,8 @@ function inverseOverflow(input, estimate) {
   }
 
   // snap to nearest multiple of 20
-  while (input % 20 !== 0) {
-    if (input % 20 > 10) {
+  while (input % 20 !== 0 && i < 20) {
+    if ((input & 0xFFFF) % 20 > 10) {
       input -= CPS_STEP;
     } else {
       input += CPS_STEP;
