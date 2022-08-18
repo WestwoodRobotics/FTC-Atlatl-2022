@@ -24,6 +24,7 @@ public final class TuningOpModes {
         List<Class<?>> opModes = Arrays.asList(
                 AccelLogger.class,
                 AngularRampLogger.class,
+                BackAndForth.class,
                 ForwardPushTest.class,
                 ForwardRampLogger.class,
                 LateralPushTest.class,
