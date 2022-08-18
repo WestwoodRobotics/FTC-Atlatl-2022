@@ -23,6 +23,15 @@ fieldset {
   display: flex;
   justify-content: space-between;
 }
+
+h1 {
+  margin-bottom: 0;
+}
+
+details, a {
+  display: block;
+  margin: 1rem 0 1rem 0;
+}
     </style>
 
     <script src="/tuning/plotly-2.12.1.min.js"></script>
@@ -36,7 +45,7 @@ fieldset {
   <body>
     <div class="content">
       <h1>RR Acceleration Regression</h1>
-      <p></p>
+      <details>Placeholder</details>
 
       <div id="download"></div>
 
@@ -74,13 +83,13 @@ function loadRegression(data) {
 
     return (kV, kS) => {
       const vs = data.powers.flatMap((ps, i) => {
-        const voltages = ps.map((p, j) => {
-          const explainedVoltage = kS + kV * forwardEncVels[i][j];
-          const totalVoltage = p * data.voltages[j]; 
+        const voltages = ps.slice(2, ps.length - 2).map((p, j) => {
+          const explainedVoltage = kS + kV * forwardEncVels[i][j + 1];
+          const totalVoltage = p * data.voltages[j + 2]; 
           return totalVoltage - explainedVoltage;
         });
         
-        return voltages.slice(2, voltages.length - 2);
+        return voltages;
       });
       
       setAccelData(as, vs);

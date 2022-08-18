@@ -63,8 +63,6 @@ fieldset {
 
     <script>
 function loadRegression(data) {
-  console.log(data);
-
   const [_, angVels] = data.angVels.reduce((acc, vsArg) => {
     const vs = vsArg.map(v => Math.abs(v));
     const maxV = vs.reduce((acc, v) => Math.max(acc, v), 0);

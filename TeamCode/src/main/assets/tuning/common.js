@@ -1,12 +1,18 @@
 // TODO: time-interpolate data
 
 function fitLinearWithScaling(xs, ys) {
-  const xNorm = xs.reduce((acc, x) => Math.max(acc, Math.abs(x)), 0);
-  const yNorm = ys.reduce((acc, x) => Math.max(acc, Math.abs(x)), 0);
-  const data = xs.map((x, i) => [x / xNorm, ys[i] / yNorm]);
+  const xOffset = xs.reduce((a, b) => a + b, 0) / xs.length;
+  const yOffset = ys.reduce((a, b) => a + b, 0) / ys.length;
+
+  const xScale = xs.reduce((acc, x) => Math.max(acc, Math.abs(x - xOffset)), 0);
+  const yScale = ys.reduce((acc, y) => Math.max(acc, Math.abs(y - yOffset)), 0);
+
+  const data = xs.map((x, i) => [(x - xOffset) / xScale, (ys[i] - yOffset) / yScale]);
+
   const result = regression.linear(data);
   const [m, b] = result.equation;
-  return [m * yNorm / xNorm, b * yNorm];
+
+  return [m * yScale / xScale, b * yScale - m * xOffset * yScale / xScale + yOffset];
 }
 
 // no output for first pair
