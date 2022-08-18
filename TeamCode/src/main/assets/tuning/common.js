@@ -30,33 +30,14 @@ function numDerivOffline(xs, ys) {
 const CPS_STEP = 0x10000;
 
 function inverseOverflow(input, estimate) {
-  if (!input && input !== 0) {
-    return input;
-  }
-
-  if (input % 4 !== 0) {
-    throw new Error(`${input} % 4 !== 0`);
-  }
-
-  // get close with numerical estimate
-  while (Math.abs(estimate - input) > CPS_STEP / 2.0) {
-    if (input < estimate) {
-      input += CPS_STEP;
-    } else {
-      input -= CPS_STEP;
-    }
-  }
-
-  // snap to nearest multiple of 20
-  while (input % 20 !== 0 && i < 20) {
-    if ((input & 0xFFFF) % 20 > 10) {
-      input -= CPS_STEP;
-    } else {
-      input += CPS_STEP;
-    }
-  }
-
-  return input;
+  // convert to uint16
+  let real = input & 0xffff;
+  // initial, modulo-based correction: it can recover the remainder of 5 of the upper 16 bits
+  // because the velocity is always a multiple of 20 cps due to Expansion Hub's 50ms measurement window
+  real += ((real % 20) / 4) * CPS_STEP;
+  // estimate-based correction: it finds the nearest multiple of 5 to correct the upper bits by
+  real += Math.round((estimate - real) / (5 * CPS_STEP)) * 5 * CPS_STEP;
+  return real;
 }
 
 // no output for first or last pair
