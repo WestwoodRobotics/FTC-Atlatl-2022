@@ -13,23 +13,23 @@ import com.acmerobotics.roadrunner.MecanumKinematics;
 import com.acmerobotics.roadrunner.MinSimpleVelConstraintFun;
 import com.acmerobotics.roadrunner.MotorFeedforward;
 import com.acmerobotics.roadrunner.PosePath;
-import com.acmerobotics.roadrunner.Position2;
+import com.acmerobotics.roadrunner.Position2d;
 import com.acmerobotics.roadrunner.PositionPath;
 import com.acmerobotics.roadrunner.PositionPathBuilder;
 import com.acmerobotics.roadrunner.ProfileAccelConstraintFun;
 import com.acmerobotics.roadrunner.Profiles;
-import com.acmerobotics.roadrunner.Rotation2;
-import com.acmerobotics.roadrunner.Rotation2Dual;
+import com.acmerobotics.roadrunner.Rotation2d;
+import com.acmerobotics.roadrunner.Rotation2dDual;
 import com.acmerobotics.roadrunner.SafePathBuilder;
 import com.acmerobotics.roadrunner.SafePosePathBuilder;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.TimeProfile;
-import com.acmerobotics.roadrunner.Transform2;
-import com.acmerobotics.roadrunner.Transform2Dual;
-import com.acmerobotics.roadrunner.Twist2;
-import com.acmerobotics.roadrunner.Twist2Dual;
-import com.acmerobotics.roadrunner.Twist2IncrementDual;
-import com.acmerobotics.roadrunner.Vector2;
+import com.acmerobotics.roadrunner.Transform2d;
+import com.acmerobotics.roadrunner.Transform2dDual;
+import com.acmerobotics.roadrunner.Twist2d;
+import com.acmerobotics.roadrunner.Twist2dDual;
+import com.acmerobotics.roadrunner.Twist2dIncrementDual;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.VelConstraintFun;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -99,11 +99,11 @@ public final class MecanumDrive {
     public final BNO055Wrapper imu;
 
     public final Localizer localizer = new DriveLocalizer();
-    public Transform2 pose = new Transform2(0, 0, 0);
+    public Transform2d pose = new Transform2d(0, 0, 0);
 
     public final double inPerTick = FORWARD_IN_PER_TICK;
 
-    private final LinkedList<Transform2> poseHistory = new LinkedList<>();
+    private final LinkedList<Transform2d> poseHistory = new LinkedList<>();
 
     public class DriveLocalizer implements Localizer {
         public final Encoder leftFront, leftRear, rightRear, rightFront;
@@ -123,7 +123,7 @@ public final class MecanumDrive {
         }
 
         @Override
-        public Twist2IncrementDual<Time> updateAndGetIncr() {
+        public Twist2dIncrementDual<Time> updateAndGetIncr() {
             Encoder.PositionVelocityPair leftFrontPosVel = leftFront.getPositionAndVelocity();
             Encoder.PositionVelocityPair leftRearPosVel = leftRear.getPositionAndVelocity();
             Encoder.PositionVelocityPair rightRearPosVel = rightRear.getPositionAndVelocity();
@@ -204,7 +204,7 @@ public final class MecanumDrive {
             xPoints = new double[disps.size()];
             yPoints = new double[disps.size()];
             for (int i = 0; i < disps.size(); i++) {
-                Transform2 t = path.get(disps.get(i), 1).value();
+                Transform2d t = path.get(disps.get(i), 1).value();
                 xPoints[i] = t.trans.x;
                 yPoints[i] = t.trans.y;
             }
@@ -232,11 +232,11 @@ public final class MecanumDrive {
             }
 
             DualNum<Time> x = profile.get(t);
-            Transform2Dual<Time> txWorldTarget = path.get(beginDisp + x.value(), 3).reparam(x);
+            Transform2dDual<Time> txWorldTarget = path.get(beginDisp + x.value(), 3).reparam(x);
 
-            Twist2 robotVelRobot = updatePoseEstimateAndGetActualVel();
+            Twist2d robotVelRobot = updatePoseEstimateAndGetActualVel();
 
-            Twist2Dual<Time> command = new HolonomicController(
+            Twist2dDual<Time> command = new HolonomicController(
                     AXIAL_GAIN, LATERAL_GAIN, HEADING_GAIN,
                     AXIAL_VEL_GAIN, LATERAL_VEL_GAIN, HEADING_VEL_GAIN
             )
@@ -254,7 +254,7 @@ public final class MecanumDrive {
             p.put("heading (deg)", Math.toDegrees(pose.rot.log()));
 
             // TODO: dedupe with controller compute()?
-            Transform2 error = txWorldTarget.value().inverse().times(pose);
+            Transform2d error = txWorldTarget.value().inverse().times(pose);
             p.put("xError", error.trans.x);
             p.put("yError", error.trans.y);
             p.put("headingError (deg)", Math.toDegrees(error.rot.log()));
@@ -285,19 +285,19 @@ public final class MecanumDrive {
     }
 
     public final class TurnAction implements Action {
-        private final Transform2 beginPose;
+        private final Transform2d beginPose;
 
         private final TimeProfile profile;
         private double beginTs;
 
         private boolean active;
 
-        public TurnAction(Transform2 beginPose, double rot) {
+        public TurnAction(Transform2d beginPose, double rot) {
             this.beginPose = beginPose;
             profile = new TimeProfile(Profiles.constantProfile(rot, 0, MAX_ANG_VEL, -MAX_ANG_ACCEL, MAX_ANG_ACCEL).baseProfile);
         }
 
-        public TurnAction(Transform2 startPose, Rotation2 rot) {
+        public TurnAction(Transform2d startPose, Rotation2d rot) {
             this(startPose, rot.log());
         }
 
@@ -323,11 +323,11 @@ public final class MecanumDrive {
             }
 
             DualNum<Time> x = profile.get(t);
-            Transform2Dual<Time> txWorldTarget = Rotation2Dual.exp(x).times(beginPose);
+            Transform2dDual<Time> txWorldTarget = Rotation2dDual.exp(x).times(beginPose);
 
-            Twist2 robotVelRobot = updatePoseEstimateAndGetActualVel();
+            Twist2d robotVelRobot = updatePoseEstimateAndGetActualVel();
 
-            Twist2Dual<Time> command = new HolonomicController(
+            Twist2dDual<Time> command = new HolonomicController(
                     AXIAL_GAIN, LATERAL_GAIN, HEADING_GAIN,
                     AXIAL_VEL_GAIN, LATERAL_VEL_GAIN, HEADING_VEL_GAIN
             )
@@ -359,8 +359,8 @@ public final class MecanumDrive {
         }
     }
 
-    private Twist2 updatePoseEstimateAndGetActualVel() {
-        Twist2IncrementDual<Time> incr = localizer.updateAndGetIncr();
+    private Twist2d updatePoseEstimateAndGetActualVel() {
+        Twist2dIncrementDual<Time> incr = localizer.updateAndGetIncr();
         pose = pose.plus(incr.value());
 
         poseHistory.add(pose);
@@ -376,7 +376,7 @@ public final class MecanumDrive {
         double[] yPoints = new double[poseHistory.size()];
 
         int i = 0;
-        for (Transform2 t : poseHistory) {
+        for (Transform2d t : poseHistory) {
             xPoints[i] = t.trans.x;
             yPoints[i] = t.trans.y;
 
@@ -388,43 +388,43 @@ public final class MecanumDrive {
         c.strokePolyline(xPoints, yPoints);
     }
 
-    private static void drawRobot(Canvas c, Transform2 t) {
+    private static void drawRobot(Canvas c, Transform2d t) {
         final double ROBOT_RADIUS = 9;
 
         c.setStrokeWidth(1);
         c.strokeCircle(t.trans.x, t.trans.y, ROBOT_RADIUS);
 
-        Vector2 halfv = t.rot.vec().times(0.5 * ROBOT_RADIUS);
-        Position2 p1 = t.trans.bind().plus(halfv);
-        Position2 p2 = p1.plus(halfv);
+        Vector2d halfv = t.rot.vec().times(0.5 * ROBOT_RADIUS);
+        Position2d p1 = t.trans.bind().plus(halfv);
+        Position2d p2 = p1.plus(halfv);
         c.strokeLine(p1.x, p1.y, p2.x, p2.y);
     }
 
-    public PositionPathBuilder posPathBuilder(Position2 beginPos, Rotation2 beginTangent) {
+    public PositionPathBuilder posPathBuilder(Position2d beginPos, Rotation2d beginTangent) {
         return new PositionPathBuilder(beginPos, beginTangent, 1e-6);
     }
-    public PositionPathBuilder posPathBuilder(Position2 beginPos, double beginTangent) {
+    public PositionPathBuilder posPathBuilder(Position2d beginPos, double beginTangent) {
         return new PositionPathBuilder(beginPos, beginTangent, 1e-6);
     }
-    public SafePosePathBuilder posePathBuilder(PositionPath<Arclength> path, Rotation2 beginHeading) {
+    public SafePosePathBuilder posePathBuilder(PositionPath<Arclength> path, Rotation2d beginHeading) {
         return new SafePosePathBuilder(path, beginHeading);
     }
     public SafePosePathBuilder posePathBuilder(PositionPath<Arclength> path, double beginHeading) {
         return new SafePosePathBuilder(path, beginHeading);
     }
 
-    public SafePathBuilder pathBuilder(Transform2 beginPose, Rotation2 beginTangent) {
+    public SafePathBuilder pathBuilder(Transform2d beginPose, Rotation2d beginTangent) {
         return new SafePathBuilder(beginPose, beginTangent, 1e-6);
     }
-    public SafePathBuilder pathBuilder(Transform2 beginPose, double beginTangent) {
+    public SafePathBuilder pathBuilder(Transform2d beginPose, double beginTangent) {
         return new SafePathBuilder(beginPose, beginTangent, 1e-6);
     }
 
-    public SafePathBuilder pathBuilder(PosePath path, Rotation2 beginTangent) {
+    public SafePathBuilder pathBuilder(PosePath path, Rotation2d beginTangent) {
         return new SafePathBuilder(path.end(1).value(), beginTangent, 1e-6);
     }
     public SafePathBuilder pathBuilder(PosePath path, double beginTangent) {
-        return pathBuilder(path, Rotation2.exp(beginTangent));
+        return pathBuilder(path, Rotation2d.exp(beginTangent));
     }
 
     public Action.BaseBuilder actionBuilder() {

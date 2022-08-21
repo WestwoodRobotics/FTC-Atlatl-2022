@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.tuning;
 
 import com.acmerobotics.roadrunner.PosePath;
-import com.acmerobotics.roadrunner.Position2;
-import com.acmerobotics.roadrunner.Transform2;
+import com.acmerobotics.roadrunner.Position2d;
+import com.acmerobotics.roadrunner.Transform2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
@@ -17,7 +17,7 @@ public final class BackAndForth extends LinearOpMode {
         if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
             MecanumDrive drive = new MecanumDrive(hardwareMap);
 
-            PosePath forward = drive.pathBuilder(new Transform2(0, 0, 0), 0)
+            PosePath forward = drive.pathBuilder(new Transform2d(0, 0, 0), 0)
                     .forward(DISTANCE)
                     .build();
 
@@ -34,7 +34,7 @@ public final class BackAndForth extends LinearOpMode {
         } else if (TuningOpModes.DRIVE_CLASS.equals(TankDrive.class)) {
             TankDrive drive = new TankDrive(hardwareMap);
 
-            PosePath forward = drive.pathBuilder(new Position2(0, 0), 0)
+            PosePath forward = drive.pathBuilder(new Position2d(0, 0), 0)
                     .forward(DISTANCE)
                     .build();
 

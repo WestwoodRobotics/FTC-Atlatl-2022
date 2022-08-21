@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.acmerobotics.roadrunner.Time;
-import com.acmerobotics.roadrunner.Twist2IncrementDual;
+import com.acmerobotics.roadrunner.Twist2dIncrementDual;
 
 public interface Localizer {
-    Twist2IncrementDual<Time> updateAndGetIncr();
+    Twist2dIncrementDual<Time> updateAndGetIncr();
 }

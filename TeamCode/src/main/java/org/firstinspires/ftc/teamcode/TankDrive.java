@@ -11,24 +11,24 @@ import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.MinSimpleVelConstraintFun;
 import com.acmerobotics.roadrunner.MotorFeedforward;
 import com.acmerobotics.roadrunner.PosePath;
-import com.acmerobotics.roadrunner.Position2;
+import com.acmerobotics.roadrunner.Position2d;
 import com.acmerobotics.roadrunner.PositionPathBuilder;
 import com.acmerobotics.roadrunner.ProfileAccelConstraintFun;
 import com.acmerobotics.roadrunner.Profiles;
 import com.acmerobotics.roadrunner.RamseteController;
-import com.acmerobotics.roadrunner.Rotation2;
-import com.acmerobotics.roadrunner.Rotation2Dual;
+import com.acmerobotics.roadrunner.Rotation2d;
+import com.acmerobotics.roadrunner.Rotation2dDual;
 import com.acmerobotics.roadrunner.TangentPath;
 import com.acmerobotics.roadrunner.TankKinematics;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.TimeProfile;
-import com.acmerobotics.roadrunner.Transform2;
-import com.acmerobotics.roadrunner.Transform2Dual;
-import com.acmerobotics.roadrunner.Twist2;
-import com.acmerobotics.roadrunner.Twist2Dual;
-import com.acmerobotics.roadrunner.Twist2IncrementDual;
-import com.acmerobotics.roadrunner.Vector2;
-import com.acmerobotics.roadrunner.Vector2Dual;
+import com.acmerobotics.roadrunner.Transform2d;
+import com.acmerobotics.roadrunner.Transform2dDual;
+import com.acmerobotics.roadrunner.Twist2d;
+import com.acmerobotics.roadrunner.Twist2dDual;
+import com.acmerobotics.roadrunner.Twist2dIncrementDual;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.Vector2dDual;
 import com.acmerobotics.roadrunner.VelConstraintFun;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -96,11 +96,11 @@ public final class TankDrive {
     public final VoltageSensor voltageSensor;
 
     public final Localizer localizer = new DriveLocalizer();
-    public Transform2 pose = new Transform2(new Vector2(0, 0), Rotation2.exp(0));
+    public Transform2d pose = new Transform2d(0, 0, 0);
 
     public final double inPerTick = IN_PER_TICK;
 
-    private final LinkedList<Transform2> poseHistory = new LinkedList<>();
+    private final LinkedList<Transform2d> poseHistory = new LinkedList<>();
 
     public class DriveLocalizer implements Localizer {
         public final List<Encoder> leftEncs, rightEncs;
@@ -132,7 +132,7 @@ public final class TankDrive {
         }
 
         @Override
-        public Twist2IncrementDual<Time> updateAndGetIncr() {
+        public Twist2dIncrementDual<Time> updateAndGetIncr() {
             double meanLeftPos = 0.0, meanLeftVel = 0.0;
             for (Encoder e : leftEncs) {
                 Encoder.PositionVelocityPair p = e.getPositionAndVelocity();
@@ -216,7 +216,7 @@ public final class TankDrive {
             xPoints = new double[disps.size()];
             yPoints = new double[disps.size()];
             for (int i = 0; i < disps.size(); i++) {
-                Transform2 t = path.get(disps.get(i), 1).value();
+                Transform2d t = path.get(disps.get(i), 1).value();
                 xPoints[i] = t.trans.x;
                 yPoints[i] = t.trans.y;
             }
@@ -245,11 +245,11 @@ public final class TankDrive {
 
             DualNum<Time> x = profile.get(t);
 
-            Transform2Dual<Arclength> txWorldTarget = path.get(beginDisp + x.value(), 3);
+            Transform2dDual<Arclength> txWorldTarget = path.get(beginDisp + x.value(), 3);
 
             updatePoseEstimateAndGetActualVel();
 
-            Twist2Dual<Time> command = new RamseteController(kinematics.trackWidth, RAMSETE_ZETA, RAMSETE_BBAR)
+            Twist2dDual<Time> command = new RamseteController(kinematics.trackWidth, RAMSETE_ZETA, RAMSETE_BBAR)
                     .compute(x, txWorldTarget, pose);
 
             TankKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
@@ -266,7 +266,7 @@ public final class TankDrive {
             p.put("heading (deg)", Math.toDegrees(pose.rot.log()));
 
             // TODO: dedupe with controller compute()?
-            Transform2 error = txWorldTarget.value().inverse().times(pose);
+            Transform2d error = txWorldTarget.value().inverse().times(pose);
             p.put("xError", error.trans.x);
             p.put("yError", error.trans.y);
             p.put("headingError (deg)", Math.toDegrees(error.rot.log()));
@@ -304,19 +304,19 @@ public final class TankDrive {
     }
 
     public final class TurnAction implements Action {
-        private final Transform2 beginPose;
+        private final Transform2d beginPose;
 
         private final TimeProfile profile;
         private double beginTs;
 
         private boolean active;
 
-        public TurnAction(Transform2 beginPose, double rot) {
+        public TurnAction(Transform2d beginPose, double rot) {
             this.beginPose = beginPose;
             profile = new TimeProfile(Profiles.constantProfile(rot, 0, MAX_ANG_VEL, -MAX_ANG_ACCEL, MAX_ANG_ACCEL).baseProfile);
         }
 
-        public TurnAction(Transform2 startPose, Rotation2 rot) {
+        public TurnAction(Transform2d startPose, Rotation2d rot) {
             this(startPose, rot.log());
         }
 
@@ -345,11 +345,11 @@ public final class TankDrive {
 
             DualNum<Time> x = profile.get(t);
 
-            Twist2 robotVelRobot = updatePoseEstimateAndGetActualVel();
+            Twist2d robotVelRobot = updatePoseEstimateAndGetActualVel();
 
-            Rotation2Dual<Time> target = Rotation2Dual.<Time>constant(beginPose.rot, 3).plus(x);
-            Twist2Dual<Time> command = new Twist2Dual<>(
-                    Vector2Dual.constant(new Vector2(0, 0), 3),
+            Rotation2dDual<Time> target = Rotation2dDual.<Time>constant(beginPose.rot, 3).plus(x);
+            Twist2dDual<Time> command = new Twist2dDual<>(
+                    Vector2dDual.constant(new Vector2d(0, 0), 3),
                     target.velocity().plus(
                             TURN_GAIN * pose.rot.minus(target.value()) +
                             TURN_VEL_GAIN * (robotVelRobot.rotVel - target.velocity().value())
@@ -369,7 +369,7 @@ public final class TankDrive {
             drawPoseHistory(c);
 
             c.setStroke("#4CAF50");
-            drawRobot(c, new Transform2(beginPose.trans, beginPose.rot.plus(x.value())));
+            drawRobot(c, new Transform2d(beginPose.trans, beginPose.rot.plus(x.value())));
 
             c.setStroke("#3F51B5");
             drawRobot(c, pose);
@@ -384,8 +384,8 @@ public final class TankDrive {
         }
     }
 
-    public Twist2 updatePoseEstimateAndGetActualVel() {
-        Twist2IncrementDual<Time> incr = localizer.updateAndGetIncr();
+    public Twist2d updatePoseEstimateAndGetActualVel() {
+        Twist2dIncrementDual<Time> incr = localizer.updateAndGetIncr();
         pose = pose.plus(incr.value());
 
         poseHistory.add(pose);
@@ -401,7 +401,7 @@ public final class TankDrive {
         double[] yPoints = new double[poseHistory.size()];
 
         int i = 0;
-        for (Transform2 t : poseHistory) {
+        for (Transform2d t : poseHistory) {
             xPoints[i] = t.trans.x;
             yPoints[i] = t.trans.y;
 
@@ -413,15 +413,15 @@ public final class TankDrive {
         c.strokePolyline(xPoints, yPoints);
     }
 
-    private static void drawRobot(Canvas c, Transform2 t) {
+    private static void drawRobot(Canvas c, Transform2d t) {
         final double ROBOT_RADIUS = 9;
 
         c.setStrokeWidth(1);
         c.strokeCircle(t.trans.x, t.trans.y, ROBOT_RADIUS);
 
-        Vector2 halfv = t.rot.vec().times(0.5 * ROBOT_RADIUS);
-        Position2 p1 = t.trans.bind().plus(halfv);
-        Position2 p2 = p1.plus(halfv);
+        Vector2d halfv = t.rot.vec().times(0.5 * ROBOT_RADIUS);
+        Position2d p1 = t.trans.bind().plus(halfv);
+        Position2d p2 = p1.plus(halfv);
         c.strokeLine(p1.x, p1.y, p2.x, p2.y);
     }
 
@@ -434,17 +434,17 @@ public final class TankDrive {
             this.offset = tanOffset;
         }
 
-        public PathBuilder(Position2 beginPos, Rotation2 beginTangent, boolean reversed, double eps) {
+        public PathBuilder(Position2d beginPos, Rotation2d beginTangent, boolean reversed, double eps) {
             this(new PositionPathBuilder(beginPos, beginTangent, eps), reversed ? Math.PI : 0);
         }
-        public PathBuilder(Position2 beginPos, double beginTangent, boolean reversed, double eps) {
-            this(beginPos, Rotation2.exp(beginTangent), reversed, eps);
+        public PathBuilder(Position2d beginPos, double beginTangent, boolean reversed, double eps) {
+            this(beginPos, Rotation2d.exp(beginTangent), reversed, eps);
         }
-        public PathBuilder(Position2 beginPos, Rotation2 beginTangent, double eps) {
+        public PathBuilder(Position2d beginPos, Rotation2d beginTangent, double eps) {
             this(beginPos, beginTangent, false, eps);
         }
-        public PathBuilder(Position2 beginPos, double beginTangent, double eps) {
-            this(beginPos, Rotation2.exp(beginTangent), eps);
+        public PathBuilder(Position2d beginPos, double beginTangent, double eps) {
+            this(beginPos, Rotation2d.exp(beginTangent), eps);
         }
 
         public PathBuilder forward(double dist) {
@@ -459,11 +459,11 @@ public final class TankDrive {
             return new PathBuilder(posPathBuilder.lineToY(posY), offset);
         }
 
-        public PathBuilder splineTo(Position2 pos, Rotation2 tangent) {
+        public PathBuilder splineTo(Position2d pos, Rotation2d tangent) {
             return new PathBuilder(posPathBuilder.splineTo(pos, tangent), offset);
         }
-        public PathBuilder splineTo(Position2 pos, double tangent) {
-            return splineTo(pos, Rotation2.exp(tangent));
+        public PathBuilder splineTo(Position2d pos, double tangent) {
+            return splineTo(pos, Rotation2d.exp(tangent));
         }
 
         public TangentPath build() {
@@ -471,25 +471,25 @@ public final class TankDrive {
         }
     }
 
-    public PathBuilder pathBuilder(Position2 beginPos, Rotation2 beginTangent, boolean reversed) {
+    public PathBuilder pathBuilder(Position2d beginPos, Rotation2d beginTangent, boolean reversed) {
         return new PathBuilder(beginPos, beginTangent, reversed, 1e-6);
     }
-    public PathBuilder pathBuilder(Position2 beginPos, double beginTangent, boolean reversed) {
-        return new PathBuilder(beginPos, Rotation2.exp(beginTangent), reversed, 1e-6);
+    public PathBuilder pathBuilder(Position2d beginPos, double beginTangent, boolean reversed) {
+        return new PathBuilder(beginPos, Rotation2d.exp(beginTangent), reversed, 1e-6);
     }
-    public PathBuilder pathBuilder(Position2 beginPos, Rotation2 beginTangent) {
+    public PathBuilder pathBuilder(Position2d beginPos, Rotation2d beginTangent) {
         return pathBuilder(beginPos, beginTangent, false);
     }
-    public PathBuilder pathBuilder(Position2 beginPos, double beginTangent) {
-        return pathBuilder(beginPos, Rotation2.exp(beginTangent), false);
+    public PathBuilder pathBuilder(Position2d beginPos, double beginTangent) {
+        return pathBuilder(beginPos, Rotation2d.exp(beginTangent), false);
     }
 
-    public PathBuilder pathBuilder(PosePath path, Rotation2 beginTangent) {
-        Transform2 t = path.end(1).value();
+    public PathBuilder pathBuilder(PosePath path, Rotation2d beginTangent) {
+        Transform2d t = path.end(1).value();
         return new PathBuilder(new PositionPathBuilder(t.trans.bind(), t.rot, 1e-6), beginTangent.minus(t.rot));
     }
     public PathBuilder pathBuilder(PosePath path, double beginTangent) {
-        return pathBuilder(path, Rotation2.exp(beginTangent));
+        return pathBuilder(path, Rotation2d.exp(beginTangent));
     }
 
     public Action.BaseBuilder actionBuilder() {

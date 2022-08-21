@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import com.acmerobotics.roadrunner.Rotation2;
+import com.acmerobotics.roadrunner.Rotation2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -14,8 +14,8 @@ public final class BNO055Wrapper {
         this.bno = bno;
     }
 
-    public Rotation2 getHeading() {
-        return Rotation2.exp(bno.getAngularOrientation()
+    public Rotation2d getHeading() {
+        return Rotation2d.exp(bno.getAngularOrientation()
                 .toAngleUnit(AngleUnit.RADIANS)
                 .toAxesOrder(AxesOrder.ZYX)
                 .firstAngle);

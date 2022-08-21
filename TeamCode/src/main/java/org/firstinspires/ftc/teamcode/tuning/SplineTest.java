@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.tuning;
 
-import com.acmerobotics.roadrunner.Position2;
-import com.acmerobotics.roadrunner.Transform2;
+import com.acmerobotics.roadrunner.Position2d;
+import com.acmerobotics.roadrunner.Transform2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
@@ -16,9 +16,9 @@ public final class SplineTest extends LinearOpMode {
             waitForStart();
 
             drive.followPath(
-                    drive.pathBuilder(new Transform2(0, 0, 0), 0)
-                            .splineTo(new Position2(30, 30), Math.PI / 2)
-                            .splineTo(new Position2(60, 0), Math.PI)
+                    drive.pathBuilder(new Transform2d(0, 0, 0), 0)
+                            .splineTo(new Position2d(30, 30), Math.PI / 2)
+                            .splineTo(new Position2d(60, 0), Math.PI)
                             .build()
             ).runBlocking();
         } else if (TuningOpModes.DRIVE_CLASS.equals(TankDrive.class)) {
@@ -27,9 +27,9 @@ public final class SplineTest extends LinearOpMode {
             waitForStart();
 
             drive.followPath(
-                    drive.pathBuilder(new Position2(0, 0), 0)
-                            .splineTo(new Position2(30, 30), Math.PI / 2)
-                            .splineTo(new Position2(60, 0), Math.PI)
+                    drive.pathBuilder(new Position2d(0, 0), 0)
+                            .splineTo(new Position2d(30, 30), Math.PI / 2)
+                            .splineTo(new Position2d(60, 0), Math.PI)
                             .build()
             ).runBlocking();
         } else {

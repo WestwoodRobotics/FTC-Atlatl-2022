@@ -2,10 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.DualNum;
-import com.acmerobotics.roadrunner.Rotation2;
+import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Time;
-import com.acmerobotics.roadrunner.Twist2IncrementDual;
-import com.acmerobotics.roadrunner.Vector2Dual;
+import com.acmerobotics.roadrunner.Twist2dIncrementDual;
+import com.acmerobotics.roadrunner.Vector2dDual;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -23,7 +23,7 @@ public final class TwoDeadWheelLocalizer implements Localizer {
     public final BNO055Wrapper imu;
 
     private int lastParPos, lastPerpPos;
-    private Rotation2 lastHeading;
+    private Rotation2d lastHeading;
 
     private final double inPerTick;
 
@@ -39,10 +39,10 @@ public final class TwoDeadWheelLocalizer implements Localizer {
         this.inPerTick = inPerTick;
     }
 
-    public Twist2IncrementDual<Time> updateAndGetIncr() {
+    public Twist2dIncrementDual<Time> updateAndGetIncr() {
         Encoder.PositionVelocityPair parPosVel = par.getPositionAndVelocity();
         Encoder.PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
-        Rotation2 heading = imu.getHeading();
+        Rotation2d heading = imu.getHeading();
 
         int parPosDelta = parPosVel.position - lastParPos;
         int perpPosDelta = perpPosVel.position - lastPerpPos;
@@ -50,8 +50,8 @@ public final class TwoDeadWheelLocalizer implements Localizer {
 
         double headingVel = imu.getHeadingVelocity();
 
-        Twist2IncrementDual<Time> twistIncr = new Twist2IncrementDual<>(
-                new Vector2Dual<>(
+        Twist2dIncrementDual<Time> twistIncr = new Twist2dIncrementDual<>(
+                new Vector2dDual<>(
                         new DualNum<Time>(new double[] {
                                 parPosDelta - PAR_Y_TICKS * headingDelta,
                                 parPosVel.velocity - PAR_Y_TICKS * headingVel,
