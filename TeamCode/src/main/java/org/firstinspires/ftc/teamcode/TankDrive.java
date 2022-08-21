@@ -4,9 +4,11 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.AccelConstraintFun;
+import com.acmerobotics.roadrunner.AngularVelConstraintFun;
 import com.acmerobotics.roadrunner.Arclength;
 import com.acmerobotics.roadrunner.CancelableProfile;
 import com.acmerobotics.roadrunner.DualNum;
+import com.acmerobotics.roadrunner.MinSimpleVelConstraintFun;
 import com.acmerobotics.roadrunner.MotorFeedforward;
 import com.acmerobotics.roadrunner.PosePath;
 import com.acmerobotics.roadrunner.Position2;
@@ -49,16 +51,29 @@ import java.util.List;
 
 @Config
 public final class TankDrive {
+    // drive model parameters
     public static double IN_PER_TICK = 0;
     public static double TRACK_WIDTH_TICKS = 0;
 
+    // feedforward parameters
     public static double kS = 0;
     public static double kV = 0;
     public static double kA = 0;
 
-    public static double RAMSETE_ZETA = 0.7; // 0 < \zeta < 1
-    public static double RAMSETE_BBAR = 2.0; // \bar{b} > 0
+    // path profile parameters
+    public static double MAX_WHEEL_VEL = 50;
+    public static double MIN_PROFILE_ACCEL = -30;
+    public static double MAX_PROFILE_ACCEL = 50;
 
+    // turn profile parameters
+    public static double MAX_ANG_VEL = Math.PI; // shared with path
+    public static double MAX_ANG_ACCEL = Math.PI;
+
+    // path controller gains
+    public static double RAMSETE_ZETA = 0.7; // in the range (0, 1)
+    public static double RAMSETE_BBAR = 2.0; // positive
+
+    // turn controller gains
     public static double TURN_GAIN = 0.0;
     public static double TURN_VEL_GAIN = 0.0;
 
@@ -66,8 +81,13 @@ public final class TankDrive {
 
     public final MotorFeedforward feedforward = new MotorFeedforward(kS, kV, kA);
 
-    public final VelConstraintFun defaultVelConstraint = kinematics.new WheelVelConstraintFun(50);
-    public final AccelConstraintFun defaultAccelConstraint = new ProfileAccelConstraintFun(-30, 50);
+    public final VelConstraintFun defaultVelConstraint = new VelConstraintFun.Adapter(
+            new MinSimpleVelConstraintFun(Arrays.asList(
+                    kinematics.new WheelVelConstraintFun(MAX_WHEEL_VEL),
+                    new AngularVelConstraintFun(MAX_ANG_VEL)
+            )));
+    public final AccelConstraintFun defaultAccelConstraint = new AccelConstraintFun.Adapter(
+            new ProfileAccelConstraintFun(MIN_PROFILE_ACCEL, MAX_PROFILE_ACCEL));
 
     public final List<DcMotorEx> leftMotors, rightMotors;
 
@@ -292,9 +312,8 @@ public final class TankDrive {
         private boolean active;
 
         public TurnAction(Transform2 beginPose, double rot) {
-            // TODO: fill in constraints
             this.beginPose = beginPose;
-            profile = new TimeProfile(Profiles.constantProfile(rot, 0, 0, 0, 0).baseProfile);
+            profile = new TimeProfile(Profiles.constantProfile(rot, 0, MAX_ANG_VEL, -MAX_ANG_ACCEL, MAX_ANG_ACCEL).baseProfile);
         }
 
         public TurnAction(Transform2 startPose, Rotation2 rot) {
