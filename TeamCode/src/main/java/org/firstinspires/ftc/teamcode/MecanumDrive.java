@@ -130,19 +130,19 @@ public final class MecanumDrive {
             Encoder.PositionVelocityPair rightFrontPosVel = rightFront.getPositionAndVelocity();
 
             MecanumKinematics.WheelIncrements<Time> incrs = new MecanumKinematics.WheelIncrements<>(
-                    new DualNum<Time>(new double[] {
+                    new DualNum<Time>(new double[]{
                             leftFrontPosVel.position - lastLeftFrontPos,
                             leftFrontPosVel.velocity,
                     }).times(inPerTick),
-                    new DualNum<Time>(new double[] {
+                    new DualNum<Time>(new double[]{
                             leftRearPosVel.position - lastLeftRearPos,
                             leftRearPosVel.velocity,
                     }).times(inPerTick),
-                    new DualNum<Time>(new double[] {
+                    new DualNum<Time>(new double[]{
                             rightRearPosVel.position - lastRightRearPos,
                             rightRearPosVel.velocity,
                     }).times(inPerTick),
-                    new DualNum<Time>(new double[] {
+                    new DualNum<Time>(new double[]{
                             rightFrontPosVel.position - lastRightFrontPos,
                             rightFrontPosVel.velocity,
                     }).times(inPerTick)
@@ -403,6 +403,7 @@ public final class MecanumDrive {
     public PositionPathBuilder posPathBuilder(Position2 beginPos, Rotation2 beginTangent) {
         return new PositionPathBuilder(beginPos, beginTangent, 1e-6);
     }
+
     public PositionPathBuilder posPathBuilder(Position2 beginPos, double beginTangent) {
         return new PositionPathBuilder(beginPos, beginTangent, 1e-6);
     }
@@ -410,6 +411,7 @@ public final class MecanumDrive {
     public SafePosePathBuilder posePathBuilder(PositionPath<Arclength> path, Rotation2 beginHeading) {
         return new SafePosePathBuilder(path, beginHeading);
     }
+
     public SafePosePathBuilder posePathBuilder(PositionPath<Arclength> path, double beginHeading) {
         return new SafePosePathBuilder(path, beginHeading);
     }
@@ -417,6 +419,7 @@ public final class MecanumDrive {
     public SafePathBuilder pathBuilder(Transform2 beginPose, Rotation2 beginTangent) {
         return new SafePathBuilder(beginPose, beginTangent, 1e-6);
     }
+
     public SafePathBuilder pathBuilder(Transform2 beginPose, double beginTangent) {
         return new SafePathBuilder(beginPose, beginTangent, 1e-6);
     }
@@ -429,7 +432,10 @@ public final class MecanumDrive {
         return new FollowTrajectoryAction(path,
                 Profiles.profile(path, 0, vf, af, 0.25));
     }
+    public FollowTrajectoryAction followPath(PosePath path, VelConstraintFun vf) {
+        return followPath(path, vf, defaultAccelConstraint);
+    }
     public FollowTrajectoryAction followPath(PosePath path) {
-        return followPath(path, defaultVelConstraint, defaultAccelConstraint);
+        return followPath(path, defaultVelConstraint);
     }
 }

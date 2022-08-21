@@ -484,11 +484,18 @@ public final class TankDrive {
         return pathBuilder(beginPos, Rotation2.exp(beginTangent), false);
     }
 
+    public Action.BaseBuilder actionBuilder() {
+        return new Action.BaseBuilder();
+    }
+
     public FollowTrajectoryAction followPath(PosePath path, VelConstraintFun vf, AccelConstraintFun af) {
         return new FollowTrajectoryAction(path,
                 Profiles.profile(path, 0, vf, af, 0.25));
     }
+    public FollowTrajectoryAction followPath(PosePath path, VelConstraintFun vf) {
+        return followPath(path, vf, defaultAccelConstraint);
+    }
     public FollowTrajectoryAction followPath(PosePath path) {
-        return followPath(path, defaultVelConstraint, defaultAccelConstraint);
+        return followPath(path, defaultVelConstraint);
     }
 }
