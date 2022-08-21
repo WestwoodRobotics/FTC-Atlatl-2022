@@ -16,6 +16,10 @@ public final class LateralPushTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        if (!TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
+            throw new RuntimeException(getClass().getSimpleName() + " is for mecanum drives only.");
+        }
+
         MecanumDrive drive = new MecanumDrive(hardwareMap);
 
         MecanumDrive.DriveLocalizer dl = (MecanumDrive.DriveLocalizer) drive.localizer;

@@ -403,15 +403,12 @@ public final class MecanumDrive {
     public PositionPathBuilder posPathBuilder(Position2 beginPos, Rotation2 beginTangent) {
         return new PositionPathBuilder(beginPos, beginTangent, 1e-6);
     }
-
     public PositionPathBuilder posPathBuilder(Position2 beginPos, double beginTangent) {
         return new PositionPathBuilder(beginPos, beginTangent, 1e-6);
     }
-
     public SafePosePathBuilder posePathBuilder(PositionPath<Arclength> path, Rotation2 beginHeading) {
         return new SafePosePathBuilder(path, beginHeading);
     }
-
     public SafePosePathBuilder posePathBuilder(PositionPath<Arclength> path, double beginHeading) {
         return new SafePosePathBuilder(path, beginHeading);
     }
@@ -419,9 +416,15 @@ public final class MecanumDrive {
     public SafePathBuilder pathBuilder(Transform2 beginPose, Rotation2 beginTangent) {
         return new SafePathBuilder(beginPose, beginTangent, 1e-6);
     }
-
     public SafePathBuilder pathBuilder(Transform2 beginPose, double beginTangent) {
         return new SafePathBuilder(beginPose, beginTangent, 1e-6);
+    }
+
+    public SafePathBuilder pathBuilder(PosePath path, Rotation2 beginTangent) {
+        return new SafePathBuilder(path.end(1).value(), beginTangent, 1e-6);
+    }
+    public SafePathBuilder pathBuilder(PosePath path, double beginTangent) {
+        return pathBuilder(path, Rotation2.exp(beginTangent));
     }
 
     public Action.BaseBuilder actionBuilder() {

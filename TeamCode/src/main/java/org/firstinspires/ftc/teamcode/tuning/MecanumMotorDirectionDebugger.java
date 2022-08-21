@@ -35,26 +35,28 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
  *                  \________/
  */
 @Config
-public class MotorDirectionDebugger extends LinearOpMode {
+public class MecanumMotorDirectionDebugger extends LinearOpMode {
     public static double MOTOR_POWER = 0.7;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        if (!TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
+            throw new RuntimeException(getClass().getSimpleName() + " is for mecanum drives only.");
+        }
 
         MecanumDrive drive = new MecanumDrive(hardwareMap);
 
-        telemetry.addLine("Press play to begin the debugging opmode");
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+        telemetry.addLine("Press play to begin the debugging op mode");
         telemetry.update();
 
         waitForStart();
 
-        if (isStopRequested()) return;
-
         telemetry.clearAll();
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
 
-        while (!isStopRequested()) {
+        while (opModeIsActive()) {
             telemetry.addLine("Press each button to turn on its respective motor");
             telemetry.addLine();
             telemetry.addLine("<font face=\"monospace\">Xbox/PS4 Button - Motor</font>");

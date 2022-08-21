@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.tuning;
 
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
@@ -42,22 +43,22 @@ final class DriveView {
         }
     }
 
-    public DriveView(Object d) {
+    public DriveView(HardwareMap hardwareMap) {
         final Localizer localizer;
-        if (d instanceof MecanumDrive) {
+        if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
             type = "mecanum";
 
-            MecanumDrive md = (MecanumDrive) d;
+            MecanumDrive md = new MecanumDrive(hardwareMap);
             leftMotors = Arrays.asList(md.leftFront, md.leftBack);
             rightMotors = Arrays.asList(md.rightFront, md.rightBack);
             imu = md.imu;
             voltageSensor = md.voltageSensor;
 
             localizer = md.localizer;
-        } else if (d instanceof TankDrive) {
+        } else if (TuningOpModes.DRIVE_CLASS.equals(TankDrive.class)) {
             type = "tank";
 
-            TankDrive td = (TankDrive) d;
+            TankDrive td = new TankDrive(hardwareMap);
             leftMotors = td.leftMotors;
             rightMotors = td.rightMotors;
             imu = td.imu;

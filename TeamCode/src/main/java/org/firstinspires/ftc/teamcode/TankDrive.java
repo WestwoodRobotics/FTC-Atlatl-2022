@@ -484,6 +484,14 @@ public final class TankDrive {
         return pathBuilder(beginPos, Rotation2.exp(beginTangent), false);
     }
 
+    public PathBuilder pathBuilder(PosePath path, Rotation2 beginTangent) {
+        Transform2 t = path.end(1).value();
+        return new PathBuilder(new PositionPathBuilder(t.trans.bind(), t.rot, 1e-6), beginTangent.minus(t.rot));
+    }
+    public PathBuilder pathBuilder(PosePath path, double beginTangent) {
+        return pathBuilder(path, Rotation2.exp(beginTangent));
+    }
+
     public Action.BaseBuilder actionBuilder() {
         return new Action.BaseBuilder();
     }

@@ -20,7 +20,7 @@ public interface Action {
         init();
 
         boolean b = true;
-        while (b) {
+        while (!Thread.currentThread().isInterrupted() && b) {
             TelemetryPacket p = new TelemetryPacket();
 
             draw(p.fieldOverlay());

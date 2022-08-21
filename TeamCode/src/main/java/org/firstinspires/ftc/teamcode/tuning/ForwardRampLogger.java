@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.tuning;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 import org.firstinspires.ftc.teamcode.util.MidpointTimer;
 
@@ -17,8 +16,7 @@ public final class ForwardRampLogger extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // TODO: fill in drive instance
-        DriveView view = new DriveView(new MecanumDrive(hardwareMap));
+        DriveView view = new DriveView(hardwareMap);
 
         class Data {
             final String type = view.type;
