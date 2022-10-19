@@ -42,6 +42,7 @@ public class Tutorial extends OpMode {
         
         //uses y movement of left joystick to control motor power
         motor.setPower(gmaepad1.left_stick_y)
+        //gmaepad1.left_stick_y or any other gamepad input can be used as a variable so that you don't have to type as much
        
         
         
