@@ -33,7 +33,10 @@ public class Tutorial extends OpMode {
     //loops after start
     @Override
     public void loop() {
-        //sets power
+    
+        
+        
+        //sets power; 1 is highest, 0 is off, -1 is highest reversed
         motor.setPower(1);
 
 
