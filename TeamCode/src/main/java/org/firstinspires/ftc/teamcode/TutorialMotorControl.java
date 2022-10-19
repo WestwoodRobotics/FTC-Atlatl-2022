@@ -10,18 +10,23 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @Autonomous(name="motor1")
 
 public class Tutorial extends OpMode {
-
+    //defines motor
     DcMotor motor;
+    
+    //defines servo
+    Servo Intake;
 
 
     //runs after initialization
     @Override
     public void init() {
-         how to go from config file to how to check which port it is in
+        //how to go from config file to how to check which port it is in
         motor = hardwareMap.dcMotor.get("motor1");
         or
         motor = hardwareMap.get(DcMotor.class, deviceName: "motor1");
-        motor = hardwareMap.dcMotor.get("motor1");
+        
+        //to set direction of tourque
+        motor.setDirection(DcMotor.Direction.REVERSE)
     }
 
 
@@ -34,6 +39,12 @@ public class Tutorial extends OpMode {
 
         //allows motor to get power when leftTrigger is pressed
         motor.setPower(gamepad1.leftTrigger)
+        
+        //uses y movement of left joystick to control motor power
+        motor.setPower(gmaepad1.left_stick_y)
+       
+        
+        
     }
 }
 
