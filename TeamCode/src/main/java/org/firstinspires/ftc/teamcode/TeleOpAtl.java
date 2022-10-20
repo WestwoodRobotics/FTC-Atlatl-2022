@@ -11,6 +11,10 @@ public class StrafeCodeTest extends  OpMode {
     DcMotor rightFront = null;
     DcMotor leftBack = null;
     DcMotor rightBack = null;
+    
+    //lift and intake
+    DcMotor lift = null;
+    Servo intake = null;
 
     @Override
     public void init() {
@@ -19,6 +23,9 @@ public class StrafeCodeTest extends  OpMode {
         rightFront = hardwareMap.get(DcMotor.class,"rightFront");
         leftBack = hardwareMap.get(DcMotor.class,"leftBack");
         rightBack = hardwareMap.get(DcMotor.class,"rightBack");
+        //Lift and intake hardware map
+        lift = hardwareMap.get(DcMotor.class, "lift");
+        intake = hardwareMap.get(Servo.class, "intake")
 
     }
 
@@ -46,5 +53,6 @@ public class StrafeCodeTest extends  OpMode {
         rightFront.setPower(rightFrontPower);
         leftBack.setPower(leftBackPower);
         rightBack.setPower(rightBackPower);
+        lift.setPower(0.1)
     }
 }
