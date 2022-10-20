@@ -6,7 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-//how you tell program where your going to find it in the driver-station map can be in @tellyOp or @Autonomous
+//how you tell program where your going to find it in the driver-station map can be in @teleOp or @Autonomous
+//teleOp is controls, Autonomous is the Autonomous period code
 @Autonomous(name="motor1")
 
 public class Tutorial extends OpMode {
@@ -17,7 +18,7 @@ public class Tutorial extends OpMode {
     //runs after initialization
     @Override
     public void init() {
-         how to go from config file to how to check which port it is in
+        //how to go from config file to how to check which port it is in
         motor = hardwareMap.dcMotor.get("motor1");
         or
         motor = hardwareMap.get(DcMotor.class, deviceName: "motor1");
