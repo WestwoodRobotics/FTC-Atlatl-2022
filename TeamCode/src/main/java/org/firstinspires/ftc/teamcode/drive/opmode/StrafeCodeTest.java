@@ -7,18 +7,18 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class StrafeCodeTest extends  OpMode {
     //wheels
-    DcMotor leftFront;
-    DcMotor rightFront;
-    DcMotor leftBack;
-    DcMotor rightBack;
+    DcMotor leftFront = null;
+    DcMotor rightFront = null;
+    DcMotor leftBack = null;
+    DcMotor rightBack = null;
 
     @Override
     public void init() {
         //wheel motor hardware map
-        leftFront = hardwareMap.dcMotor.get("motor1");
-        rightFront = hardwareMap.dcMotor.get("motor2");
-        leftBack = hardwareMap.dcMotor.get("motor3");
-        rightBack = hardwareMap.dcMotor.get("motor4");
+        leftFront = hardware.map("leftFront");
+        rightFront = hardware.map("rightFront");
+        leftBack = hardware.map("leftBack");
+        rightBack = hhardware.map("rightBack");
 
     }
 
