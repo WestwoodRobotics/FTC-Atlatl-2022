@@ -15,10 +15,10 @@ public class StrafeCodeTest extends  OpMode {
     @Override
     public void init() {
         //wheel motor hardware map
-        leftFront = hardware.map("leftFront");
-        rightFront = hardware.map("rightFront");
-        leftBack = hardware.map("leftBack");
-        rightBack = hardware.map("rightBack");
+        leftFront = hardwareMap.get(DcMotor.class,"leftFront");
+        rightFront = hardwareMap.get(DcMotor.class,"rightFront");
+        leftBack = hardwareMap.get(DcMotor.class,"leftBack");
+        rightBack = hardwareMap.get(DcMotor.class,"rightBack");
 
     }
 
