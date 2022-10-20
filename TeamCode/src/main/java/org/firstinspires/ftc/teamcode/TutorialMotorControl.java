@@ -12,10 +12,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class Tutorial extends OpMode {
     //defines motor
-    DcMotor motor;
+    DcMotor motor = null;
     
     //defines servo
-    Servo Intake;
+    Servo Intake = null;
 
 
     //runs after initialization
@@ -24,7 +24,7 @@ public class Tutorial extends OpMode {
         //how to go from config file to how to check which port it is in
         motor = hardwareMap.dcMotor.get("motor1");
         or
-        motor = hardwareMap.get(DcMotor.class, deviceName: "motor1");
+        motor = hardware.map(DcMotor.class, "motor1");
         
         //to set direction of tourque
         motor.setDirection(DcMotor.Direction.REVERSE)
