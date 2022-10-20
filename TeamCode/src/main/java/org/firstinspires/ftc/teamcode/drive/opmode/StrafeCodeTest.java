@@ -18,7 +18,7 @@ public class StrafeCodeTest extends  OpMode {
         leftFront = hardware.map("leftFront");
         rightFront = hardware.map("rightFront");
         leftBack = hardware.map("leftBack");
-        rightBack = hhardware.map("rightBack");
+        rightBack = hardware.map("rightBack");
 
     }
 
