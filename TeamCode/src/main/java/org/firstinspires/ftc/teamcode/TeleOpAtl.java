@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name = "CTele")
+@TeleOp(name = "CringeTeleOp")
 
 public class TeleOpAtl extends OpMode {
     //wheels
