@@ -22,9 +22,7 @@ public class Tutorial extends OpMode {
     @Override
     public void init() {
         //how to go from config file to how to check which port it is in
-        motor = hardwareMap.dcMotor.get("motor1");
-        or
-        motor = hardware.map(DcMotor.class, "motor1");
+        motor = hardwareMap.get(DcMotor.class,"motor");
         
         //to set direction of tourque
         motor.setDirection(DcMotor.Direction.REVERSE)
