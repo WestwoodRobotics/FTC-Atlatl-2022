@@ -24,9 +24,19 @@ public class TeleOpAtl extends OpMode {
         rightFront = hardwareMap.get(DcMotor.class,"rightFront");
         leftBack = hardwareMap.get(DcMotor.class,"leftBack");
         rightBack = hardwareMap.get(DcMotor.class,"rightBack");
+
+        leftFront.setDirection(DcMotor.Direction.FORWARD);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
+        leftBack.setDirection(DcMotor.Direction.FORWARD);
+        rightBack.setDirection(DcMotor.Direction.REVERSE);
+
+
         //Lift and intake hardware map
         lift = hardwareMap.get(DcMotor.class, "lift");
         intake = hardwareMap.get(Servo.class, "intake");
+
+        lift.setDirection(DcMotor.Direction.FORWARD);
+        intake.setDirection(Servo.Direction.REVERSE);
 
     }
 
@@ -54,6 +64,8 @@ public class TeleOpAtl extends OpMode {
         rightFront.setPower(rightFrontPower);
         leftBack.setPower(leftBackPower);
         rightBack.setPower(rightBackPower);
+
+        //lift & intake
         lift.setPower(0.1);
     }
 }
