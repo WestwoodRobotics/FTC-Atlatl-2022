@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-
 @Autonomous(name = "AutoAtl")
+
 public class AutoAtl extends OpMode {
     //wheels
     DcMotor leftFront = null;
