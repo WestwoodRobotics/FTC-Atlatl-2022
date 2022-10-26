@@ -13,10 +13,13 @@ public class TeleOpAtl extends OpMode {
     DcMotor leftBack = null;
     DcMotor rightBack = null;
 
+
     //lift and intake
     DcMotor lift = null;
     Servo intake = null;
     public boolean AutoLift = true;
+
+
     @Override
     public void init() {
         //wheel motor hardware map
@@ -36,7 +39,6 @@ public class TeleOpAtl extends OpMode {
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-
         //Lift and intake hardware map
         lift = hardwareMap.get(DcMotor.class, "lift");
         intake = hardwareMap.get(Servo.class, "intake");
@@ -46,6 +48,7 @@ public class TeleOpAtl extends OpMode {
 
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+
 
     @Override
     public void loop() {
