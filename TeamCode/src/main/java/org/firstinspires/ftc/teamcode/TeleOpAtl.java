@@ -16,7 +16,7 @@ public class TeleOpAtl extends OpMode {
     //lift and intake
     DcMotor lift = null;
     Servo intake = null;
-
+    public boolean AutoLift = true;
     @Override
     public void init() {
         //wheel motor hardware map
@@ -35,6 +35,8 @@ public class TeleOpAtl extends OpMode {
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+
+
         //Lift and intake hardware map
         lift = hardwareMap.get(DcMotor.class, "lift");
         intake = hardwareMap.get(Servo.class, "intake");
@@ -43,8 +45,6 @@ public class TeleOpAtl extends OpMode {
         intake.setDirection(Servo.Direction.REVERSE);
 
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
     }
 
     @Override
@@ -72,7 +72,21 @@ public class TeleOpAtl extends OpMode {
         leftBack.setPower(leftBackPower);
         rightBack.setPower(rightBackPower);
 
+
         //lift & intake
-        lift.setPower(gamepad1.left_stick_y);
+        if (AutoLift){
+            if (gamepad2.a){
+                System.out.print("a is pressed");
+            }
+            if (gamepad2.b){
+                System.out.print("b is pressed");
+            }
+            if (gamepad2.x){
+                System.out.print("x is pressed");
+            }
+            if (gamepad2.y){
+                System.out.print("y is pressed");
+            }
+        } else {lift.setPower(gamepad2.left_stick_y);}
     }
 }
