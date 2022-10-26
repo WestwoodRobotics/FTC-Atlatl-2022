@@ -30,12 +30,20 @@ public class TeleOpAtl extends OpMode {
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
 
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         //Lift and intake hardware map
         lift = hardwareMap.get(DcMotor.class, "lift");
         intake = hardwareMap.get(Servo.class, "intake");
 
         lift.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(Servo.Direction.REVERSE);
+
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
     }
 
@@ -65,6 +73,6 @@ public class TeleOpAtl extends OpMode {
         rightBack.setPower(rightBackPower);
 
         //lift & intake
-        lift.setPower(0.1);
+        lift.setPower(gamepad1.left_stick_y);
     }
 }
