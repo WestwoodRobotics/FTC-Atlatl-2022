@@ -77,18 +77,26 @@ public class TeleOpAtl extends OpMode {
 
 
         //lift & intake
+        if (gamepad2.left_bumper){
+            while (gamepad2.left_bumper){
+                telemetry.addData("ERROR: ","LET GO OF THE LEFT BUMPER IDIOT");
+            }
+            AutoLift = !AutoLift;
+            telemetry.addData("autoLift: ", AutoLift);
+        }
+
         if (AutoLift){
             if (gamepad2.a){
-                System.out.print("a is pressed");
+                telemetry.addData("button A: ","pressed");
             }
             if (gamepad2.b){
-                System.out.print("b is pressed");
+                telemetry.addData("button B: ","pressed");
             }
             if (gamepad2.x){
-                System.out.print("x is pressed");
+                telemetry.addData("button X: ","pressed");
             }
             if (gamepad2.y){
-                System.out.print("y is pressed");
+                telemetry.addData("button Y: ","pressed");
             }
         } else {lift.setPower(gamepad2.left_stick_y);}
     }
