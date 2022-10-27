@@ -8,15 +8,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class TeleOpAtl extends OpMode {
     //wheels
-    DcMotor leftFront = null;
-    DcMotor rightFront = null;
-    DcMotor leftBack = null;
-    DcMotor rightBack = null;
+    public DcMotor leftFront = null;
+    public DcMotor rightFront = null;
+    public DcMotor leftBack = null;
+    public DcMotor rightBack = null;
 
 
     //lift and intake
-    DcMotor lift = null;
-    Servo intake = null;
+    public DcMotor lift = null;
+    public Servo intake = null;
     public boolean AutoLift = true;
 
 
@@ -46,7 +46,7 @@ public class TeleOpAtl extends OpMode {
         lift.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(Servo.Direction.REVERSE);
 
-        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
 
@@ -63,6 +63,12 @@ public class TeleOpAtl extends OpMode {
         double strafing = gamepad1.right_stick_x;
         double turn = gamepad1.left_stick_x;
 
+        //defining AutoLift buttons
+        boolean bottom;
+        boolean low;
+        boolean mid;
+        boolean high;
+
         //strafe equation
         leftFrontPower = (straight + strafing + turn);
         rightFrontPower = (straight - strafing - turn);
@@ -75,28 +81,54 @@ public class TeleOpAtl extends OpMode {
         leftBack.setPower(leftBackPower);
         rightBack.setPower(rightBackPower);
 
+        //AutoLift buttons
+        bottom = gamepad2.a;
+        low = gamepad2.b;
+        mid = gamepad2.x;
+        high = gamepad2.y;
+
 
         //lift & intake
+        if (AutoLift){
+            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }else{
+            lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
         if (gamepad2.left_bumper){
+            AutoLift = !AutoLift;
+            telemetry.addData("autoLift: ", AutoLift);
             while (gamepad2.left_bumper){
                 telemetry.addData("ERROR: ","LET GO OF THE LEFT BUMPER IDIOT");
             }
-            AutoLift = !AutoLift;
-            telemetry.addData("autoLift: ", AutoLift);
         }
 
         if (AutoLift){
-            if (gamepad2.a){
+            if (bottom){
                 telemetry.addData("button A: ","pressed");
+                while (gamepad2.a){
+                    telemetry.addData("ERROR: ","LET GO OF THE A BUTTON IDIOT");
+                }
             }
-            if (gamepad2.b){
+            if (low){
                 telemetry.addData("button B: ","pressed");
+                while (gamepad2.b){
+                    telemetry.addData("ERROR: ","LET GO OF THE B BUTTON IDIOT");
+                }
+
             }
-            if (gamepad2.x){
-                telemetry.addData("button X: ","pressed");
+            if (mid){
+                while (gamepad2.x){
+                    telemetry.addData("button X: ","pressed");
+                    telemetry.addData("ERROR: ","LET GO OF THE X BUTTON IDIOT");
+                }
             }
-            if (gamepad2.y){
+            if (high){
                 telemetry.addData("button Y: ","pressed");
+                while (gamepad2.y){
+                    telemetry.addData("ERROR: ","LET GO OF THE Y BUTTON IDIOT");
+                }
+
             }
         } else {lift.setPower(gamepad2.left_stick_y);}
     }

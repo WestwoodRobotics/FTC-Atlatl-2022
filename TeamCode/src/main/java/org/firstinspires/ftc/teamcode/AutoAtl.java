@@ -8,14 +8,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class AutoAtl extends OpMode {
     //wheels
-    DcMotor leftFront = null;
-    DcMotor rightFront = null;
-    DcMotor leftBack = null;
-    DcMotor rightBack = null;
+    public DcMotor leftFront = null;
+    public DcMotor rightFront = null;
+    public DcMotor leftBack = null;
+    public DcMotor rightBack = null;
 
     //lift and intake
-    DcMotor lift = null;
-    Servo intake = null;
+    public DcMotor lift = null;
+    public Servo intake = null;
 
     @Override
     public void init() {
