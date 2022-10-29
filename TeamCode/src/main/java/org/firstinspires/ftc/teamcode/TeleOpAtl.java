@@ -97,7 +97,7 @@ public class TeleOpAtl extends OpMode {
 
         if (gamepad2.left_bumper){
             AutoLift = !AutoLift;
-            telemetry.addData("autoLift: ", AutoLift);
+            telemetry.addData("auto lift: ", AutoLift);
             while (gamepad2.left_bumper){
                 telemetry.addData("ERROR: ","LET GO OF THE LEFT BUMPER IDIOT");
             }
