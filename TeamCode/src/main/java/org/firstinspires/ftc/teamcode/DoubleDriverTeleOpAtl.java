@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "TeleOpAtl")
 
-public class TeleOpAtl extends OpMode {
+public class DoubleDriverTeleOpAtl extends OpMode {
     //wheels
     public DcMotor leftFront = null;
     public DcMotor rightFront = null;
@@ -93,12 +93,11 @@ public class TeleOpAtl extends OpMode {
 
         //intake
         intake.setPosition(gamepad2.left_trigger);
-        intake.setPosition(0);
-        intake.setPosition(1);
 
         //telemetry
         telemetry.addData("lift position: ",liftPos);
-        telemetry.addData("servo state: ", 1);
+        telemetry.addData("servo state: ", intake.getPosition());
+        telemetry.update();
 
     }
 }
