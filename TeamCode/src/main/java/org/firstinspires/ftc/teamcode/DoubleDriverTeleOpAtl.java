@@ -18,6 +18,8 @@ public class DoubleDriverTeleOpAtl extends OpMode {
     public DcMotor lift = null;
     public Servo intake = null;
 
+    public boolean autoLift = false;
+
 
     @Override
     public void init() {
@@ -65,7 +67,7 @@ public class DoubleDriverTeleOpAtl extends OpMode {
         leftBackPower = (straight + strafing - turn);
         rightBackPower = (straight + strafing + turn);
 /*
-    test theese new equations
+    test these new equations
         leftFrontPower = (straight + strafing - turn);
         rightFrontPower = (straight - strafing + turn);
         leftBackPower = (straight - strafing - turn);
@@ -80,23 +82,51 @@ public class DoubleDriverTeleOpAtl extends OpMode {
 
         //lift
         double liftPos;
-
-        liftPos = lift.getCurrentPosition();
-        if (gamepad2.left_stick_y > 0){
-            if (liftPos < 500){
-                lift.setPower((gamepad2.left_stick_y) * 0.5);
+        if (!autoLift){
+            //lift limits
+            liftPos = lift.getCurrentPosition();
+            if (gamepad2.left_stick_y > 0){
+                if (liftPos < 500){
+                    lift.setPower((gamepad2.left_stick_y) * 0.5);
+                }
+            }else if (gamepad2.left_stick_y < 0)
+                if (liftPos > 10){
+                    lift.setPower((gamepad2.left_stick_y) * 0.5);
+                }
+            telemetry.addData("lift position: ",liftPos);
+        }else {
+            if (gamepad2.a){
+                lift.setTargetPosition(1);
+                lift.setPower(1);
             }
-        }else if (gamepad2.left_stick_y < 0)
-            if (liftPos > 10){
-                lift.setPower((gamepad2.left_stick_y) * 0.5);
+            if (gamepad2.b){
+                lift.setTargetPosition(1);
+                lift.setPower(1);
             }
+            if (gamepad2.x){
+                lift.setTargetPosition(1);
+                lift.setPower(1);
+            }
+            if (gamepad2.y){
+                lift.setTargetPosition(1);
+                lift.setPower(1);
+            }
+        }
 
+
+        if (gamepad2.dpad_down){
+            autoLift = false;
+        } else if (gamepad2.dpad_up){
+            autoLift = true;
+        }
+
+        telemetry.addData("Auto Lift: ",autoLift);
         //intake
         intake.setPosition(gamepad2.left_trigger);
-
-        //telemetry
-        telemetry.addData("lift position: ",liftPos);
         telemetry.addData("servo state: ", intake.getPosition());
+
+
+
         telemetry.update();
 
     }
