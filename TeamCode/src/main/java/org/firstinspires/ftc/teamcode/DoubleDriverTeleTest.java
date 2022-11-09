@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "TeleOpAtl")
 
-public class DoubleDriverTeleOpAtl extends OpMode {
+public class DoubleDriverTeleTest extends OpMode {
     //wheels
     public DcMotor leftFront = null;
     public DcMotor rightFront = null;
@@ -60,19 +60,19 @@ public class DoubleDriverTeleOpAtl extends OpMode {
         double strafing = gamepad1.right_stick_x;
         double turn = (gamepad1.left_stick_x * 0.7);
 
-
-        //strafe equation
+/*
+        // old strafe equation
         leftFrontPower = (straight - strafing - turn);
         rightFrontPower = (straight - strafing + turn);
         leftBackPower = (straight + strafing - turn);
         rightBackPower = (straight + strafing + turn);
-/*
-    test these new equations
+*/
+    // new equations
         leftFrontPower = (straight + strafing - turn);
         rightFrontPower = (straight - strafing + turn);
         leftBackPower = (straight - strafing - turn);
         rightBackPower = (straight + strafing + turn);
-*/
+
         //strafe chassis wheel move
         leftFront.setPower(leftFrontPower);
         rightFront.setPower(rightFrontPower);
@@ -96,19 +96,19 @@ public class DoubleDriverTeleOpAtl extends OpMode {
             telemetry.addData("lift position: ",liftPos);
         }else {
             if (gamepad2.a){
-                lift.setTargetPosition(1);
+                lift.setTargetPosition(50);
                 lift.setPower(1);
             }
             if (gamepad2.b){
-                lift.setTargetPosition(1);
+                lift.setTargetPosition(300);
                 lift.setPower(1);
             }
             if (gamepad2.x){
-                lift.setTargetPosition(1);
+                lift.setTargetPosition(500);
                 lift.setPower(1);
             }
             if (gamepad2.y){
-                lift.setTargetPosition(1);
+                lift.setTargetPosition(1000);
                 lift.setPower(1);
             }
         }
