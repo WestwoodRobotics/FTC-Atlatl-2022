@@ -37,9 +37,6 @@ public class TeleOpAtl extends OpMode {
         lift = hardwareMap.get(DcMotor.class, "lift");
         intake = hardwareMap.get(Servo.class, "intake");
 
-        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
         lift.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(Servo.Direction.REVERSE);
     }
@@ -59,17 +56,24 @@ public class TeleOpAtl extends OpMode {
         double rightBackPower;
 
         //giving controls a value to use for drive
+
         double straight = gamepad1.right_stick_y;
         double strafing = gamepad1.right_stick_x;
-        double turn = gamepad1.left_stick_x;
+        double turn = (gamepad1.left_stick_x * 0.7);
 
 
         //strafe equation
-        leftFrontPower = (straight + strafing + turn);
-        rightFrontPower = (straight - strafing - turn);
-        leftBackPower = (straight + strafing + turn);
-        rightBackPower = (straight - strafing - turn);
-
+        leftFrontPower = (straight - strafing - turn);
+        rightFrontPower = (straight - strafing + turn);
+        leftBackPower = (straight + strafing - turn);
+        rightBackPower = (straight + strafing + turn);
+/*
+    test theese new equations
+        leftFrontPower = (straight + strafing - turn);
+        rightFrontPower = (straight - strafing + turn);
+        leftBackPower = (straight - strafing - turn);
+        rightBackPower = (straight + strafing + turn);
+*/
         //strafe chassis wheel move
         leftFront.setPower(leftFrontPower);
         rightFront.setPower(rightFrontPower);
@@ -78,22 +82,7 @@ public class TeleOpAtl extends OpMode {
 
 
         //lift & intake
-        if (gamepad2.a){
-            lift.setTargetPosition(20);
-            lift.setPower(0.3);
-        }
-        if (gamepad2.b){
-            lift.setTargetPosition(100);
-            lift.setPower(0.3);
-        }
-        if (gamepad2.x){
-            lift.setTargetPosition(200);
-            lift.setPower(0.3);
-        }
-        if (gamepad2.y){
-            lift.setTargetPosition(300);
-            lift.setPower(0.3);
-        }
+        lift.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 0.5);
 
     }
 }
