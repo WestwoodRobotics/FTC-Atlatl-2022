@@ -100,7 +100,8 @@ public class SoloDriverTeleOpAtl extends OpMode {
 
         //telemetry
         telemetry.addData("lift position: ",liftPos);
-        telemetry.addData("servo state: ", 1);
+        telemetry.addData("servo state: ", intake.getPosition());
+        telemetry.update();
 
     }
 }
