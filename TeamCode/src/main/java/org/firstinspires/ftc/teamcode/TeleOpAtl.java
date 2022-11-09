@@ -39,16 +39,13 @@ public class TeleOpAtl extends OpMode {
 
         lift.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(Servo.Direction.REVERSE);
+
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 
     @Override
     public void loop() {
-        if (gamepad1.left_stick_x != 0){
-            telemetry.addData("test",1);
-            telemetry.update();
-        }
-
         //defining Wheel power
         double leftFrontPower;
         double rightFrontPower;
@@ -81,8 +78,27 @@ public class TeleOpAtl extends OpMode {
         rightBack.setPower(rightBackPower);
 
 
-        //lift & intake
-        lift.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 0.5);
+        //lift
+        double liftPos;
+
+        liftPos = lift.getCurrentPosition();
+        if (gamepad2.left_stick_y > 0){
+            if (liftPos < 500){
+                lift.setPower((gamepad2.left_stick_y) * 0.5);
+            }
+        }else if (gamepad2.left_stick_y < 0)
+            if (liftPos > 10){
+                lift.setPower((gamepad2.left_stick_y) * 0.5);
+            }
+
+        //intake
+        intake.setPosition(gamepad2.left_trigger);
+        intake.setPosition(0);
+        intake.setPosition(1);
+
+        //telemetry
+        telemetry.addData("lift position: ",liftPos);
+        telemetry.addData("servo state: ", 1);
 
     }
 }
