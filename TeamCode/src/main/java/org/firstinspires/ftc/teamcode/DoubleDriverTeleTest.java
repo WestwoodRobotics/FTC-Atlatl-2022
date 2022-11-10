@@ -60,14 +60,14 @@ public class DoubleDriverTeleTest extends OpMode {
         double strafing = gamepad1.right_stick_x;
         double turn = (gamepad1.left_stick_x * 0.7);
 
-/*
-        // old strafe equation
+
+  /*      //strafe equation
         leftFrontPower = (straight - strafing - turn);
         rightFrontPower = (straight - strafing + turn);
         leftBackPower = (straight + strafing - turn);
         rightBackPower = (straight + strafing + turn);
 */
-    // new equations
+        //new equation
         leftFrontPower = (straight + strafing - turn);
         rightFrontPower = (straight - strafing + turn);
         leftBackPower = (straight - strafing - turn);
@@ -96,19 +96,19 @@ public class DoubleDriverTeleTest extends OpMode {
             telemetry.addData("lift position: ",liftPos);
         }else {
             if (gamepad2.a){
-                lift.setTargetPosition(50);
+                lift.setTargetPosition(1);
                 lift.setPower(1);
             }
             if (gamepad2.b){
-                lift.setTargetPosition(300);
+                lift.setTargetPosition(1);
                 lift.setPower(1);
             }
             if (gamepad2.x){
-                lift.setTargetPosition(500);
+                lift.setTargetPosition(1);
                 lift.setPower(1);
             }
             if (gamepad2.y){
-                lift.setTargetPosition(1000);
+                lift.setTargetPosition(1);
                 lift.setPower(1);
             }
         }
@@ -117,6 +117,12 @@ public class DoubleDriverTeleTest extends OpMode {
             autoLift = false;
         } else if (gamepad2.dpad_up){
             autoLift = true;
+        }
+        //intake
+        if (gamepad1.left_bumper){
+            intake.setPosition(1);
+        }else if (gamepad1.right_bumper){
+            intake.setPosition(0);
         }
 
         telemetry.addData("Auto Lift: ",autoLift);
