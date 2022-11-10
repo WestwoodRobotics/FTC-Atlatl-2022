@@ -118,6 +118,12 @@ public class DoubleDriverTeleOpAtl extends OpMode {
         } else if (gamepad2.dpad_up){
             autoLift = true;
         }
+        //intake
+        if (gamepad1.left_bumper){
+            intake.setPosition(1);
+        }else if (gamepad1.right_bumper){
+            intake.setPosition(0);
+        }
 
         telemetry.addData("Auto Lift: ",autoLift);
         //intake
