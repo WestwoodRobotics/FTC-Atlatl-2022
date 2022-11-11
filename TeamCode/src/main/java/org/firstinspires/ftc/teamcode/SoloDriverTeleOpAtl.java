@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "TeleOpAtl")
+@TeleOp(name = "TeleOpAtlSolo")
 
 public class SoloDriverTeleOpAtl extends OpMode {
     //wheels
@@ -60,17 +60,11 @@ public class SoloDriverTeleOpAtl extends OpMode {
 
 
         //strafe equation
-        leftFrontPower = (straight - strafing - turn);
-        rightFrontPower = (straight - strafing + turn);
-        leftBackPower = (straight + strafing - turn);
-        rightBackPower = (straight + strafing + turn);
-/*
-    test theese new equations
         leftFrontPower = (straight + strafing - turn);
         rightFrontPower = (straight - strafing + turn);
         leftBackPower = (straight - strafing - turn);
         rightBackPower = (straight + strafing + turn);
-*/
+
         //strafe chassis wheel move
         leftFront.setPower(leftFrontPower);
         rightFront.setPower(rightFrontPower);
