@@ -43,6 +43,7 @@ public class DoubleDriverTeleOpAtl extends OpMode {
         intake.setDirection(Servo.Direction.REVERSE);
 
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
 
@@ -62,10 +63,10 @@ public class DoubleDriverTeleOpAtl extends OpMode {
 
 
         //strafe equation
-        leftFrontPower = (straight + strafing - turn);
-        rightFrontPower = (straight - strafing + turn);
-        leftBackPower = (straight - strafing - turn);
-        rightBackPower = (straight + strafing + turn);
+        leftFrontPower = (straight - strafing - turn);
+        rightFrontPower = (straight + strafing + turn);
+        leftBackPower = (straight + strafing - turn);
+        rightBackPower = (straight - strafing + turn);
 
         //strafe chassis wheel move
         leftFront.setPower(leftFrontPower);
@@ -91,20 +92,38 @@ public class DoubleDriverTeleOpAtl extends OpMode {
         }else {
             if (gamepad2.a){
                 lift.setTargetPosition(1);
-                lift.setPower(1);
+                if (lift.getCurrentPosition() > 1){
+                    lift.setPower(-0.5);
+                }else{
+                    lift.setPower(0.5);
+                }
+
             }
             if (gamepad2.b){
                 lift.setTargetPosition(1);
-                lift.setPower(1);
+                if (lift.getCurrentPosition() > 1){
+                    lift.setPower(-0.5);
+                }else{
+                    lift.setPower(0.5);
+                }
             }
             if (gamepad2.x){
                 lift.setTargetPosition(1);
-                lift.setPower(1);
+                if (lift.getCurrentPosition() > 1){
+                    lift.setPower(-0.5);
+                }else{
+                    lift.setPower(0.5);
+                }
             }
             if (gamepad2.y){
                 lift.setTargetPosition(1);
-                lift.setPower(1);
+                if (lift.getCurrentPosition() > 1){
+                    lift.setPower(-0.5);
+                }else{
+                    lift.setPower(0.5);
+                }
             }
+            telemetry.addData("lift position: ", lift.getCurrentPosition());
         }
 
         if (gamepad2.dpad_down){

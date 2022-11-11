@@ -12,7 +12,7 @@ public class SoloDriverTeleOpAtl extends OpMode {
     public DcMotor rightFront = null;
     public DcMotor leftBack = null;
     public DcMotor rightBack = null;
-
+    public double liftPos;
 
     //lift and intake
     public DcMotor lift = null;
@@ -40,6 +40,7 @@ public class SoloDriverTeleOpAtl extends OpMode {
         lift.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(Servo.Direction.REVERSE);
 
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
@@ -60,10 +61,10 @@ public class SoloDriverTeleOpAtl extends OpMode {
 
 
         //strafe equation
-        leftFrontPower = (straight + strafing - turn);
-        rightFrontPower = (straight - strafing + turn);
-        leftBackPower = (straight - strafing - turn);
-        rightBackPower = (straight + strafing + turn);
+        leftFrontPower = (straight - strafing - turn);
+        rightFrontPower = (straight + strafing + turn);
+        leftBackPower = (straight + strafing - turn);
+        rightBackPower = (straight - strafing + turn);
 
         //strafe chassis wheel move
         leftFront.setPower(leftFrontPower);
@@ -73,17 +74,27 @@ public class SoloDriverTeleOpAtl extends OpMode {
 
 
         //lift
-        double liftPos;
 
         liftPos = lift.getCurrentPosition();
-        if (gamepad1.left_trigger>0){
-            if (liftPos < 500){
-                lift.setPower((gamepad1.left_trigger) * 0.5);
+        telemetry.addData("e",-gamepad1.left_trigger + gamepad1.right_trigger);
+        if ((-gamepad1.left_trigger + gamepad1.right_trigger)>0){
+
+            if (liftPos<2000){
+                telemetry.addData("on",2);
+                lift.setPower(-gamepad1.left_trigger + gamepad1.right_trigger);
             }
-        }else if (gamepad1.right_trigger>0)
-            if (liftPos > 10){
-                lift.setPower((gamepad1.right_trigger) * 0.5);
+
+        }
+        else if ((-gamepad1.left_trigger + gamepad1.right_trigger)<0){
+
+            if (liftPos>20) {
+                telemetry.addData("on", 1);
+                lift.setPower(-gamepad1.left_trigger + gamepad1.right_trigger);
             }
+        }
+        else {
+            lift.setPower(0);
+        }
 
         //intake
         if (gamepad1.left_bumper){
