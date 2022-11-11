@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -24,10 +25,10 @@ public class DoubleDriverTeleOpAtl extends OpMode {
     @Override
     public void init() {
         //wheel motor hardware map
-        leftFront = hardwareMap.get(DcMotor.class,"leftFront");
-        rightFront = hardwareMap.get(DcMotor.class,"rightFront");
-        leftBack = hardwareMap.get(DcMotor.class,"leftBack");
-        rightBack = hardwareMap.get(DcMotor.class,"rightBack");
+        leftFront = hardwareMap.get(DcMotor.class, "leftFront");
+        rightFront = hardwareMap.get(DcMotor.class, "rightFront");
+        leftBack = hardwareMap.get(DcMotor.class, "leftBack");
+        rightBack = hardwareMap.get(DcMotor.class, "rightBack");
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
@@ -42,6 +43,7 @@ public class DoubleDriverTeleOpAtl extends OpMode {
         lift.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(Servo.Direction.REVERSE);
 
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
@@ -62,10 +64,10 @@ public class DoubleDriverTeleOpAtl extends OpMode {
 
 
         //strafe equation
-        leftFrontPower = (straight + strafing - turn);
-        rightFrontPower = (straight - strafing + turn);
-        leftBackPower = (straight - strafing - turn);
-        rightBackPower = (straight + strafing + turn);
+        leftFrontPower = (straight - strafing - turn);
+        rightFrontPower = (straight + strafing + turn);
+        leftBackPower = (straight + strafing - turn);
+        rightBackPower = (straight - strafing + turn);
 
         //strafe chassis wheel move
         leftFront.setPower(leftFrontPower);
@@ -76,50 +78,90 @@ public class DoubleDriverTeleOpAtl extends OpMode {
 
         //lift
         double liftPos;
-        if (!autoLift){
+        if (!autoLift) {
             //lift limits
             liftPos = lift.getCurrentPosition();
-            if (gamepad2.left_stick_y > 0){
-                if (liftPos < 500){
-                    lift.setPower((gamepad2.left_stick_y) * 0.5);
+            telemetry.addData("e", -gamepad1.left_trigger + gamepad1.right_trigger);
+            if ((-gamepad1.left_trigger + gamepad1.right_trigger) > 0) {
+
+                if (liftPos < 2000) {
+                    telemetry.addData("on", 2);
+                    lift.setPower(-gamepad1.left_trigger + gamepad1.right_trigger);
+                } else {
+                    lift.setPower(0);
                 }
-            }else if (gamepad2.left_stick_y < 0)
-                if (liftPos > 10){
-                    lift.setPower((gamepad2.left_stick_y) * 0.5);
+
+            } else if ((-gamepad1.left_trigger + gamepad1.right_trigger) < 0) {
+                if (liftPos > 20) {
+                    telemetry.addData("on", 1);
+                    lift.setPower(-gamepad1.left_trigger + gamepad1.right_trigger);
+                } else {
+                    lift.setPower(0);
                 }
-            telemetry.addData("lift position: ",liftPos);
-        }else {
-            if (gamepad2.a){
-                lift.setTargetPosition(1);
-                lift.setPower(1);
+            } else {
+                lift.setPower(0);
             }
-            if (gamepad2.b){
-                lift.setTargetPosition(1);
-                lift.setPower(1);
+
+            //intake
+            if (gamepad1.left_bumper) {
+                intake.setPosition(1);
+            } else if (gamepad1.right_bumper) {
+                intake.setPosition(0);
             }
-            if (gamepad2.x){
+            telemetry.addData("lift position: ", liftPos);
+
+
+        } else {
+            if (gamepad2.a) {
                 lift.setTargetPosition(1);
-                lift.setPower(1);
+                if (lift.getCurrentPosition() > 1) {
+                    lift.setPower(-0.5);
+                } else {
+                    lift.setPower(0.5);
+                }
+
             }
-            if (gamepad2.y){
+            if (gamepad2.b) {
                 lift.setTargetPosition(1);
-                lift.setPower(1);
+                if (lift.getCurrentPosition() > 1) {
+                    lift.setPower(-0.5);
+                } else {
+                    lift.setPower(0.5);
+                }
             }
+            if (gamepad2.x) {
+                lift.setTargetPosition(1);
+                if (lift.getCurrentPosition() > 1) {
+                    lift.setPower(-0.5);
+                } else {
+                    lift.setPower(0.5);
+                }
+            }
+            if (gamepad2.y) {
+                lift.setTargetPosition(1);
+                if (lift.getCurrentPosition() > 1) {
+                    lift.setPower(-0.5);
+                } else {
+                    lift.setPower(0.5);
+                }
+            }
+            telemetry.addData("lift position: ", lift.getCurrentPosition());
         }
 
-        if (gamepad2.dpad_down){
+        if (gamepad2.dpad_down) {
             autoLift = false;
-        } else if (gamepad2.dpad_up){
+        } else if (gamepad2.dpad_up) {
             autoLift = true;
         }
+
         //intake
-        if (gamepad1.left_bumper){
+        if (gamepad1.left_bumper) {
             intake.setPosition(1);
-        }else if (gamepad1.right_bumper){
+        } else if (gamepad1.right_bumper) {
             intake.setPosition(0);
         }
 
-        telemetry.addData("Auto Lift: ",autoLift);
+        telemetry.addData("Auto Lift: ", autoLift);
         //intake
         intake.setPosition(gamepad2.left_trigger);
         telemetry.addData("servo state: ", intake.getPosition());

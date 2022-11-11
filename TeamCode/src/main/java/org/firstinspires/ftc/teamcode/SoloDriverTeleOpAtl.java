@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,7 +13,7 @@ public class SoloDriverTeleOpAtl extends OpMode {
     public DcMotor rightFront = null;
     public DcMotor leftBack = null;
     public DcMotor rightBack = null;
-
+    public double liftPos;
 
     //lift and intake
     public DcMotor lift = null;
@@ -22,10 +23,10 @@ public class SoloDriverTeleOpAtl extends OpMode {
     @Override
     public void init() {
         //wheel motor hardware map
-        leftFront = hardwareMap.get(DcMotor.class,"leftFront");
-        rightFront = hardwareMap.get(DcMotor.class,"rightFront");
-        leftBack = hardwareMap.get(DcMotor.class,"leftBack");
-        rightBack = hardwareMap.get(DcMotor.class,"rightBack");
+        leftFront = hardwareMap.get(DcMotor.class, "leftFront");
+        rightFront = hardwareMap.get(DcMotor.class, "rightFront");
+        leftBack = hardwareMap.get(DcMotor.class, "leftBack");
+        rightBack = hardwareMap.get(DcMotor.class, "rightBack");
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
@@ -40,6 +41,7 @@ public class SoloDriverTeleOpAtl extends OpMode {
         lift.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(Servo.Direction.REVERSE);
 
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
@@ -60,10 +62,10 @@ public class SoloDriverTeleOpAtl extends OpMode {
 
 
         //strafe equation
-        leftFrontPower = (straight + strafing - turn);
-        rightFrontPower = (straight - strafing + turn);
-        leftBackPower = (straight - strafing - turn);
-        rightBackPower = (straight + strafing + turn);
+        leftFrontPower = (straight - strafing - turn);
+        rightFrontPower = (straight + strafing + turn);
+        leftBackPower = (straight + strafing - turn);
+        rightBackPower = (straight - strafing + turn);
 
         //strafe chassis wheel move
         leftFront.setPower(leftFrontPower);
@@ -73,27 +75,38 @@ public class SoloDriverTeleOpAtl extends OpMode {
 
 
         //lift
-        double liftPos;
 
         liftPos = lift.getCurrentPosition();
-        if (gamepad1.left_trigger>0){
-            if (liftPos < 500){
-                lift.setPower((gamepad1.left_trigger) * 0.5);
-            }
-        }else if (gamepad1.right_trigger>0)
-            if (liftPos > 10){
-                lift.setPower((gamepad1.right_trigger) * 0.5);
+        telemetry.addData("Lift Power: ", -gamepad1.left_trigger + gamepad1.right_trigger);
+        if ((-gamepad1.left_trigger + gamepad1.right_trigger) > 0) {
+
+            if (liftPos < 2000) {
+                telemetry.addData("lift dir: ", "up");
+                lift.setPower(-gamepad1.left_trigger + gamepad1.right_trigger);
+            } else {
+                lift.setPower(0);
             }
 
+        } else if ((-gamepad1.left_trigger + gamepad1.right_trigger) < 0) {
+            if (liftPos > 20) {
+                telemetry.addData("lift dir:", "down");
+                lift.setPower(-gamepad1.left_trigger + gamepad1.right_trigger);
+            } else {
+                lift.setPower(0);
+            }
+        } else {
+            lift.setPower(0);
+        }
+
         //intake
-        if (gamepad1.left_bumper){
+        if (gamepad1.left_bumper) {
             intake.setPosition(1);
-        }else if (gamepad1.right_bumper){
+        } else if (gamepad1.right_bumper) {
             intake.setPosition(0);
         }
 
         //telemetry
-        telemetry.addData("lift position: ",liftPos);
+        telemetry.addData("lift position: ", liftPos);
         telemetry.addData("servo state: ", intake.getPosition());
         telemetry.update();
 
