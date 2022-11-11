@@ -13,6 +13,7 @@ public class DoubleDriverTeleOpAtl extends OpMode {
     public DcMotor rightFront = null;
     public DcMotor leftBack = null;
     public DcMotor rightBack = null;
+    public double liftPos = 0 ;
 
 
     //lift and intake
@@ -77,24 +78,23 @@ public class DoubleDriverTeleOpAtl extends OpMode {
 
 
         //lift
-        double liftPos;
         if (!autoLift) {
             //lift limits
             liftPos = lift.getCurrentPosition();
-            telemetry.addData("e", -gamepad1.left_trigger + gamepad1.right_trigger);
-            if ((-gamepad1.left_trigger + gamepad1.right_trigger) > 0) {
+            telemetry.addData("lift Power: ", -gamepad2.left_trigger + gamepad2.right_trigger);
+            if ((-gamepad2.left_trigger + gamepad2.right_trigger) > 0) {
 
                 if (liftPos < 2000) {
-                    telemetry.addData("on", 2);
-                    lift.setPower(-gamepad1.left_trigger + gamepad1.right_trigger);
+                    telemetry.addData("lift dir: ", "up");
+                    lift.setPower(-gamepad2.left_trigger + gamepad2.right_trigger);
                 } else {
                     lift.setPower(0);
                 }
 
-            } else if ((-gamepad1.left_trigger + gamepad1.right_trigger) < 0) {
+            } else if ((-gamepad2.left_trigger + gamepad2.right_trigger) < 0) {
                 if (liftPos > 20) {
-                    telemetry.addData("on", 1);
-                    lift.setPower(-gamepad1.left_trigger + gamepad1.right_trigger);
+                    telemetry.addData("lift dir: ", "down");
+                    lift.setPower(-gamepad2.left_trigger + gamepad2.right_trigger);
                 } else {
                     lift.setPower(0);
                 }
@@ -103,15 +103,16 @@ public class DoubleDriverTeleOpAtl extends OpMode {
             }
 
             //intake
-            if (gamepad1.left_bumper) {
+            if (gamepad2.left_bumper) {
                 intake.setPosition(1);
-            } else if (gamepad1.right_bumper) {
+            } else if (gamepad2.right_bumper) {
                 intake.setPosition(0);
             }
             telemetry.addData("lift position: ", liftPos);
 
 
         } else {
+            //auto lift
             if (gamepad2.a) {
                 lift.setTargetPosition(1);
                 if (lift.getCurrentPosition() > 1) {
@@ -120,8 +121,21 @@ public class DoubleDriverTeleOpAtl extends OpMode {
                     lift.setPower(0.5);
                 }
 
-            }
-            if (gamepad2.b) {
+            }else if (gamepad2.b) {
+                lift.setTargetPosition(1);
+                if (lift.getCurrentPosition() > 1) {
+                    lift.setPower(-0.5);
+                } else {
+                    lift.setPower(0.5);
+                }
+            }else if (gamepad2.x) {
+                lift.setTargetPosition(1);
+                if (lift.getCurrentPosition() > 1) {
+                    lift.setPower(-0.5);
+                } else {
+                    lift.setPower(0.5);
+                }
+            }else if (gamepad2.y) {
                 lift.setTargetPosition(1);
                 if (lift.getCurrentPosition() > 1) {
                     lift.setPower(-0.5);
@@ -129,22 +143,7 @@ public class DoubleDriverTeleOpAtl extends OpMode {
                     lift.setPower(0.5);
                 }
             }
-            if (gamepad2.x) {
-                lift.setTargetPosition(1);
-                if (lift.getCurrentPosition() > 1) {
-                    lift.setPower(-0.5);
-                } else {
-                    lift.setPower(0.5);
-                }
-            }
-            if (gamepad2.y) {
-                lift.setTargetPosition(1);
-                if (lift.getCurrentPosition() > 1) {
-                    lift.setPower(-0.5);
-                } else {
-                    lift.setPower(0.5);
-                }
-            }
+
             telemetry.addData("lift position: ", lift.getCurrentPosition());
         }
 
