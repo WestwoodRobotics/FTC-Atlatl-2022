@@ -45,7 +45,7 @@ public class SoloDriverTeleOpAtl extends OpMode {
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        intake.setPosition(1);
+        intake.setPosition(0.7);
     }
 
 
