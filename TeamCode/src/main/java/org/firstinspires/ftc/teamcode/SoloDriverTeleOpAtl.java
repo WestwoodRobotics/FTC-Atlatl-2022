@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "TeleOpAtlSolo")
+@TeleOp(name = "ToggleTest")
 
 public class SoloDriverTeleOpAtl extends OpMode {
     //wheels

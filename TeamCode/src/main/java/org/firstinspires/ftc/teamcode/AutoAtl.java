@@ -25,9 +25,9 @@ public class AutoAtl extends OpMode {
         leftBack = hardwareMap.get(DcMotor.class,"leftBack");
         rightBack = hardwareMap.get(DcMotor.class,"rightBack");
 
-        leftFront.setDirection(DcMotor.Direction.FORWARD);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
-        leftBack.setDirection(DcMotor.Direction.FORWARD);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -47,6 +47,16 @@ public class AutoAtl extends OpMode {
 
     @Override
     public void loop() {
+        leftFront.setTargetPosition(300);
+        rightFront.setTargetPosition(300);
+        leftBack.setTargetPosition(300);
+        rightBack.setTargetPosition(300);
+
+        leftFront.setPower(1);
+        rightFront.setPower(1);
+        leftBack.setPower(1);
+        rightBack.setPower(1);
+
 
     }
 }
