@@ -43,6 +43,9 @@ public class SoloDriverTeleOpAtl extends OpMode {
 
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        intake.setPosition(1);
     }
 
 
@@ -80,17 +83,17 @@ public class SoloDriverTeleOpAtl extends OpMode {
         telemetry.addData("Lift Power: ", -gamepad1.left_trigger + gamepad1.right_trigger);
         if ((-gamepad1.left_trigger + gamepad1.right_trigger) > 0) {
 
-            if (liftPos < 2000) {
+            if (liftPos < 3400) {
                 telemetry.addData("lift dir: ", "up");
-                lift.setPower(-gamepad1.left_trigger + gamepad1.right_trigger);
+                lift.setPower((-gamepad1.left_trigger + gamepad1.right_trigger));
             } else {
                 lift.setPower(0);
             }
 
-        } else if ((-gamepad1.left_trigger + gamepad1.right_trigger) < 0) {
-            if (liftPos > 20) {
+        } else if ((-gamepad1.left_trigger + gamepad1.right_trigger) < 150) {
+            if (liftPos > 0) {
                 telemetry.addData("lift dir:", "down");
-                lift.setPower(-gamepad1.left_trigger + gamepad1.right_trigger);
+                lift.setPower((-gamepad1.left_trigger + gamepad1.right_trigger));
             } else {
                 lift.setPower(0);
             }
@@ -99,10 +102,11 @@ public class SoloDriverTeleOpAtl extends OpMode {
         }
 
         //intake
+
         if (gamepad1.left_bumper) {
             intake.setPosition(1);
-        } else if (gamepad1.right_bumper) {
-            intake.setPosition(0);
+        } else if (gamepad1.right_bumper){
+            intake.setPosition(0.7);
         }
 
         //telemetry
