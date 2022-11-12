@@ -71,10 +71,19 @@ public class SoloDriverTeleOpAtl extends OpMode {
         rightBackPower = (straight - strafing + turn);
 
         //strafe chassis wheel move
-        leftFront.setPower(leftFrontPower);
-        rightFront.setPower(rightFrontPower);
-        leftBack.setPower(leftBackPower);
-        rightBack.setPower(rightBackPower);
+        if (liftPos>1500){
+            leftFront.setPower(leftFrontPower * 0.5);
+            rightFront.setPower(rightFrontPower * 0.5);
+            leftBack.setPower(leftBackPower * 0.5);
+            rightBack.setPower(rightBackPower * 0.5);
+        }else{
+            leftFront.setPower(leftFrontPower);
+            rightFront.setPower(rightFrontPower);
+            leftBack.setPower(leftBackPower);
+            rightBack.setPower(rightBackPower);
+        }
+
+
 
 
         //lift
