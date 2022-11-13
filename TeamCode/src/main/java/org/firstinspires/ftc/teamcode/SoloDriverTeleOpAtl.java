@@ -92,7 +92,7 @@ public class SoloDriverTeleOpAtl extends OpMode {
         telemetry.addData("Lift Power: ", -gamepad1.left_trigger + gamepad1.right_trigger);
         if ((-gamepad1.left_trigger + gamepad1.right_trigger) > 0) {
 
-            if (liftPos < 3400) {
+            if (liftPos < 3500) {
                 telemetry.addData("lift dir: ", "up");
                 lift.setPower((-gamepad1.left_trigger + gamepad1.right_trigger));
             } else {

@@ -46,8 +46,7 @@ public class IntakeToggleTest extends OpMode {
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        intake.setPosition(0.7);
+        
     }
 
 
@@ -114,10 +113,10 @@ public class IntakeToggleTest extends OpMode {
 
         //intake
         if ((gamepad1.left_bumper || gamepad1.right_bumper) && counter == 0) {
-            if (intake.getPosition()==0.7) {
+            if (intake.getPosition()==0.76) {
                 intake.setPosition(1);
             } else {
-                intake.setPosition(0.7);
+                intake.setPosition(0.76);
             }
             counter++;
         }
