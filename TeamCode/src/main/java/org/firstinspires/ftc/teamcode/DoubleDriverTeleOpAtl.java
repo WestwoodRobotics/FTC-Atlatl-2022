@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "DoNotUse")
+@TeleOp(name = "TeleOpAtlSolo")
 
 public class DoubleDriverTeleOpAtl extends OpMode {
     //wheels
@@ -13,14 +13,17 @@ public class DoubleDriverTeleOpAtl extends OpMode {
     public DcMotor rightFront = null;
     public DcMotor leftBack = null;
     public DcMotor rightBack = null;
-    public double liftPos = 0 ;
-
+    public double liftPos;
 
     //lift and intake
     public DcMotor lift = null;
     public Servo intake = null;
 
+    public int intakePressed = 0;
     public boolean autoLift = false;
+    public double liftPower;
+    public int liftTarget = 0;
+    public int dpadPressed  = 0;
 
 
     @Override
@@ -46,125 +49,133 @@ public class DoubleDriverTeleOpAtl extends OpMode {
 
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
     }
 
 
     @Override
     public void loop() {
-        //defining Wheel power
-        double leftFrontPower;
-        double rightFrontPower;
-        double leftBackPower;
-        double rightBackPower;
+        //drive chassis
+        {
+            //defining Wheel power
+            double leftFrontPower;
+            double rightFrontPower;
+            double leftBackPower;
+            double rightBackPower;
 
-        //giving controls a value to use for drive
+            //giving controls a value to use for drive
 
-        double straight = gamepad1.right_stick_y;
-        double strafing = gamepad1.right_stick_x;
-        double turn = (gamepad1.left_stick_x * 0.7);
+            double straight = gamepad1.right_stick_y;
+            double strafing = gamepad1.right_stick_x;
+            double turn = (gamepad1.left_stick_x * 0.7);
 
+            //strafe equation
+            leftFrontPower = (straight - strafing - turn);
+            rightFrontPower = (straight + strafing + turn);
+            leftBackPower = (straight + strafing - turn);
+            rightBackPower = (straight - strafing + turn);
 
-        //strafe equation
-        leftFrontPower = (straight - strafing - turn);
-        rightFrontPower = (straight + strafing + turn);
-        leftBackPower = (straight + strafing - turn);
-        rightBackPower = (straight - strafing + turn);
-
-        //strafe chassis wheel move
-        leftFront.setPower(leftFrontPower);
-        rightFront.setPower(rightFrontPower);
-        leftBack.setPower(leftBackPower);
-        rightBack.setPower(rightBackPower);
-
-
-        //lift
-        if (!autoLift) {
-            //lift limits
-            liftPos = lift.getCurrentPosition();
-            telemetry.addData("lift Power: ", -gamepad2.left_trigger + gamepad2.right_trigger);
-            if ((-gamepad2.left_trigger + gamepad2.right_trigger) > 0) {
-
-                if (liftPos < 2000) {
-                    telemetry.addData("lift dir: ", "up");
-                    lift.setPower(-gamepad2.left_trigger + gamepad2.right_trigger);
-                } else {
-                    lift.setPower(0);
-                }
-
-            } else if ((-gamepad2.left_trigger + gamepad2.right_trigger) < 0) {
-                if (liftPos > 20) {
-                    telemetry.addData("lift dir: ", "down");
-                    lift.setPower(-gamepad2.left_trigger + gamepad2.right_trigger);
-                } else {
-                    lift.setPower(0);
-                }
+            //strafe chassis wheel move
+            if (liftPos > 1500) {
+                leftFront.setPower(leftFrontPower * 0.5);
+                rightFront.setPower(rightFrontPower * 0.5);
+                leftBack.setPower(leftBackPower * 0.5);
+                rightBack.setPower(rightBackPower * 0.5);
             } else {
+                leftFront.setPower(leftFrontPower);
+                rightFront.setPower(rightFrontPower);
+                leftBack.setPower(leftBackPower);
+                rightBack.setPower(rightBackPower);
+            }
+
+        }
+
+        //liftPos variable
+        liftPos = lift.getCurrentPosition();
+
+        //autoLift switcher
+        {
+            if ((gamepad2.dpad_down) && dpadPressed == 0) {
+                autoLift = !autoLift;
+                dpadPressed++;
+            }
+            if (!(gamepad2.dpad_down) && dpadPressed > 0) {
+                dpadPressed = 0;
+            }
+        }
+        //lift power and position set
+        {
+            if (autoLift) {
+                lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                if (gamepad2.a) {
+                    liftTarget = 0;
+                }
+                if (gamepad2.b) {
+                    liftTarget = 0;
+                }
+                if (gamepad2.x) {
+                    liftTarget = 0;
+                }
+                if (gamepad2.y) {
+                    liftTarget = 0;
+                }
+                lift.setTargetPosition(liftTarget);
+
+                if (liftPos > liftTarget+25) {
+                    lift.setPower(1);
+                } else if (liftPos < liftTarget-25) {
+                    lift.setPower(1);
+                }
+
+            } else {
+                //manual lift
                 lift.setPower(0);
-            }
-
-            //intake
-            if (gamepad2.left_bumper) {
-                intake.setPosition(1);
-            } else if (gamepad2.right_bumper) {
-                intake.setPosition(0);
-            }
-            telemetry.addData("lift position: ", liftPos);
+                lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-        } else {
-            //auto lift
-            if (gamepad2.a) {
-                lift.setTargetPosition(1);
-                if (lift.getCurrentPosition() > 1) {
-                    lift.setPower(-0.5);
-                } else {
-                    lift.setPower(0.5);
-                }
+                liftPower = (-gamepad2.left_trigger + gamepad2.right_trigger);
+                telemetry.addData("Lift Power: ", liftPower);
+                //going up
+                if (liftPower > 0) {
+                    if (liftPos < 3400) {
+                        telemetry.addData("lift dir: ", "up");
+                        lift.setPower(liftPower);
+                    } else {
+                        lift.setPower(0);
+                    }
 
-            }else if (gamepad2.b) {
-                lift.setTargetPosition(1);
-                if (lift.getCurrentPosition() > 1) {
-                    lift.setPower(-0.5);
+                } else if (liftPower < 0) {
+                    if (liftPos > 100) {
+                        telemetry.addData("lift dir:", "down");
+                        lift.setPower(liftPower);
+                    } else {
+                        lift.setPower(0);
+                    }
                 } else {
-                    lift.setPower(0.5);
-                }
-            }else if (gamepad2.x) {
-                lift.setTargetPosition(1);
-                if (lift.getCurrentPosition() > 1) {
-                    lift.setPower(-0.5);
-                } else {
-                    lift.setPower(0.5);
-                }
-            }else if (gamepad2.y) {
-                lift.setTargetPosition(1);
-                if (lift.getCurrentPosition() > 1) {
-                    lift.setPower(-0.5);
-                } else {
-                    lift.setPower(0.5);
+                    lift.setPower(0);
                 }
             }
-
-            telemetry.addData("lift position: ", lift.getCurrentPosition());
-        }
-
-        if (gamepad2.dpad_down) {
-            autoLift = false;
-        } else if (gamepad2.dpad_up) {
-            autoLift = true;
         }
 
         //intake
-        if (gamepad1.left_bumper) {
-            intake.setPosition(1);
-        } else if (gamepad1.right_bumper) {
-            intake.setPosition(0);
+        {
+            if ((gamepad2.left_bumper || gamepad2.right_bumper) && intakePressed == 0) {
+                if (intake.getPosition() == 0.76) {
+                    intake.setPosition(1);
+                } else {
+                    intake.setPosition(0.76);
+                }
+                intakePressed++;
+            }
+            if ((!gamepad2.left_bumper && !gamepad2.right_bumper) && intakePressed > 0) {
+                intakePressed = 0;
+            }
         }
-
-        telemetry.addData("Auto Lift: ", autoLift);
-        //intake
-        intake.setPosition(gamepad2.left_trigger);
+        //telemetry
+        telemetry.addData("lift position: ", liftPos);
         telemetry.addData("servo state: ", intake.getPosition());
-
         telemetry.update();
 
     }

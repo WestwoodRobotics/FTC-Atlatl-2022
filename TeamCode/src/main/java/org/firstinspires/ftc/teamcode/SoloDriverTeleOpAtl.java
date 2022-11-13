@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "ToggleTest")
+@TeleOp(name = "TeleOpAtlSolo")
 
 public class SoloDriverTeleOpAtl extends OpMode {
     //wheels
@@ -18,6 +18,8 @@ public class SoloDriverTeleOpAtl extends OpMode {
     //lift and intake
     public DcMotor lift = null;
     public Servo intake = null;
+
+    public int counter = 0;
 
 
     @Override
@@ -45,7 +47,6 @@ public class SoloDriverTeleOpAtl extends OpMode {
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        intake.setPosition(0.7);
     }
 
 
@@ -92,7 +93,7 @@ public class SoloDriverTeleOpAtl extends OpMode {
         telemetry.addData("Lift Power: ", -gamepad1.left_trigger + gamepad1.right_trigger);
         if ((-gamepad1.left_trigger + gamepad1.right_trigger) > 0) {
 
-            if (liftPos < 3500) {
+            if (liftPos < 3400) {
                 telemetry.addData("lift dir: ", "up");
                 lift.setPower((-gamepad1.left_trigger + gamepad1.right_trigger));
             } else {
@@ -111,11 +112,16 @@ public class SoloDriverTeleOpAtl extends OpMode {
         }
 
         //intake
-
-        if (gamepad1.left_bumper) {
-            intake.setPosition(1);
-        } else if (gamepad1.right_bumper){
-            intake.setPosition(0.7);
+        if ((gamepad1.left_bumper || gamepad1.right_bumper) && counter == 0) {
+            if (intake.getPosition()==0.76) {
+                intake.setPosition(1);
+            } else {
+                intake.setPosition(0.76);
+            }
+            counter++;
+        }
+        if ((!gamepad1.left_bumper && !gamepad1.right_bumper) && counter > 0) {
+            counter = 0;
         }
 
         //telemetry
