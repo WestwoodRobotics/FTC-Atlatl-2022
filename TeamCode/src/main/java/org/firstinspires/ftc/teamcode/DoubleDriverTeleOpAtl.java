@@ -24,6 +24,7 @@ public class DoubleDriverTeleOpAtl extends OpMode {
     public double liftPower;
     public int liftTarget = 0;
     public int dpadPressed  = 0;
+    public boolean slowMode = false;
 
 
     @Override
@@ -58,6 +59,8 @@ public class DoubleDriverTeleOpAtl extends OpMode {
     public void loop() {
         //drive chassis
         {
+            slowMode = gamepad1.left_bumper;
+
             //defining Wheel power
             double leftFrontPower;
             double rightFrontPower;
@@ -77,11 +80,11 @@ public class DoubleDriverTeleOpAtl extends OpMode {
             rightBackPower = (straight - strafing + turn);
 
             //strafe chassis wheel move
-            if (liftPos > 1500) {
-                leftFront.setPower(leftFrontPower * 0.5);
-                rightFront.setPower(rightFrontPower * 0.5);
-                leftBack.setPower(leftBackPower * 0.5);
-                rightBack.setPower(rightBackPower * 0.5);
+            if ((liftPos > 2000) || slowMode) {
+                leftFront.setPower(leftFrontPower * 0.3);
+                rightFront.setPower(rightFrontPower * 0.3);
+                leftBack.setPower(leftBackPower * 0.3);
+                rightBack.setPower(rightBackPower * 0.3);
             } else {
                 leftFront.setPower(leftFrontPower);
                 rightFront.setPower(rightFrontPower);
