@@ -2,12 +2,11 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous(name = "move right")
 
-public class autoboi extends LinearOpMode {
+public class autoboiRight extends LinearOpMode {
 
     public DcMotor leftFront = null;
     public DcMotor rightFront = null;
