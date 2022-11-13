@@ -111,23 +111,27 @@ public class DoubleDriverTeleOpAtl extends OpMode {
         {
             if (autoLift) {
                 lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
+                //down
                 if (gamepad2.a) {
                     liftTarget = 0;
                 }
+                //low
                 if (gamepad2.b) {
                     liftTarget = 0;
                 }
+                //mid
                 if (gamepad2.x) {
                     liftTarget = 0;
                 }
+                //high
                 if (gamepad2.y) {
                     liftTarget = 0;
                 }
                 lift.setTargetPosition(liftTarget);
 
                 if (liftPos > liftTarget+25) {
-                    lift.setPower(1);
+                    //
+                    lift.setPower(-1);
                 } else if (liftPos < liftTarget-25) {
                     lift.setPower(1);
                 }
