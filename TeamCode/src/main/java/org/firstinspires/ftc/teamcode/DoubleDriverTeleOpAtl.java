@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "TeleOpAtlSolo")
+@TeleOp(name = "DoubleAtl")
 
 public class DoubleDriverTeleOpAtl extends OpMode {
     //wheels
@@ -47,6 +47,7 @@ public class DoubleDriverTeleOpAtl extends OpMode {
 
         lift.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(Servo.Direction.REVERSE);
+        intake.setPosition(0);
 
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -111,33 +112,39 @@ public class DoubleDriverTeleOpAtl extends OpMode {
         {
             if (autoLift) {
                 lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                lift.setTargetPosition(0);
                 //down
                 if (gamepad2.a) {
                     liftTarget = 0;
+                    telemetry.addData("Target position: ","ground");
                 }
                 //low
                 if (gamepad2.b) {
-                    liftTarget = 0;
+                    liftTarget = 500;
+                    telemetry.addData("Target position: ","low");
                 }
                 //mid
                 if (gamepad2.x) {
-                    liftTarget = 0;
+                    liftTarget = 1700;
+                    telemetry.addData("Target position: ","mid");
                 }
                 //high
                 if (gamepad2.y) {
-                    liftTarget = 0;
+                    liftTarget = 3400;
+                    telemetry.addData("Target position: ","high");
                 }
                 lift.setTargetPosition(liftTarget);
 
-                if (liftPos > liftTarget+25) {
+                if (liftPos > liftTarget+10) {
                     //
                     lift.setPower(-1);
-                } else if (liftPos < liftTarget-25) {
+                } else if (liftPos < liftTarget-10) {
                     lift.setPower(1);
                 }
 
             } else {
                 //manual lift
+                telemetry.addData("lift position: ", liftPos);
                 lift.setPower(0);
                 lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -181,9 +188,8 @@ public class DoubleDriverTeleOpAtl extends OpMode {
             }
         }
         //telemetry
-        telemetry.addData("lift position: ", liftPos);
         telemetry.addData("servo state: ", intake.getPosition());
-        telemetry.update();
 
+        telemetry.update();
     }
 }

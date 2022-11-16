@@ -4,7 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name = "move right")
+
+@Autonomous(name = "right")
 
 public class autoboiRight extends LinearOpMode {
 
@@ -24,7 +25,6 @@ public class autoboiRight extends LinearOpMode {
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
-
 
         waitForStart();
 
