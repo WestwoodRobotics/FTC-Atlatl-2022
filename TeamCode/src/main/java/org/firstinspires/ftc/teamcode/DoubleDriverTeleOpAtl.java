@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -23,8 +24,9 @@ public class DoubleDriverTeleOpAtl extends OpMode {
     public boolean autoLift = false;
     public double liftPower;
     public int liftTarget = 0;
-    public int dpadPressed  = 0;
+    public int dpadPressed = 0;
     public boolean slowMode = false;
+    public int slowModePressed = 0;
 
 
     @Override
@@ -60,25 +62,25 @@ public class DoubleDriverTeleOpAtl extends OpMode {
     public void loop() {
         //drive chassis
         {
-            slowMode = gamepad1.left_bumper;
-
             //defining Wheel power
             double leftFrontPower;
             double rightFrontPower;
             double leftBackPower;
             double rightBackPower;
 
-            //giving controls a value to use for drive
 
+            //giving controls a value to use for drive
             double straight = gamepad1.right_stick_y;
             double strafing = gamepad1.right_stick_x;
             double turn = (gamepad1.left_stick_x * 0.7);
+
 
             //strafe equation
             leftFrontPower = (straight - strafing - turn);
             rightFrontPower = (straight + strafing + turn);
             leftBackPower = (straight + strafing - turn);
             rightBackPower = (straight - strafing + turn);
+
 
             //strafe chassis wheel move
             if ((liftPos > 2000) || slowMode) {
@@ -95,80 +97,85 @@ public class DoubleDriverTeleOpAtl extends OpMode {
 
         }
 
+
         //liftPos variable
         liftPos = lift.getCurrentPosition();
 
+
         //autoLift switcher
         {
-            if ((gamepad2.dpad_down) && dpadPressed == 0) {
+            if ((gamepad2.dpad_down) && dpadPressed == 0)
                 autoLift = !autoLift;
-                dpadPressed++;
-            }
-            if (!(gamepad2.dpad_down) && dpadPressed > 0) {
+            dpadPressed++;
+            if (!(gamepad2.dpad_down) && dpadPressed > 0)
                 dpadPressed = 0;
-            }
         }
+
+
         //lift power and position set
         {
             if (autoLift) {
                 lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                lift.setTargetPosition(0);
+                lift.setTargetPosition((int) liftPos);
+
                 //down
                 if (gamepad2.a) {
                     liftTarget = 0;
-                    telemetry.addData("Target position: ","ground");
+                    telemetry.addData("Target position: ", "ground");
                 }
+
                 //low
                 if (gamepad2.b) {
                     liftTarget = 500;
-                    telemetry.addData("Target position: ","low");
+                    telemetry.addData("Target position: ", "low");
                 }
+
                 //mid
                 if (gamepad2.x) {
                     liftTarget = 1700;
-                    telemetry.addData("Target position: ","mid");
+                    telemetry.addData("Target position: ", "mid");
                 }
+
                 //high
                 if (gamepad2.y) {
                     liftTarget = 3400;
-                    telemetry.addData("Target position: ","high");
+                    telemetry.addData("Target position: ", "high");
                 }
+
                 lift.setTargetPosition(liftTarget);
 
                 if (liftPos > liftTarget) {
-                    //
+                    //going down
                     lift.setPower(-0.4);
                 } else if (liftPos < liftTarget) {
+                    //going up
                     lift.setPower(0.7);
-                }else{
+                } else {
+                    //stopping
                     lift.setPower(0);
                 }
 
             } else {
-                //manual lift
-                telemetry.addData("lift position: ", liftPos);
-                lift.setPower(0);
                 lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                lift.setPower(0);
+                //manual lift
+                if ((-gamepad2.left_trigger + gamepad2.right_trigger) > 0) {
 
-
-                liftPower = (-gamepad2.left_trigger + gamepad2.right_trigger);
-                telemetry.addData("Lift Power: ", liftPower);
-                //going up
-                if (liftPower > 0) {
                     if (liftPos < 3400) {
                         telemetry.addData("lift dir: ", "up");
-                        lift.setPower(liftPower);
+                        lift.setPower((-gamepad2.left_trigger + gamepad2.right_trigger));
                     } else {
                         lift.setPower(0);
                     }
 
-                } else if (liftPower < 0) {
-                    if (liftPos > 100) {
+                } else if ((-gamepad2.left_trigger + gamepad2.right_trigger) < 150) {
+                    if (liftPos > 0) {
                         telemetry.addData("lift dir:", "down");
-                        lift.setPower(liftPower);
+                        lift.setPower((-gamepad2.left_trigger + gamepad2.right_trigger));
                     } else {
                         lift.setPower(0);
                     }
+
                 } else {
                     lift.setPower(0);
                 }
@@ -189,12 +196,25 @@ public class DoubleDriverTeleOpAtl extends OpMode {
                 intakePressed = 0;
             }
         }
-        //telemetry
-        telemetry.addData("servo state: ", intake.getPosition());
-        telemetry.addData("slow mode", slowMode);
-        telemetry.addData("lift position", liftPos);
-        telemetry.addData("lift power",liftPower);
 
-        telemetry.update();
+        //slow mode toggle
+        {
+            if ((gamepad1.left_bumper || gamepad1.right_bumper) && slowModePressed == 0)
+                slowMode = !slowMode;
+            slowModePressed++;
+
+            if ((!gamepad1.left_bumper && !gamepad1.right_bumper) && slowModePressed > 0)
+                slowModePressed = 0;
+
+        }
+        //telemetry
+        {
+            telemetry.addData("servo state: ", intake.getPosition());
+            telemetry.addData("slow mode", slowMode);
+            telemetry.addData("lift position", liftPos);
+            telemetry.addData("lift power", liftPower);
+
+            telemetry.update();
+        }
     }
 }
