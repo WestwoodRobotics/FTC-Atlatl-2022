@@ -135,11 +135,13 @@ public class DoubleDriverTeleOpAtl extends OpMode {
                 }
                 lift.setTargetPosition(liftTarget);
 
-                if (liftPos > liftTarget+10) {
+                if (liftPos > liftTarget) {
                     //
-                    lift.setPower(-1);
-                } else if (liftPos < liftTarget-10) {
-                    lift.setPower(1);
+                    lift.setPower(-0.4);
+                } else if (liftPos < liftTarget) {
+                    lift.setPower(0.7);
+                }else{
+                    lift.setPower(0);
                 }
 
             } else {
@@ -189,6 +191,9 @@ public class DoubleDriverTeleOpAtl extends OpMode {
         }
         //telemetry
         telemetry.addData("servo state: ", intake.getPosition());
+        telemetry.addData("slow mode", slowMode);
+        telemetry.addData("lift position", liftPos);
+        telemetry.addData("lift power",liftPower);
 
         telemetry.update();
     }

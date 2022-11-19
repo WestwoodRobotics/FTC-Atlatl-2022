@@ -19,8 +19,9 @@ public class SoloDriverTeleOpAtl extends OpMode {
     public DcMotor lift = null;
     public Servo intake = null;
 
-    public int counter = 0;
-
+    public int intakePressed = 0;
+    public int slowModePressed = 0;
+    public boolean slowMode;
 
     @Override
     public void init() {
@@ -72,7 +73,7 @@ public class SoloDriverTeleOpAtl extends OpMode {
         rightBackPower = (straight - strafing + turn);
 
         //strafe chassis wheel move
-        if (liftPos>1500){
+        if ((liftPos>2000) || slowMode){
             leftFront.setPower(leftFrontPower * 0.5);
             rightFront.setPower(rightFrontPower * 0.5);
             leftBack.setPower(leftBackPower * 0.5);
@@ -112,16 +113,24 @@ public class SoloDriverTeleOpAtl extends OpMode {
         }
 
         //intake
-        if ((gamepad1.left_bumper || gamepad1.right_bumper) && counter == 0) {
+        if ((gamepad1.left_bumper) && intakePressed == 0) {
             if (intake.getPosition()==0.76) {
                 intake.setPosition(1);
             } else {
                 intake.setPosition(0.76);
             }
-            counter++;
+            intakePressed++;
         }
-        if ((!gamepad1.left_bumper && !gamepad1.right_bumper) && counter > 0) {
-            counter = 0;
+        if ((!gamepad1.left_bumper) && intakePressed > 0) {
+            intakePressed = 0;
+        }
+
+        if ((gamepad1.right_bumper) && slowModePressed == 0) {
+            slowMode = !slowMode;
+            slowModePressed++;
+        }
+        if ((!gamepad1.right_bumper) && slowModePressed > 0) {
+            slowModePressed = 0;
         }
 
         //telemetry
