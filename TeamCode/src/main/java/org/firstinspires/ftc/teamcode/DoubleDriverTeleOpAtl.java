@@ -187,8 +187,10 @@ public class DoubleDriverTeleOpAtl extends OpMode {
             if ((gamepad2.left_bumper || gamepad2.right_bumper) && intakePressed == 0) {
                 if (intake.getPosition() == 0.76) {
                     intake.setPosition(1);
+                    telemetry.addData("intake", "open");
                 } else {
                     intake.setPosition(0.76);
+                    telemetry.addData("intake", "closed");
                 }
                 intakePressed++;
             }
@@ -209,10 +211,10 @@ public class DoubleDriverTeleOpAtl extends OpMode {
         }
         //telemetry
         {
-            telemetry.addData("servo state: ", intake.getPosition());
             telemetry.addData("slow mode", slowMode);
             telemetry.addData("lift position", liftPos);
             telemetry.addData("lift power", liftPower);
+
 
             telemetry.update();
         }
