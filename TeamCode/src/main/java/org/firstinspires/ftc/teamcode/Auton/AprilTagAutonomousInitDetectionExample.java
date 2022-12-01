@@ -19,12 +19,13 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Auton;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Auton.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -33,7 +34,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 
-@TeleOp
+@TeleOp(name = "AprilTagExample")
 public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -52,7 +53,11 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
     // UNITS ARE METERS
     double tagsize = 0.166;
 
-    int ID_TAG_OF_INTEREST = 18; // Tag ID 18 from the 36h11 family
+
+    //Tag ID 1,2,3 from the 36h11 family
+    int LEFT = 1;
+    int MIDDLE = 2;
+    int RIGHT = 3;
 
     AprilTagDetection tagOfInterest = null;
 
@@ -88,7 +93,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
                 boolean tagFound = false;
 
                 for (AprilTagDetection tag : currentDetections) {
-                    if (tag.id == ID_TAG_OF_INTEREST) {
+                    if (tag.id == LEFT ||tag.id == MIDDLE ||tag.id == RIGHT) {
                         tagOfInterest = tag;
                         tagFound = true;
                         break;
@@ -141,31 +146,20 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
         }
 
         /* Actually do something useful */
-        if (tagOfInterest == null) {
-            /*
-             * Insert your autonomous code here, presumably running some default configuration
-             * since the tag was never sighted during INIT
-             */
-        } else {
-            /*
-             * Insert your autonomous code here, probably using the tag pose to decide your configuration.
-             */
-
-            // e.g.
-            if (tagOfInterest.pose.x <= 20) {
-                // do something
-            } else if (tagOfInterest.pose.x >= 20 && tagOfInterest.pose.x <= 50) {
-                // do something else
-            } else if (tagOfInterest.pose.x >= 50) {
-                // do something else
-            }
+        //go left, if not se or left seen, 1/3 chance
+        if(tagOfInterest == null || tagOfInterest.id == LEFT){
+            //trajectory for left
+        }else if(tagOfInterest.id == MIDDLE){
+            //trajectory for middle
+        }else if(tagOfInterest.id == RIGHT){
+            //trajectory for right
         }
 
 
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
-        while (opModeIsActive()) {
-            sleep(20);
-        }
+        //delete this when have auto code
+        while (opModeIsActive()) {sleep(20);}
+        //add auto code here
     }
 
     void tagToTelemetry(AprilTagDetection detection) {
