@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -22,8 +23,6 @@ public class SoloSetPosTest extends OpMode {
     public int intakePressed = 0;
     public int slowModePressed = 0;
     public boolean slowMode;
-    public boolean autoLift;
-    public int autoLiftPressed = 0;
 
     public int liftTarget;
     @Override
@@ -48,7 +47,7 @@ public class SoloSetPosTest extends OpMode {
         intake.setDirection(Servo.Direction.REVERSE);
 
         lift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        lift.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
     }
@@ -76,12 +75,12 @@ public class SoloSetPosTest extends OpMode {
         rightBackPower = (straight - strafing + turn);
 
         //strafe chassis wheel move
-        if (slowMode){
+        if (slowMode) {
             leftFront.setPower(leftFrontPower * 0.4);
             rightFront.setPower(rightFrontPower * 0.4);
             leftBack.setPower(leftBackPower * 0.4);
             rightBack.setPower(rightBackPower * 0.4);
-        }else{
+        } else {
             leftFront.setPower(leftFrontPower);
             rightFront.setPower(rightFrontPower);
             leftBack.setPower(leftBackPower);
@@ -89,60 +88,50 @@ public class SoloSetPosTest extends OpMode {
         }
 
 
-
-
         //lift
-
         liftPos = lift.getCurrentPosition();
-        if (autoLift) {
-            lift.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            telemetry.addData("Lift Power: ", -gamepad1.left_trigger + gamepad1.right_trigger);
-            if ((-gamepad1.left_trigger + gamepad1.right_trigger) > 0) {
 
-                if (liftPos < 3400) {
-                    telemetry.addData("lift dir: ", "up");
-                    lift.setPower((-gamepad1.left_trigger + gamepad1.right_trigger));
-                } else {
-                    lift.setPower(0);
-                }
-
-            } else if ((-gamepad1.left_trigger + gamepad1.right_trigger) < 150) {
-                if (liftPos > 0) {
-                    telemetry.addData("lift dir:", "down");
-                    lift.setPower((-gamepad1.left_trigger + gamepad1.right_trigger));
-                } else {
-                    lift.setPower(0);
-                }
-            } else {
-                lift.setPower(0);
+        //manual
+        if (!(gamepad1.right_trigger-gamepad1.left_trigger == 0)) {
+            /*
+            if (gamepad1.right_trigger > 0) {
+                liftTarget += 20;
+            } else if (gamepad1.left_trigger > 0) {
+                liftTarget -= 20;
             }
-        }else{
-            lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            //target position setting
-            {
-                if (gamepad1.a) {
-                    liftTarget=0;
-                } else if (gamepad1.b) {
-                    liftTarget=1000;
-                } else if (gamepad1.x) {
-                    liftTarget=2000;
-                } else if (gamepad1.y) {
-                    liftTarget=3640;
-                }
+             */
+            liftTarget += Math.round(gamepad1.right_trigger-gamepad1.left_trigger) * 20;
+        } else {
+            //auto
+            if (gamepad1.a) {
+                liftTarget = 0;
+            } else if (gamepad1.b) {
+                liftTarget = 1000;
+            } else if (gamepad1.x) {
+                liftTarget = 2000;
+            } else if (gamepad1.y) {
+                liftTarget = 3640;
             }
-
-            //power setting
-            lift.setTargetPosition(liftTarget);
-            lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            if (liftTarget > liftPos) {
-                lift.setPower(.8);
-            } else if (liftPos > liftTarget) {
-                lift.setPower(-.8);
-            } else if (liftPos == liftTarget) {
-                lift.setPower(0);
-            }
-
         }
+
+        //limits
+        if (liftTarget > 4000) {
+            liftTarget = 4000;
+        } else if (liftTarget < 0) {
+            liftTarget = 0;
+        }
+
+        //power setting
+        lift.setTargetPosition(liftTarget);
+
+        if (liftTarget > liftPos) {
+            lift.setPower(1);
+        } else if (liftPos > liftTarget) {
+            lift.setPower(-.6);
+        } else if (liftPos == liftTarget) {
+            lift.setPower(0);
+        }
+
 
         //intake
         if ((gamepad1.left_bumper) && intakePressed == 0) {
@@ -163,17 +152,6 @@ public class SoloSetPosTest extends OpMode {
         }
         if ((!gamepad1.right_bumper) && slowModePressed > 0) {
             slowModePressed = 0;
-        }
-
-
-
-
-        if ((gamepad1.dpad_down) && autoLiftPressed == 0) {
-            autoLift = !autoLift;
-            autoLiftPressed++;
-        }
-        if ((!gamepad1.dpad_down) && autoLiftPressed > 0) {
-            autoLiftPressed = 0;
         }
 
 
