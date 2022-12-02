@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "set pos test")
@@ -25,6 +24,7 @@ public class SoloSetPosTest extends OpMode {
     public boolean slowMode;
 
     public int liftTarget;
+
     @Override
     public void init() {
         //wheel motor hardware map
@@ -93,8 +93,8 @@ public class SoloSetPosTest extends OpMode {
         //lift
         liftPos = lift.getCurrentPosition();
         //manual
-        if (!(gamepad1.right_trigger-gamepad1.left_trigger == 0)) {
-            liftTarget += Math.round(gamepad1.right_trigger-gamepad1.left_trigger) * 10;
+        if (!(gamepad1.right_trigger - gamepad1.left_trigger == 0)) {
+            liftTarget += Math.round(gamepad1.right_trigger - gamepad1.left_trigger) * 10;
         } else {
             //auto
             if (gamepad1.a) {
@@ -129,7 +129,7 @@ public class SoloSetPosTest extends OpMode {
 
         //intake
         if ((gamepad1.left_bumper) && intakePressed == 0) {
-            if (intake.getPosition()==0.7) {
+            if (intake.getPosition() == 0.7) {
                 intake.setPosition(1);
             } else {
                 intake.setPosition(0.7);

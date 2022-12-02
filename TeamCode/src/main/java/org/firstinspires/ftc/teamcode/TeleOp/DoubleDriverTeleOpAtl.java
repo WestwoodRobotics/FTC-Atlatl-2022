@@ -144,6 +144,7 @@ public class DoubleDriverTeleOpAtl extends OpMode {
                 intakePressed = 0;
             }
         }
+
         //slow mode toggle
         {
             if ((gamepad1.right_bumper || gamepad1.left_bumper) && slowModePressed == 0) {
