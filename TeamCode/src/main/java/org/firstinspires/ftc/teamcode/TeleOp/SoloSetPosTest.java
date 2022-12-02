@@ -10,14 +10,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class SoloSetPosTest extends OpMode {
     //wheels
-    public DcMotorEx leftFront = null;
-    public DcMotorEx rightFront = null;
-    public DcMotorEx leftBack = null;
-    public DcMotorEx rightBack = null;
+    public DcMotor leftFront = null;
+    public DcMotor rightFront = null;
+    public DcMotor leftBack = null;
+    public DcMotor rightBack = null;
     public double liftPos;
 
     //lift and intake
-    public DcMotorEx lift = null;
+    public DcMotor lift = null;
     public Servo intake = null;
 
     public int intakePressed = 0;
@@ -28,27 +28,29 @@ public class SoloSetPosTest extends OpMode {
     @Override
     public void init() {
         //wheel motor hardware map
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
-        leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
-        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
+        leftFront = hardwareMap.get(DcMotor.class, "leftFront");
+        rightFront = hardwareMap.get(DcMotor.class, "rightFront");
+        leftBack = hardwareMap.get(DcMotor.class, "leftBack");
+        rightBack = hardwareMap.get(DcMotor.class, "rightBack");
 
-        leftFront.setDirection(DcMotorEx.Direction.REVERSE);
-        rightFront.setDirection(DcMotorEx.Direction.REVERSE);
-        leftBack.setDirection(DcMotorEx.Direction.REVERSE);
-        rightBack.setDirection(DcMotorEx.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        rightBack.setDirection(DcMotor.Direction.REVERSE);
 
 
         //Lift and intake hardware map
-        lift = hardwareMap.get(DcMotorEx.class, "lift");
+        lift = hardwareMap.get(DcMotor.class, "lift");
         intake = hardwareMap.get(Servo.class, "intake");
 
-        lift.setDirection(DcMotorEx.Direction.FORWARD);
+        lift.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(Servo.Direction.REVERSE);
 
-        lift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftTarget = 0;
+        lift.setTargetPosition(liftTarget);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 
@@ -90,17 +92,11 @@ public class SoloSetPosTest extends OpMode {
 
         //lift
         liftPos = lift.getCurrentPosition();
-
         //manual
         if (!(gamepad1.right_trigger-gamepad1.left_trigger == 0)) {
-            /*
-            if (gamepad1.right_trigger > 0) {
-                liftTarget += 20;
-            } else if (gamepad1.left_trigger > 0) {
-                liftTarget -= 20;
-            }
-             */
-            liftTarget += Math.round(gamepad1.right_trigger-gamepad1.left_trigger) * 20;
+            liftTarget += Math.round(gamepad1.right_trigger-gamepad1.left_trigger) * 10;
+            telemetry.addData("liftTarget",liftTarget);
+            telemetry.addData("button test","E");
         } else {
             //auto
             if (gamepad1.a) {
@@ -127,7 +123,7 @@ public class SoloSetPosTest extends OpMode {
         if (liftTarget > liftPos) {
             lift.setPower(1);
         } else if (liftPos > liftTarget) {
-            lift.setPower(-.6);
+            lift.setPower(-.8);
         } else if (liftPos == liftTarget) {
             lift.setPower(0);
         }
