@@ -50,7 +50,7 @@ public class SoloSetPosTest extends OpMode {
         liftTarget = 0;
         lift.setTargetPosition(liftTarget);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 
@@ -95,8 +95,6 @@ public class SoloSetPosTest extends OpMode {
         //manual
         if (!(gamepad1.right_trigger-gamepad1.left_trigger == 0)) {
             liftTarget += Math.round(gamepad1.right_trigger-gamepad1.left_trigger) * 10;
-            telemetry.addData("liftTarget",liftTarget);
-            telemetry.addData("button test","E");
         } else {
             //auto
             if (gamepad1.a) {
