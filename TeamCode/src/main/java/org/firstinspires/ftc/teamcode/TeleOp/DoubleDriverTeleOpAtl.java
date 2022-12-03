@@ -97,7 +97,7 @@ public class DoubleDriverTeleOpAtl extends OpMode {
             liftPos = lift.getCurrentPosition();
             //manual
             if (!(gamepad2.right_trigger - gamepad2.left_trigger == 0)) {
-                liftTarget += Math.round(gamepad2.right_trigger - gamepad2.left_trigger) * 10;
+                liftTarget += Math.round(gamepad2.right_trigger - gamepad2.left_trigger) * 15;
             } else {
                 //auto
                 if (gamepad2.a) {
@@ -140,7 +140,7 @@ public class DoubleDriverTeleOpAtl extends OpMode {
                 }
                 intakePressed++;
             }
-            if ((!gamepad2.left_bumper || gamepad2.right_bumper) && intakePressed > 0) {
+            if ((!gamepad2.left_bumper && !gamepad2.right_bumper) && intakePressed > 0) {
                 intakePressed = 0;
             }
         }

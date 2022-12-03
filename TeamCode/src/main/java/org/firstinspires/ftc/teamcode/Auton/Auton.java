@@ -26,6 +26,7 @@ import android.annotation.SuppressLint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
@@ -40,10 +41,11 @@ import java.util.HashMap;
 public class Auton extends LinearOpMode
 {
     // CHANGE CODE(change string according to what you named your motors)
-    String frontLeftM = "frontLeft";
-    String frontRightM = "frontRight";
-    String backLeftM = "backLeft";
-    String backRightM = "backRight";
+    String frontLeftM = "leftFront";
+    String frontRightM = "rightFront";
+
+    String backLeftM = "leftBack";
+    String backRightM = "rightBack";
     // END OG CHANE CODE
 
     // MCODE
@@ -59,10 +61,10 @@ public class Auton extends LinearOpMode
     int gearRatio = 20;
     double wheelRadius = 3.77953/2; // value in inches
     double wheelCircumference = 2*Math.PI*wheelRadius;
-    double trackWidth = 13.75; // value in inches
+    double trackWidth = 13; // value in inches
     // go to link to see what track width is
     //https://learnroadrunner.com/assets/img/wes-bot-edit-half.a0bf7846.jpg
-    double robotLength = 10.5; // value in inches
+    double robotLength = 13; // value in inches
     // length is the opposite of width
     // END CHANGE CODE
 
@@ -144,9 +146,9 @@ public class Auton extends LinearOpMode
        if I set power of 1 on turn variable it should turn right
         */
         frontLeft.setDirection(DcMotorEx.Direction.FORWARD);
-        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
+        frontRight.setDirection(DcMotorEx.Direction.FORWARD);
         backLeft.setDirection(DcMotorEx.Direction.FORWARD);
-        backRight.setDirection(DcMotorEx.Direction.REVERSE);
+        backRight.setDirection(DcMotorEx.Direction.FORWARD);
         // END CHANGE CODE
 
         // MCODE
