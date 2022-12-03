@@ -37,6 +37,10 @@ public class SoloDriverTeleOpAtl extends OpMode {
         leftBack.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
 
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Lift and intake hardware map
         lift = hardwareMap.get(DcMotor.class, "lift");
@@ -48,8 +52,6 @@ public class SoloDriverTeleOpAtl extends OpMode {
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setTargetPosition(liftTarget);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //change to not commented out if needed
-        //lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 
