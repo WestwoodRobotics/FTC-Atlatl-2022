@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auton;
+package org.firstinspires.ftc.teamcode;
 
 /*
  * Copyright (c) 2021 OpenFTC Team
@@ -24,7 +24,6 @@ package org.firstinspires.ftc.teamcode.Auton;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
@@ -35,14 +34,14 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-@Autonomous(name="visoon")
+@Autonomous(name="visoonAtl")
 public class VisionAuton extends LinearOpMode
 {
     // CHANGE CODE(change string according to what you named your motors)
-    String frontLeftM = "frontLeft";
-    String frontRightM = "frontRight";
-    String backLeftM = "backLeft";
-    String backRightM = "backRight";
+    String frontLeftM = "leftFront";
+    String frontRightM = "rightFront";
+    String backLeftM = "leftBack";
+    String backRightM = "rightBack";
     // END OG CHANE CODE
 
     // MCODE
@@ -72,8 +71,8 @@ public class VisionAuton extends LinearOpMode
     double actualTicksPerRotation = 0.0;
     int matLength = 24; // inches
     int turn90DegTicks = 0;
-    int timeForForwardMat = 0;
-    int timeForStrafeMat = 0;
+    int timeForForwardMat = 1000;
+    int timeForStrafeMat = 1000;
 
     // c^2 = a^2 + b^2 -> c = sqrt(a^2 + b^2)
     double robotDiameter = Math.sqrt(Math.pow(trackWidth,2)+Math.pow(robotLength,2));
@@ -134,12 +133,12 @@ public class VisionAuton extends LinearOpMode
         // END MCODE
 
         // CHANGE CODE
-        /*
-        (sample mecanum equation: drive +/- strafe +/- turn)
-        if I set power of 1 on drive variable it should drive forward
-        if I set power of 1 on strafe variable it should strafe right
-        if I set power of 1 on turn variable it should turn right
-         */
+       /*
+       (sample mecanum equation: drive +/- strafe +/- turn)
+       if I set power of 1 on drive variable it should drive forward
+       if I set power of 1 on strafe variable it should strafe right
+       if I set power of 1 on turn variable it should turn right
+        */
         frontLeft.setDirection(DcMotorEx.Direction.FORWARD);
         frontRight.setDirection(DcMotorEx.Direction.REVERSE);
         backLeft.setDirection(DcMotorEx.Direction.FORWARD);
@@ -272,7 +271,7 @@ public class VisionAuton extends LinearOpMode
         /* Actually do something useful */
         if (tagOfInterest.id == LEFT) {
             // MOVE FORWARD 1.5 MAT LENGTH (START)
-            frontLeft.setPower(0.3);
+            frontLeft.setPower(0.3f);
             frontRight.setPower(0.3);
             backLeft.setPower(0.3);
             backRight.setPower(0.3);
@@ -356,3 +355,4 @@ public class VisionAuton extends LinearOpMode
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
     }
 }
+

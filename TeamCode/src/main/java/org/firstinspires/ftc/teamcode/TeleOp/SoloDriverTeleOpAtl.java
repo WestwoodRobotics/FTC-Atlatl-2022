@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -42,6 +42,7 @@ public class SoloDriverTeleOpAtl extends OpMode {
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+
         //Lift and intake hardware map
         lift = hardwareMap.get(DcMotor.class, "lift");
         intake = hardwareMap.get(Servo.class, "intake");
@@ -52,6 +53,8 @@ public class SoloDriverTeleOpAtl extends OpMode {
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setTargetPosition(liftTarget);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //change to not commented out if needed
+        //lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 
@@ -163,3 +166,4 @@ public class SoloDriverTeleOpAtl extends OpMode {
         }
     }
 }
+
