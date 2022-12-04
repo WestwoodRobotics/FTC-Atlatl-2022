@@ -1,13 +1,13 @@
-package org.firstinspires.ftc.teamcode.Auton;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name = "MoveForward")
+@Autonomous(name = "MoveRight")
 
-public class MoveForward extends LinearOpMode {
+public class MoveRight extends LinearOpMode {
     //wheels
     public DcMotor leftFront = null;
     public DcMotor rightFront = null;
@@ -61,6 +61,17 @@ public class MoveForward extends LinearOpMode {
         rightBack.setPower(0.3);
 
         sleep(1500);
+
+        leftFront.setPower(0);
+        leftBack.setPower(0);
+        rightFront.setPower(0);
+        rightBack.setPower(0);
+
+        //goForward
+        leftBack.setPower(-0.1);
+        rightBack.setPower(-0.1);
+
+        sleep(2000);
 
         leftFront.setPower(0);
         leftBack.setPower(0);

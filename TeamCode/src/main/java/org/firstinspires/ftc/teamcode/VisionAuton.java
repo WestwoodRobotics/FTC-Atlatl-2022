@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auton;
+package org.firstinspires.ftc.teamcode;
 
 /*
  * Copyright (c) 2021 OpenFTC Team
@@ -24,7 +24,6 @@ package org.firstinspires.ftc.teamcode.Auton;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
@@ -35,7 +34,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-@Autonomous(name="visoon")
+@Autonomous(name="visoonAtl")
 public class VisionAuton extends LinearOpMode
 {
     // CHANGE CODE(change string according to what you named your motors)
@@ -134,12 +133,12 @@ public class VisionAuton extends LinearOpMode
         // END MCODE
 
         // CHANGE CODE
-        /*
-        (sample mecanum equation: drive +/- strafe +/- turn)
-        if I set power of 1 on drive variable it should drive forward
-        if I set power of 1 on strafe variable it should strafe right
-        if I set power of 1 on turn variable it should turn right
-         */
+       /*
+       (sample mecanum equation: drive +/- strafe +/- turn)
+       if I set power of 1 on drive variable it should drive forward
+       if I set power of 1 on strafe variable it should strafe right
+       if I set power of 1 on turn variable it should turn right
+        */
         frontLeft.setDirection(DcMotorEx.Direction.FORWARD);
         frontRight.setDirection(DcMotorEx.Direction.FORWARD);
         backLeft.setDirection(DcMotorEx.Direction.FORWARD);
@@ -272,7 +271,7 @@ public class VisionAuton extends LinearOpMode
         /* Actually do something useful */
         if (tagOfInterest == null || tagOfInterest.id == LEFT) {
             // MOVE FORWARD 1.5 MAT LENGTH (START)
-            frontLeft.setPower(0.3);
+            frontLeft.setPower(0.3f);
             frontRight.setPower(0.3);
             backLeft.setPower(0.1);
             backRight.setPower(0.3);
@@ -356,3 +355,4 @@ public class VisionAuton extends LinearOpMode
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
     }
 }
+

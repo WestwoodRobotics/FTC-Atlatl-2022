@@ -1,13 +1,12 @@
-package org.firstinspires.ftc.teamcode.Auton;
+package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name = "MoveRight")
+@Autonomous(name = "MoveLeft")
 
-public class MoveRight extends LinearOpMode {
+public class MoveLeft extends LinearOpMode {
     //wheels
     public DcMotor leftFront = null;
     public DcMotor rightFront = null;
@@ -31,10 +30,10 @@ public class MoveRight extends LinearOpMode {
         telemetry.update();
         waitForStart();
         //go to corner
-        leftFront.setPower(.6);
-        leftBack.setPower(-.6);
-        rightFront.setPower(-.6);
-        rightBack.setPower(.6);
+        leftFront.setPower(-.6);
+        leftBack.setPower(.6);
+        rightFront.setPower(.6);
+        rightBack.setPower(-.6);
 
         sleep(1000);
 
@@ -43,10 +42,10 @@ public class MoveRight extends LinearOpMode {
         rightFront.setPower(0);
         rightBack.setPower(0);
         //goback
-        leftFront.setPower(-.6);
-        leftBack.setPower(.6);
-        rightFront.setPower(.6);
-        rightBack.setPower(-.6);
+        leftFront.setPower(.6);
+        leftBack.setPower(-.6);
+        rightFront.setPower(-.6);
+        rightBack.setPower(.6);
 
         sleep(1000);
 
@@ -77,7 +76,5 @@ public class MoveRight extends LinearOpMode {
         leftBack.setPower(0);
         rightFront.setPower(0);
         rightBack.setPower(0);
-
-
     }
 }

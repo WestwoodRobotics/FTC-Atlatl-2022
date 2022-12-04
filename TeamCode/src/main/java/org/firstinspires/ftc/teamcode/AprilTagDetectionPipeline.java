@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auton;
+package org.firstinspires.ftc.teamcode;
 
 /*
  * Copyright (c) 2021 OpenFTC Team

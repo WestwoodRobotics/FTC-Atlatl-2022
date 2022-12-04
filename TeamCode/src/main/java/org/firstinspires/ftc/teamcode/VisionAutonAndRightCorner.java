@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auton;
+package org.firstinspires.ftc.teamcode;
 
 /*
  * Copyright (c) 2021 OpenFTC Team
@@ -133,12 +133,12 @@ public class VisionAutonAndRightCorner extends LinearOpMode
         // END MCODE
 
         // CHANGE CODE
-        /*
-        (sample mecanum equation: drive +/- strafe +/- turn)
-        if I set power of 1 on drive variable it should drive forward
-        if I set power of 1 on strafe variable it should strafe right
-        if I set power of 1 on turn variable it should turn right
-         */
+       /*
+       (sample mecanum equation: drive +/- strafe +/- turn)
+       if I set power of 1 on drive variable it should drive forward
+       if I set power of 1 on strafe variable it should strafe right
+       if I set power of 1 on turn variable it should turn right
+        */
         frontLeft.setDirection(DcMotorEx.Direction.FORWARD);
         frontRight.setDirection(DcMotorEx.Direction.REVERSE);
         backLeft.setDirection(DcMotorEx.Direction.FORWARD);
@@ -381,3 +381,4 @@ public class VisionAutonAndRightCorner extends LinearOpMode
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
     }
 }
+
