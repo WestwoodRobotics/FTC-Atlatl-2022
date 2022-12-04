@@ -66,6 +66,15 @@ public class MoveLeft extends LinearOpMode {
         rightFront.setPower(0);
         rightBack.setPower(0);
 
+        //goForward
+        leftBack.setPower(-0.1);
+        rightBack.setPower(-0.1);
 
+        sleep(2000);
+
+        leftFront.setPower(0);
+        leftBack.setPower(0);
+        rightFront.setPower(0);
+        rightBack.setPower(0);
     }
 }

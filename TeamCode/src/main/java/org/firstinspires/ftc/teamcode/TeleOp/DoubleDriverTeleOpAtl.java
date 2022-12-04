@@ -76,7 +76,7 @@ public class DoubleDriverTeleOpAtl extends OpMode {
             rightBackPower = (straight - strafing + turn);
 
             //strafe chassis wheel move
-            if (slowMode) {
+            if (slowMode || liftPos > 1500) {
                 leftFront.setPower(leftFrontPower * 0.4);
                 rightFront.setPower(rightFrontPower * 0.4);
                 leftBack.setPower(leftBackPower * 0.4);
@@ -100,9 +100,10 @@ public class DoubleDriverTeleOpAtl extends OpMode {
                 if (gamepad2.a) {
                     liftTarget = 0;
                 } else if (gamepad2.b) {
-                    liftTarget = 1000;
+                    liftTarget = 1500;
+
                 } else if (gamepad2.x) {
-                    liftTarget = 2000;
+                    liftTarget = 2400;
                 } else if (gamepad2.y) {
                     liftTarget = 3640;
                 }

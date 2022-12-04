@@ -39,10 +39,10 @@ import java.util.HashMap;
 public class VisionAuton extends LinearOpMode
 {
     // CHANGE CODE(change string according to what you named your motors)
-    String frontLeftM = "frontLeft";
-    String frontRightM = "frontRight";
-    String backLeftM = "backLeft";
-    String backRightM = "backRight";
+    String frontLeftM = "leftFront";
+    String frontRightM = "rightFront";
+    String backLeftM = "leftBack";
+    String backRightM = "rightBack";
     // END OG CHANE CODE
 
     // MCODE
@@ -72,8 +72,8 @@ public class VisionAuton extends LinearOpMode
     double actualTicksPerRotation = 0.0;
     int matLength = 24; // inches
     int turn90DegTicks = 0;
-    int timeForForwardMat = 0;
-    int timeForStrafeMat = 0;
+    int timeForForwardMat = 1000;
+    int timeForStrafeMat = 1000;
 
     // c^2 = a^2 + b^2 -> c = sqrt(a^2 + b^2)
     double robotDiameter = Math.sqrt(Math.pow(trackWidth,2)+Math.pow(robotLength,2));
@@ -141,9 +141,9 @@ public class VisionAuton extends LinearOpMode
         if I set power of 1 on turn variable it should turn right
          */
         frontLeft.setDirection(DcMotorEx.Direction.FORWARD);
-        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
+        frontRight.setDirection(DcMotorEx.Direction.FORWARD);
         backLeft.setDirection(DcMotorEx.Direction.FORWARD);
-        backRight.setDirection(DcMotorEx.Direction.REVERSE);
+        backRight.setDirection(DcMotorEx.Direction.FORWARD);
         // END CHANGE CODE
 
         // MCODE
@@ -270,11 +270,11 @@ public class VisionAuton extends LinearOpMode
 
 
         /* Actually do something useful */
-        if (tagOfInterest.id == LEFT) {
+        if (tagOfInterest == null || tagOfInterest.id == LEFT) {
             // MOVE FORWARD 1.5 MAT LENGTH (START)
             frontLeft.setPower(0.3);
             frontRight.setPower(0.3);
-            backLeft.setPower(0.3);
+            backLeft.setPower(0.1);
             backRight.setPower(0.3);
 
             sleep(timeForForwardMat);
@@ -287,7 +287,7 @@ public class VisionAuton extends LinearOpMode
             //strafe left 1.5 Mat
             frontLeft.setPower(-0.3);
             frontRight.setPower(0.3);
-            backLeft.setPower(0.3);
+            backLeft.setPower(0.1);
             backRight.setPower(-0.3);
 
             sleep(timeForStrafeMat);
@@ -297,11 +297,11 @@ public class VisionAuton extends LinearOpMode
             backLeft.setPower(0);
             backRight.setPower(0);
 
-        } else if (tagOfInterest == null || tagOfInterest.id == MIDDLE) {
+        } else if ( tagOfInterest.id == MIDDLE) {
             // MOVE FORWARD 1.5 MAT LENGTH (START)
             frontLeft.setPower(0.3);
             frontRight.setPower(0.3);
-            backLeft.setPower(0.3);
+            backLeft.setPower(0.1);
             backRight.setPower(0.3);
 
             sleep(timeForForwardMat);
