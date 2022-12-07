@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "DoubleMotorAtl")
+@TeleOp(name = "DoubleAtlTester")
 
 public class DoubleTeleDoubleMotor extends OpMode {
     //wheels
@@ -95,17 +95,11 @@ public class DoubleTeleDoubleMotor extends OpMode {
                 rightBackPower = (straight - strafing + turn);
             }
             //strafe chassis wheel move
-            if (slowMode || liftPos > 1500) {
-                leftFront.setPower(leftFrontPower * 0.4);
-                rightFront.setPower(rightFrontPower * 0.4);
-                leftBack.setPower(leftBackPower * 0.4);
-                rightBack.setPower(rightBackPower * 0.4);
-            } else {
-                leftFront.setPower(leftFrontPower);
-                rightFront.setPower(rightFrontPower);
-                leftBack.setPower(leftBackPower);
-                rightBack.setPower(rightBackPower);
-            }
+            leftFront.setPower(leftFrontPower);
+            rightFront.setPower(rightFrontPower);
+            leftBack.setPower(leftBackPower);
+            rightBack.setPower(rightBackPower);
+
         }
 
         //lift

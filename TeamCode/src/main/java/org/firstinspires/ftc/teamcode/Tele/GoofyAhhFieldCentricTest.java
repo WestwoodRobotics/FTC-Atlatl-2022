@@ -48,8 +48,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-import org.firstinspires.ftc.teamcode.AxesSigns;
-import org.firstinspires.ftc.teamcode.BNO055IMUUtil;
+import org.firstinspires.ftc.teamcode.util.AxesSigns;
+import org.firstinspires.ftc.teamcode.util.BNO055IMUUtil;
 
 import java.lang.Math;
 
@@ -68,17 +68,17 @@ import java.lang.Math;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="FiledCentricDriveTest", group="Iterative Opmode")
+@TeleOp(name="NOTSTOLENFiledCentricDriveTest", group="Iterative Opmode")
 
 public class GoofyAhhFieldCentricTest extends OpMode
 
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotorEx leftFrontDrive = null;
-    private DcMotorEx rightFrontDrive = null;
-    private DcMotorEx leftBackDrive = null;
-    private DcMotorEx rightBackDrive = null;
+    private DcMotorEx leftFront = null;
+    private DcMotorEx rightFront = null;
+    private DcMotorEx leftBack = null;
+    private DcMotorEx rightBack = null;
     public BNO055IMU imu;
 
     double leftFrontPower;
@@ -97,56 +97,50 @@ public class GoofyAhhFieldCentricTest extends OpMode
     public void init() {
         telemetry.addData("Status", "Initialized");
 
-        leftFrontDrive  = hardwareMap.get(DcMotorEx.class, "leftFront");
-        rightFrontDrive = hardwareMap.get(DcMotorEx.class, "rightFront");
-        leftBackDrive  = hardwareMap.get(DcMotorEx.class, "leftBack");
-        rightBackDrive = hardwareMap.get(DcMotorEx.class, "rightBack");
+        leftFront  = hardwareMap.get(DcMotorEx.class, "leftFront");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        leftBack  = hardwareMap.get(DcMotorEx.class, "leftBack");
+        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
 
-        rightBackDrive.setDirection(DcMotorEx.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotorEx.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotorEx.Direction.FORWARD);
-        leftFrontDrive.setDirection(DcMotorEx.Direction.REVERSE);
+        rightBack.setDirection(DcMotorEx.Direction.REVERSE);
+        leftBack.setDirection(DcMotorEx.Direction.REVERSE);
+        rightFront.setDirection(DcMotorEx.Direction.REVERSE);
+        leftFront.setDirection(DcMotorEx.Direction.REVERSE);
 
-        leftFrontDrive.setVelocityPIDFCoefficients(15, 0, 0, 0);
-        rightFrontDrive.setVelocityPIDFCoefficients(15, 0, 0, 0);
-        leftBackDrive.setVelocityPIDFCoefficients(15, 0, 0, 0);
-        rightBackDrive.setVelocityPIDFCoefficients(15, 0, 0, 0);
-
+        //tuning PIDs
+        {
+            leftFront.setVelocityPIDFCoefficients(15, 0, 0, 0);
+            rightFront.setVelocityPIDFCoefficients(15, 0, 0, 0);
+            leftBack.setVelocityPIDFCoefficients(15, 0, 0, 0);
+            rightBack.setVelocityPIDFCoefficients(15, 0, 0, 0);
+        }
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
 
         //Setting Zero Power behaviour
-        leftFrontDrive.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        rightFrontDrive.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        leftBackDrive.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        rightBackDrive.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        leftFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        //centric
+        {
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
-        parameters.mode                = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled      = false;
+            parameters.mode = BNO055IMU.SensorMode.IMU;
+            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.loggingEnabled = false;
 
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module and named "imu".
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
+            // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+            // on a Core Device Interface Module and named "imu".
+            imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        imu.initialize(parameters);
-        BNO055IMUUtil.remapAxes(imu, AxesOrder.ZXY, AxesSigns.NPN);
+            imu.initialize(parameters);
+            BNO055IMUUtil.remapAxes(imu, AxesOrder.ZXY, AxesSigns.NPN);
+        }
     }
-
-    /*
-     * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
-     */
-    @Override
-    public void init_loop() {
-    }
-
-    /*
-     * Code to run ONCE when the driver hits PLAY
-     */
     @Override
     public void start() {
         runtime.reset();
@@ -157,44 +151,47 @@ public class GoofyAhhFieldCentricTest extends OpMode
      */
     @Override
     public void loop() {
-        this.calculateCurAngle();
+        //centric drive
+        {
+            this.calculateCurAngle();
 
-        double strafe;
-        double drive;
-        double turn;
+            double strafe;
+            double drive;
+            double turn;
 
-        strafe = this.getNewXY(gamepad1.left_stick_x, gamepad1.left_stick_y, "X");
-        drive = this.getNewXY(gamepad1.left_stick_x, gamepad1.left_stick_y, "Y");
-        turn  =  gamepad1.right_stick_x;
+            strafe = this.getNewXY(gamepad1.right_stick_x, gamepad1.right_stick_y, "X");
+            drive = this.getNewXY(gamepad1.right_stick_x, gamepad1.right_stick_y, "Y");
+            turn = gamepad1.left_stick_x;
 
-        leftFrontPower   = -drive + strafe + turn;
-        leftBackPower    = drive + strafe - turn;
-        rightFrontPower  = -drive - strafe - turn;
-        rightBackPower   = -drive + strafe - turn;
 
-        leftFrontDrive.setVelocity(leftFrontPower*2000);
-        rightBackDrive.setVelocity(rightBackPower*2000);
-        leftBackDrive.setVelocity(leftBackPower*2000);
-        rightFrontDrive.setVelocity(rightFrontPower*2000);
+            //edit equations E
+            leftFrontPower = drive + strafe + turn;
+            leftBackPower = drive + strafe - turn;
+            rightFrontPower = drive - strafe - turn;
+            rightBackPower = drive + strafe - turn;
 
-        telemetry.addData("IMU: ", getAngle());
-        telemetry.addData("zxy axis:", imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZXY, AngleUnit.DEGREES).firstAngle);
-        telemetry.addData("xzx axis:", imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.XZX, AngleUnit.DEGREES).firstAngle);
-        telemetry.addData("yxy axis:", imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.YXY, AngleUnit.DEGREES).firstAngle);
-        telemetry.addData("strafe: ", strafe);
-        telemetry.addData("drive: ", drive);
-        telemetry.addData("turn: ", turn);
-        telemetry.addData("currentAngle: ", currentActualAngle);
+
+            //edit constants
+            leftFront.setVelocity(leftFrontPower * 2000);
+            rightBack.setVelocity(rightBackPower * 2000);
+            leftBack.setVelocity(leftBackPower * 2000);
+            rightFront.setVelocity(rightFrontPower * 2000);
+
+
+            //telemetry
+            telemetry.addData("IMU: ", getAngle());
+            telemetry.addData("zxy axis:", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES).firstAngle);
+            telemetry.addData("xzx axis:", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XZX, AngleUnit.DEGREES).firstAngle);
+            telemetry.addData("yxy axis:", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.YXY, AngleUnit.DEGREES).firstAngle);
+            telemetry.addData("strafe: ", strafe);
+            telemetry.addData("drive: ", drive);
+            telemetry.addData("turn: ", turn);
+            telemetry.addData("currentAngle: ", currentActualAngle);
+        }
 
     }
 
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
-    @Override
-    public void stop() {
-    }
-
+    //funny functions for goofy ahh  centric
     public double getAngle() {
         return imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZXY, AngleUnit.RADIANS).firstAngle;
     }
