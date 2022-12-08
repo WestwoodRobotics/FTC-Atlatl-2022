@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "DoubleAtlTester")
 
-public class DoubleTeleDoubleMotor extends OpMode {
+public class DoubleTeleTester extends OpMode {
     //wheels
     public DcMotor leftFront = null;
     public DcMotor rightFront = null;
@@ -25,6 +25,7 @@ public class DoubleTeleDoubleMotor extends OpMode {
     public int slowModePressed = 0;
     public boolean slowMode;
     public int liftTarget = 0;
+    public double powerProportion = 0.0;
 
     @Override
     public void init() {
@@ -81,14 +82,15 @@ public class DoubleTeleDoubleMotor extends OpMode {
             double strafing = gamepad1.right_stick_x;
             double turn = (gamepad1.left_stick_x * 0.8);
 
+            powerProportion = 1.2;
 
             //strafe equation
-            if (liftPos>500){
-                leftFrontPower = (straight - strafing - turn)*1*(4000/liftPos);
-                rightFrontPower = (straight + strafing + turn)*1*(4000/liftPos);
-                leftBackPower = (straight + strafing - turn)*1*(4000/liftPos);
-                rightBackPower = (straight - strafing + turn*1*(4000/liftPos));
-            }else {
+            if (liftPos > 500) {
+                leftFrontPower = (straight - strafing - turn) * powerProportion * (4000 / liftPos);
+                rightFrontPower = (straight + strafing + turn) * powerProportion * (4000 / liftPos);
+                leftBackPower = (straight + strafing - turn) * powerProportion * (4000 / liftPos);
+                rightBackPower = (straight - strafing + turn) * powerProportion * (4000 / liftPos);
+            } else {
                 leftFrontPower = (straight - strafing - turn);
                 rightFrontPower = (straight + strafing + turn);
                 leftBackPower = (straight + strafing - turn);
