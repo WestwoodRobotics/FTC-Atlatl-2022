@@ -29,25 +29,17 @@
 
 package org.firstinspires.ftc.teamcode.Tele;
 
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.util.AxesSigns;
 import org.firstinspires.ftc.teamcode.util.BNO055IMUUtil;
 
@@ -85,10 +77,23 @@ public class GoofyAhhFieldCentricTest extends OpMode
     double rightFrontPower;
     double leftBackPower;
     double rightBackPower;
-    double offSetAngle;
+    double offSetAngle = 0;
     double currentActualAngle = 0;
     double currentActualAngleRadians = 0;
     double theta;
+
+    public double liftPos;
+
+    //lift and intake
+    public DcMotorEx lift = null;
+    //public DcMotor lift2 = null;
+    public Servo intake = null;
+
+    public int intakePressed = 0;
+    public int slowModePressed = 0;
+    public boolean slowMode;
+    public int liftTarget = 0;
+    public double powerProportion = 0.0;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -123,6 +128,17 @@ public class GoofyAhhFieldCentricTest extends OpMode
         rightFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        //Lift and intake hardware map
+        lift = hardwareMap.get(DcMotorEx.class, "lift");
+        intake = hardwareMap.get(Servo.class, "intake");
+
+        lift.setDirection(DcMotor.Direction.FORWARD);
+        intake.setDirection(Servo.Direction.REVERSE);
+
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setTargetPosition(liftTarget);
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //centric
         {
@@ -165,10 +181,10 @@ public class GoofyAhhFieldCentricTest extends OpMode
 
 
             //edit equations E
-            leftFrontPower = drive + strafe + turn;
-            leftBackPower = drive + strafe - turn;
-            rightFrontPower = drive - strafe - turn;
-            rightBackPower = drive + strafe - turn;
+            leftFrontPower = (drive - strafe - turn);
+            rightFrontPower = (drive + strafe + turn);
+            leftBackPower = (drive + strafe - turn);
+            rightBackPower = (drive - strafe + turn);
 
 
             //edit constants
@@ -176,6 +192,21 @@ public class GoofyAhhFieldCentricTest extends OpMode
             rightBack.setVelocity(rightBackPower * 2000);
             leftBack.setVelocity(leftBackPower * 2000);
             rightFront.setVelocity(rightFrontPower * 2000);
+
+            powerProportion = 1.2;
+
+            //strafe equation
+            if (liftPos > 500) {
+                leftFrontPower = (drive - strafe - turn) * powerProportion * (4000 / liftPos);
+                rightFrontPower = (drive + strafe + turn) * powerProportion * (4000 / liftPos);
+                leftBackPower = (drive + strafe - turn) * powerProportion * (4000 / liftPos);
+                rightBackPower = (drive - strafe + turn) * powerProportion * (4000 / liftPos);
+            } else {
+                leftFrontPower = (drive - strafe - turn);
+                rightFrontPower = (drive + strafe + turn);
+                leftBackPower = (drive + strafe - turn);
+                rightBackPower = (drive - strafe + turn);
+            }
 
 
             //telemetry
@@ -189,9 +220,80 @@ public class GoofyAhhFieldCentricTest extends OpMode
             telemetry.addData("currentAngle: ", currentActualAngle);
         }
 
+        //lift
+        {
+            liftPos = lift.getCurrentPosition();
+            //manual
+            if (!(gamepad2.right_trigger - gamepad2.left_trigger == 0)) {
+                liftTarget += Math.round(gamepad2.right_trigger - gamepad2.left_trigger) * 15;
+            } else {
+                //auto
+                if (gamepad2.a) {
+                    liftTarget = 0;
+                } else if (gamepad2.b) {
+                    liftTarget = 1500;
+
+                } else if (gamepad2.x) {
+                    liftTarget = 2400;
+                } else if (gamepad2.y) {
+                    liftTarget = 3640;
+                }
+            }
+
+            //limits
+            if (liftTarget > 4000) {
+                liftTarget = 4000;
+            } else if (liftTarget < 0) {
+                liftTarget = 0;
+            }
+
+            //power setting
+            lift.setTargetPosition(liftTarget);
+
+            if (liftTarget > liftPos) {
+                lift.setVelocity(4000);
+            } else if (liftPos > liftTarget) {
+                lift.setVelocity(2000);
+            } else if (liftPos == liftTarget) {
+                lift.setVelocity(0);
+            }
+        }
+
+        //intake
+        {
+            if ((gamepad2.left_bumper || gamepad2.right_bumper) && intakePressed == 0) {
+                if (intake.getPosition() == 0.7) {
+                    intake.setPosition(1);
+                } else {
+                    intake.setPosition(0.7);
+                }
+                intakePressed++;
+            }
+            if ((!gamepad2.left_bumper && !gamepad2.right_bumper) && intakePressed > 0) {
+                intakePressed = 0;
+            }
+        }
+
+        //slow mode toggle
+        {
+            if ((gamepad1.right_bumper || gamepad1.left_bumper) && slowModePressed == 0) {
+                slowMode = !slowMode;
+                slowModePressed++;
+            }
+            if ((!gamepad1.right_bumper && !gamepad1.left_bumper) && slowModePressed > 0) {
+                slowModePressed = 0;
+            }
+        }
+
+        if (gamepad1.dpad_down && gamepad1.a){
+            this.OffSetAngle();
+        }
+
     }
 
-    //funny functions for goofy ahh  centric
+
+
+    //funny methods for goofy ahh  centric
     public double getAngle() {
         return imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZXY, AngleUnit.RADIANS).firstAngle;
     }
@@ -220,7 +322,7 @@ public class GoofyAhhFieldCentricTest extends OpMode
     }
 
     public void calculateCurAngle() {
-        double imuAngle = this.getDegreesAngle();
+        double imuAngle = this.getDegreesAngle() + offSetAngle;
 //        currentAngle = imuAngle < 0? 360 + imuAngle: imuAngle;
         if (imuAngle < 0) {
             currentActualAngle = 360 + imuAngle;
@@ -230,6 +332,10 @@ public class GoofyAhhFieldCentricTest extends OpMode
         }
 
         currentActualAngleRadians = currentActualAngle*(Math.PI/180);
+    }
+
+    public void OffSetAngle(){
+        offSetAngle = 90 - this.getDegreesAngle();
     }
 
 }
