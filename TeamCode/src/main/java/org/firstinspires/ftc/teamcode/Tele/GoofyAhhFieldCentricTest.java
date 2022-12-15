@@ -151,10 +151,10 @@ public class GoofyAhhFieldCentricTest extends OpMode
 
             //strafe equation
             if (liftPos > 500) {
-                leftFrontPower = (drive - strafe - turn) * powerProportion * (4000 / liftPos);
-                rightFrontPower = (drive + strafe + turn) * powerProportion * (4000 / liftPos);
-                leftBackPower = (drive + strafe - turn) * powerProportion * (4000 / liftPos);
-                rightBackPower = (drive - strafe + turn) * powerProportion * (4000 / liftPos);
+                leftFrontPower = (drive - strafe - turn) * powerProportion * (4100 / liftPos);
+                rightFrontPower = (drive + strafe + turn) * powerProportion * (4100 / liftPos);
+                leftBackPower = (drive + strafe - turn) * powerProportion * (4100 / liftPos);
+                rightBackPower = (drive - strafe + turn) * powerProportion * (4100 / liftPos);
             } else {
                 leftFrontPower = (drive - strafe - turn);
                 rightFrontPower = (drive + strafe + turn);
