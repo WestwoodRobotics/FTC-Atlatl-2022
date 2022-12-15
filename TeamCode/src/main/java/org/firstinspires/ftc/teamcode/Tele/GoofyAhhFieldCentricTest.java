@@ -50,7 +50,7 @@ public class GoofyAhhFieldCentricTest extends OpMode
     public int slowModePressed = 0;
     public boolean slowMode;
     public int liftTarget = 0;
-    public double powerProportion = 0.0;
+    public double powerProportion = 0.2;
 
 
 
