@@ -68,6 +68,7 @@ public class GoofyAhhFieldCentricTest extends OpMode
         rightFront.setDirection(DcMotorEx.Direction.REVERSE);
         leftFront.setDirection(DcMotorEx.Direction.REVERSE);
 
+
         //tuning PIDs
         {
             leftFront.setVelocityPIDFCoefficients(15, 0, 0, 0);
