@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Tele;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "SoloAtl")
@@ -24,6 +23,7 @@ public class SoloDriverTeleOpAtl extends OpMode {
     public int slowModePressed = 0;
     public boolean slowMode;
     public int liftTarget = 0;
+    public double powerProportion = 0;
 
     @Override
     public void init() {
@@ -33,10 +33,10 @@ public class SoloDriverTeleOpAtl extends OpMode {
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
 
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        rightFront.setDirection(DcMotor.Direction.FORWARD);
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
-        rightBack.setDirection(DcMotor.Direction.FORWARD);
+        leftFront.setDirection(DcMotor.Direction.FORWARD);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
+        leftBack.setDirection(DcMotor.Direction.FORWARD);
+        rightBack.setDirection(DcMotor.Direction.REVERSE);
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -54,8 +54,8 @@ public class SoloDriverTeleOpAtl extends OpMode {
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setTargetPosition(liftTarget);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //change to not commented out if needed
-        //lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 
@@ -77,11 +77,25 @@ public class SoloDriverTeleOpAtl extends OpMode {
             double turn = (gamepad1.left_stick_x * 0.7);
 
 
-            //strafe equation
+            /*strafe equation
             leftFrontPower = (straight - strafing - turn);
             rightFrontPower = (straight + strafing + turn);
             leftBackPower = (straight + strafing - turn);
             rightBackPower = (straight - strafing + turn);
+*/
+            powerProportion = 1.2;
+            if (liftPos > 1500) {
+                leftFrontPower = ((straight - strafing - turn) * powerProportion) - ( liftPos/ 4500);
+                rightFrontPower = ((straight - strafing - turn) * powerProportion) - ( liftPos/ 4500);
+                leftBackPower = ((straight - strafing - turn) * powerProportion) - ( liftPos/ 4500);
+                rightBackPower = ((straight - strafing - turn) * powerProportion) - ( liftPos/ 4500);
+            } else {
+                leftFrontPower = (straight - strafing - turn);
+                rightFrontPower = (straight - strafing - turn);
+                leftBackPower = (straight - strafing - turn);
+                rightBackPower = (straight - strafing - turn);
+            }
+
 
             //strafe chassis wheel move
             if (slowMode) {
@@ -102,23 +116,24 @@ public class SoloDriverTeleOpAtl extends OpMode {
             liftPos = lift.getCurrentPosition();
             //manual
             if (!(gamepad1.right_trigger - gamepad1.left_trigger == 0)) {
-                liftTarget += Math.round(gamepad1.right_trigger - gamepad1.left_trigger) * 10;
+                liftTarget += Math.round(gamepad1.right_trigger - gamepad1.left_trigger) * 15;
             } else {
                 //auto
                 if (gamepad1.a) {
                     liftTarget = 0;
                 } else if (gamepad1.b) {
-                    liftTarget = 1000;
+                    liftTarget = 1600;
+
                 } else if (gamepad1.x) {
-                    liftTarget = 2000;
+                    liftTarget = 2500;
                 } else if (gamepad1.y) {
-                    liftTarget = 3640;
+                    liftTarget = 4100;
                 }
             }
 
             //limits
-            if (liftTarget > 4000) {
-                liftTarget = 4000;
+            if (liftTarget > 4300) {
+                liftTarget = 4300;
             } else if (liftTarget < 0) {
                 liftTarget = 0;
             }
@@ -137,7 +152,7 @@ public class SoloDriverTeleOpAtl extends OpMode {
 
         //intake
         {
-            if ((gamepad1.left_bumper) && intakePressed == 0) {
+            if ((gamepad1.right_bumper) && intakePressed == 0) {
                 if (intake.getPosition() == 0.7) {
                     intake.setPosition(1);
                 } else {
@@ -145,26 +160,29 @@ public class SoloDriverTeleOpAtl extends OpMode {
                 }
                 intakePressed++;
             }
-            if ((!gamepad1.left_bumper) && intakePressed > 0) {
+            if ((!gamepad1.right_bumper) && intakePressed > 0) {
                 intakePressed = 0;
             }
         }
 
-        //slowMode Toggle
+        //slow mode toggle
         {
-            if ((gamepad1.right_bumper) && slowModePressed == 0) {
+            if ((gamepad1.left_bumper) && slowModePressed == 0) {
                 slowMode = !slowMode;
                 slowModePressed++;
             }
-            if ((!gamepad1.right_bumper) && slowModePressed > 0) {
+            if ((!gamepad1.left_bumper) && slowModePressed > 0) {
                 slowModePressed = 0;
             }
-            telemetry.addData("slow Mode", slowMode);
-            //telemetry
-            telemetry.addData("lift position: ", liftPos);
-            telemetry.addData("servo state: ", intake.getPosition());
-            telemetry.update();
         }
+
+
+        //telemetry
+        telemetry.addData("slow Mode", slowMode);
+        telemetry.addData("lift position: ", liftPos);
+        telemetry.addData("servo state: ", intake.getPosition());
+        telemetry.addData("Lift Error", liftTarget-liftPos);
+        telemetry.update();
+
     }
 }
-
