@@ -269,10 +269,84 @@ public class AutonTest extends LinearOpMode
             telemetry.update();
         }
 
+
+
+
+
+
+
+        frontLeft.setTargetPosition(500);
+        frontRight.setTargetPosition(-500);
+        backLeft.setTargetPosition(-500);
+        backRight.setTargetPosition(500);
+
+        frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        frontLeft.setPower(.3);
+        frontRight.setPower(-.3);
+        backLeft.setPower(-.3);
+        backRight.setPower(.3);
+        // END MCODE
+
+        // CHANGE CODE
+        // change value according to how long it takes robot to reach wanted position
+        sleep(5000); // 5 seconds
+        // END CHANGE CODE
+
+        // MCODE
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        // END MCODE
+
+        // MOVE FORWARD 1.5 MAT LENGTH (END)
+
+        frontLeft.setTargetPosition(0);
+        frontRight.setTargetPosition(0);
+        backLeft.setTargetPosition(0);
+        backRight.setTargetPosition(0);
+
+        frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        frontLeft.setPower(-.3);
+        frontRight.setPower(.3);
+        backLeft.setPower(.3);
+        backRight.setPower(-.3);
+        // END MCODE
+
+        // CHANGE CODE
+        // change value according to how long it takes robot to reach wanted position
+        sleep(5000); // 5 seconds
+        // END CHANGE CODE
+
+        // MCODE
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        // END MCODE
+
+        // MOVE FORWARD 1.5 MAT LENGTH (END)
+
+
+
+
+
+
         /* Actually do something useful */
         if (tagOfInterest == null || tagOfInterest.id == LEFT) {
             // MOVE FORWARD 1.5 MAT LENGTH (START)
-
+            frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
             // MCODE
             frontLeft.setTargetPosition(forwardTicksForMat+forwardTicksForMat/6);
             frontRight.setTargetPosition(forwardTicksForMat+forwardTicksForMat/6);
@@ -384,6 +458,11 @@ public class AutonTest extends LinearOpMode
 
             // MOVE FORWARD 1.5 MAT LENGTH (END)
         } else if (tagOfInterest.id == MIDDLE) {
+            frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
             // MCODE
             frontLeft.setTargetPosition(forwardTicksForMat+forwardTicksForMat/6);
             frontRight.setTargetPosition(forwardTicksForMat+forwardTicksForMat/6);
@@ -423,7 +502,10 @@ public class AutonTest extends LinearOpMode
             // END MCODE
         } else {
             // MOVE FORWARD 1.5 MAT LENGTH (START)
-
+            frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
             // MCODE
             frontLeft.setTargetPosition(forwardTicksForMat+forwardTicksForMat/6);
             frontRight.setTargetPosition(forwardTicksForMat+forwardTicksForMat/6);

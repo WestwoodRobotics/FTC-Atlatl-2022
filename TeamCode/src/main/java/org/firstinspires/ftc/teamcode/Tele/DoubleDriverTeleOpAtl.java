@@ -23,6 +23,7 @@ public class DoubleDriverTeleOpAtl extends OpMode {
     public int slowModePressed = 0;
     public boolean slowMode;
     public int liftTarget = 0;
+    public double powerProportion = 0;
 
     @Override
     public void init() {
@@ -54,8 +55,7 @@ public class DoubleDriverTeleOpAtl extends OpMode {
         lift.setTargetPosition(liftTarget);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        //change to not commented out if needed
-        //lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 
@@ -77,11 +77,25 @@ public class DoubleDriverTeleOpAtl extends OpMode {
             double turn = (gamepad1.left_stick_x * 0.7);
 
 
-            //strafe equation
+            /*strafe equation
             leftFrontPower = (straight - strafing - turn);
             rightFrontPower = (straight + strafing + turn);
             leftBackPower = (straight + strafing - turn);
             rightBackPower = (straight - strafing + turn);
+*/
+            powerProportion = 1.2;
+            if (liftPos > 1500) {
+                leftFrontPower = ((straight - strafing - turn) * powerProportion) - ( liftPos/ 4500);
+                rightFrontPower = ((straight - strafing - turn) * powerProportion) - ( liftPos/ 4500);
+                leftBackPower = ((straight - strafing - turn) * powerProportion) - ( liftPos/ 4500);
+                rightBackPower = ((straight - strafing - turn) * powerProportion) - ( liftPos/ 4500);
+            } else {
+                leftFrontPower = (straight - strafing - turn);
+                rightFrontPower = (straight - strafing - turn);
+                leftBackPower = (straight - strafing - turn);
+                rightBackPower = (straight - strafing - turn);
+            }
+
 
             //strafe chassis wheel move
             if (slowMode || liftPos > 1500) {
@@ -108,18 +122,18 @@ public class DoubleDriverTeleOpAtl extends OpMode {
                 if (gamepad2.a) {
                     liftTarget = 0;
                 } else if (gamepad2.b) {
-                    liftTarget = 1500;
+                    liftTarget = 1600;
 
                 } else if (gamepad2.x) {
-                    liftTarget = 2400;
+                    liftTarget = 2500;
                 } else if (gamepad2.y) {
-                    liftTarget = 3640;
+                    liftTarget = 4100;
                 }
             }
 
             //limits
-            if (liftTarget > 4000) {
-                liftTarget = 4000;
+            if (liftTarget > 4300) {
+                liftTarget = 4300;
             } else if (liftTarget < 0) {
                 liftTarget = 0;
             }
@@ -167,6 +181,7 @@ public class DoubleDriverTeleOpAtl extends OpMode {
         telemetry.addData("slow Mode", slowMode);
         telemetry.addData("lift position: ", liftPos);
         telemetry.addData("servo state: ", intake.getPosition());
+        telemetry.addData("Lift Error", liftTarget-liftPos);
         telemetry.update();
 
     }
