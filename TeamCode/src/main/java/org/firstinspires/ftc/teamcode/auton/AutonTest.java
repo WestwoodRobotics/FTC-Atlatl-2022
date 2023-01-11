@@ -40,10 +40,10 @@ import java.util.HashMap;
 public class AutonTest extends LinearOpMode
 {
     // CHANGE CODE(change string according to what you named your motors)
-    String frontLeftM = "frontLeft";
-    String frontRightM = "frontRight";
-    String backLeftM = "backLeft";
-    String backRightM = "backRight";
+    String frontLeftM = "leftFront";
+    String frontRightM = "rightFront";
+    String backLeftM = "leftBack";
+    String backRightM = "rightBack";
     // END OG CHANE CODE
 
     // MCODE
