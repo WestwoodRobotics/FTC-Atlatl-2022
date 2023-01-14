@@ -23,7 +23,7 @@ public class SoloDriverTeleOpAtl extends OpMode {
     public int slowModePressed = 0;
     public boolean slowMode;
     public int liftTarget = 0;
-    public double powerProportion = 0;
+    public double powerProportion = 1.4;
 
     @Override
     public void init() {
@@ -83,8 +83,8 @@ public class SoloDriverTeleOpAtl extends OpMode {
             leftBackPower = (straight + strafing - turn);
             rightBackPower = (straight - strafing + turn);
 */
-            powerProportion = 1.1;
-            if (liftPos > 1500) {
+            powerProportion = 1.4;
+            if (liftPos > 2000) {
                 leftFrontPower = ((straight - strafing - turn) * (powerProportion - (liftPos/4500)));
                 rightFrontPower = ((straight + strafing + turn) * (powerProportion - (liftPos/4500)));
                 leftBackPower = ((straight + strafing - turn) * (powerProportion - (liftPos/4500)));
@@ -124,10 +124,9 @@ public class SoloDriverTeleOpAtl extends OpMode {
                 if (gamepad1.a) {
                     liftTarget = 0;
                 } else if (gamepad1.b) {
-                    liftTarget = 1600;
-
+                    liftTarget = 1800;
                 } else if (gamepad1.x) {
-                    liftTarget = 2500;
+                    liftTarget = 2650;
                 } else if (gamepad1.y) {
                     liftTarget = 4100;
                 }
