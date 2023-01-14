@@ -273,10 +273,10 @@ public class AutonRightGoesLeft extends LinearOpMode
 
 
 
-        frontLeft.setTargetPosition(-1200);
-        frontRight.setTargetPosition(1200);
-        backLeft.setTargetPosition(1200);
-        backRight.setTargetPosition(-1200);
+        frontLeft.setTargetPosition(-1150);
+        frontRight.setTargetPosition(1150);
+        backLeft.setTargetPosition(1150);
+        backRight.setTargetPosition(-1150);
 
         frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
