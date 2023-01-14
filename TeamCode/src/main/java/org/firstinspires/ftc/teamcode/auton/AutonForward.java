@@ -24,10 +24,8 @@ package org.firstinspires.ftc.teamcode.auton;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.auton.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -36,8 +34,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-@Autonomous(name="Auton Test")
-public class AutonTest extends LinearOpMode
+@Autonomous(name="Auton Forward")
+public class AutonForward extends LinearOpMode
 {
     // CHANGE CODE(change string according to what you named your motors)
     String frontLeftM = "leftFront";
@@ -59,7 +57,7 @@ public class AutonTest extends LinearOpMode
     int gearRatio = 20;
     double wheelRadius = 3.77953/2; // value in inches
     double wheelCircumference = 2*Math.PI*wheelRadius;
-    double trackWidth = 13.75; // value in inches
+    double trackWidth = 13.5; // value in inches
     // go to link to see what track width is
     //https://learnroadrunner.com/assets/img/wes-bot-edit-half.a0bf7846.jpg
     double robotLength = 10.5; // value in inches
@@ -104,9 +102,9 @@ public class AutonTest extends LinearOpMode
     double tagsize = 0.166;
 
     //    int ID_TAG_OF_INTEREST = 18; // Tag ID 18 from the 36h11 family
-    int LEFT = 1;
+    int LEFT = 3;
     int MIDDLE = 2;
-    int RIGHT = 3;
+    int RIGHT = 1;
 
     AprilTagDetection tagOfInterest = null;
 
@@ -176,7 +174,7 @@ public class AutonTest extends LinearOpMode
             @Override
             public void onOpened()
             {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(1280,720, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -269,78 +267,6 @@ public class AutonTest extends LinearOpMode
             telemetry.update();
         }
 
-
-
-
-
-
-
-        frontLeft.setTargetPosition(500);
-        frontRight.setTargetPosition(-500);
-        backLeft.setTargetPosition(-500);
-        backRight.setTargetPosition(500);
-
-        frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-        frontLeft.setPower(.3);
-        frontRight.setPower(-.3);
-        backLeft.setPower(-.3);
-        backRight.setPower(.3);
-        // END MCODE
-
-        // CHANGE CODE
-        // change value according to how long it takes robot to reach wanted position
-        sleep(5000); // 5 seconds
-        // END CHANGE CODE
-
-        // MCODE
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
-        // END MCODE
-
-        // MOVE FORWARD 1.5 MAT LENGTH (END)
-
-        frontLeft.setTargetPosition(0);
-        frontRight.setTargetPosition(0);
-        backLeft.setTargetPosition(0);
-        backRight.setTargetPosition(0);
-
-        frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-        frontLeft.setPower(-.3);
-        frontRight.setPower(.3);
-        backLeft.setPower(.3);
-        backRight.setPower(-.3);
-        // END MCODE
-
-        // CHANGE CODE
-        // change value according to how long it takes robot to reach wanted position
-        sleep(5000); // 5 seconds
-        // END CHANGE CODE
-
-        // MCODE
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
-        // END MCODE
-
-        // MOVE FORWARD 1.5 MAT LENGTH (END)
-
-
-
-
-
-
-        /* Actually do something useful */
         if (tagOfInterest == null || tagOfInterest.id == LEFT) {
             // MOVE FORWARD 1.5 MAT LENGTH (START)
             frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);

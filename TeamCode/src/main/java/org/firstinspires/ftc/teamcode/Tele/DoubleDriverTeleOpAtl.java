@@ -83,12 +83,14 @@ public class DoubleDriverTeleOpAtl extends OpMode {
             leftBackPower = (straight + strafing - turn);
             rightBackPower = (straight - strafing + turn);
 */
-            powerProportion = 1.2;
+            powerProportion = 1.1;
             if (liftPos > 1500) {
-                leftFrontPower = ((straight - strafing - turn) * powerProportion) - ( liftPos/ 4500);
-                rightFrontPower = ((straight + strafing + turn) * powerProportion) - ( liftPos/ 4500);
-                leftBackPower = ((straight + strafing - turn) * powerProportion) - ( liftPos/ 4500);
-                rightBackPower = ((straight - strafing + turn) * powerProportion) - ( liftPos/ 4500);
+                leftFrontPower = ((straight - strafing - turn) * (powerProportion - (liftPos/4500)));
+                rightFrontPower = ((straight + strafing + turn) * (powerProportion - (liftPos/4500)));
+                leftBackPower = ((straight + strafing - turn) * (powerProportion - (liftPos/4500)));
+                rightBackPower = ((straight - strafing + turn) * (powerProportion - (liftPos/4500)));
+                slowMode = false;
+                // motorPower * (1 - (liftPos/4500))
             } else {
                 leftFrontPower = (straight - strafing - turn);
                 rightFrontPower = (straight + strafing + turn);

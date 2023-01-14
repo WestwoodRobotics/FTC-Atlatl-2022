@@ -89,6 +89,7 @@ public class SoloDriverTeleOpAtl extends OpMode {
                 rightFrontPower = ((straight + strafing + turn) * (powerProportion - (liftPos/4500)));
                 leftBackPower = ((straight + strafing - turn) * (powerProportion - (liftPos/4500)));
                 rightBackPower = ((straight - strafing + turn) * (powerProportion - (liftPos/4500)));
+                slowMode = false;
                 // motorPower * (1 - (liftPos/4500))
             } else {
                 leftFrontPower = (straight - strafing - turn);
