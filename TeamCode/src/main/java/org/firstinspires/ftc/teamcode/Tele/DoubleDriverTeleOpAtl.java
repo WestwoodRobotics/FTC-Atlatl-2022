@@ -121,13 +121,13 @@ public class DoubleDriverTeleOpAtl extends OpMode {
                 liftTarget += Math.round(gamepad2.right_trigger - gamepad2.left_trigger) * 15;
             } else {
                 //auto
-                if (gamepad1.a) {
+                if (gamepad2.a) {
                     liftTarget = 0;
-                } else if (gamepad1.b) {
+                } else if (gamepad2.b) {
                     liftTarget = 1800;
-                } else if (gamepad1.x) {
-                    liftTarget = 2650;
-                } else if (gamepad1.y) {
+                } else if (gamepad2.x) {
+                    liftTarget = 2750;
+                } else if (gamepad2.y) {
                     liftTarget = 4100;
                 }
             }
