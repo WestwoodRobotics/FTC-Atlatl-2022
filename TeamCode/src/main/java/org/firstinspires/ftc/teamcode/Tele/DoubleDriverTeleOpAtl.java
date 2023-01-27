@@ -13,17 +13,21 @@ public class DoubleDriverTeleOpAtl extends OpMode {
     public DcMotor rightFront = null;
     public DcMotor leftBack = null;
     public DcMotor rightBack = null;
+
+
     public double liftPos;
 
     //lift and intake
     public DcMotor lift = null;
     public Servo intake = null;
+    public Servo aligner = null;
 
     public int intakePressed = 0;
     public int slowModePressed = 0;
     public boolean slowMode;
     public int liftTarget = 0;
     public double powerProportion = 1.4;
+    public boolean isUp = true;
 
     @Override
     public void init() {
@@ -56,12 +60,14 @@ public class DoubleDriverTeleOpAtl extends OpMode {
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        aligner.setPosition(1);
 
     }
 
 
     @Override
     public void loop() {
+
         //chassis
         {
             //defining Wheel power
@@ -118,16 +124,33 @@ public class DoubleDriverTeleOpAtl extends OpMode {
             liftPos = lift.getCurrentPosition();
             //manual
             if (!(gamepad2.right_trigger - gamepad2.left_trigger == 0)) {
+                if (liftTarget > (liftTarget + Math.round(gamepad2.right_trigger - gamepad2.left_trigger) * 15)){
+                    isUp = false;
+                }else if (liftTarget < (liftTarget + Math.round(gamepad2.right_trigger - gamepad2.left_trigger) * 15)){
+                    isUp = true;
+                }
                 liftTarget += Math.round(gamepad2.right_trigger - gamepad2.left_trigger) * 15;
             } else {
                 //auto
                 if (gamepad2.a) {
+                    isUp = false;
                     liftTarget = 0;
                 } else if (gamepad2.b) {
+                    if (liftTarget > 1800){
+                        isUp = false;
+                    }else if (liftTarget < 1800){
+                        isUp = true;
+                    }
                     liftTarget = 1800;
                 } else if (gamepad2.x) {
+                    if (liftTarget > 2750){
+                        isUp = false;
+                    }else if (liftTarget < 4100){
+                        isUp = true;
+                    }
                     liftTarget = 2750;
                 } else if (gamepad2.y) {
+                    isUp = true;
                     liftTarget = 4100;
                 }
             }
@@ -177,12 +200,20 @@ public class DoubleDriverTeleOpAtl extends OpMode {
             }
         }
 
+        //aligner zone
+        if(isUp && liftPos >= 1500){
+            aligner.setPosition(1);
+        }else if (!isUp && liftPos <= 2000){
+            aligner.setPosition(0);
+        }
+
 
         //telemetry
         telemetry.addData("slow Mode", slowMode);
         telemetry.addData("lift position: ", liftPos);
         telemetry.addData("servo state: ", intake.getPosition());
         telemetry.addData("Lift Error", liftTarget-liftPos);
+        telemetry.addData("aligner", aligner.getPosition());
         telemetry.update();
 
     }
