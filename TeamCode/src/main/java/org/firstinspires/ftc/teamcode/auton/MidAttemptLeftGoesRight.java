@@ -23,7 +23,9 @@ package org.firstinspires.ftc.teamcode.auton;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
@@ -34,9 +36,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-@Autonomous(name="Auton Right (left)")
-public class MidAttemptLeftGoesRight extends LinearOpMode
-{
+@Autonomous(name="Cone Auton Left (right)")
+public class MidAttemptLeftGoesRight extends LinearOpMode {
     // CHANGE CODE(change string according to what you named your motors)
     String frontLeftM = "leftFront";
     String frontRightM = "rightFront";
@@ -49,14 +50,17 @@ public class MidAttemptLeftGoesRight extends LinearOpMode
     DcMotorEx frontRight = null;
     DcMotorEx backLeft = null;
     DcMotorEx backRight = null;
+    DcMotorEx lift = null;
+    Servo intake = null;
+    Servo aligner = null;
     // END MCODE
 
     // CHANGE CODE
     // if you have a 1:4 and then a 1:5 then you gear ratio is 1:20
     // in that case just type 20 in the gear ratio variable value
     int gearRatio = 20;
-    double wheelRadius = 3.77953/2; // value in inches
-    double wheelCircumference = 2*Math.PI*wheelRadius;
+    double wheelRadius = 3.77953 / 2; // value in inches
+    double wheelCircumference = 2 * Math.PI * wheelRadius;
     double trackWidth = 13.5; // value in inches
     // go to link to see what track width is
     //https://learnroadrunner.com/assets/img/wes-bot-edit-half.a0bf7846.jpg
@@ -67,7 +71,7 @@ public class MidAttemptLeftGoesRight extends LinearOpMode
     // MCODE
     HashMap<Integer, Double> actualGearRatio = new HashMap<>();
     int revMotorTicksPerRotation = 28;
-    int ticksPerRotation = revMotorTicksPerRotation*gearRatio;
+    int ticksPerRotation = revMotorTicksPerRotation * gearRatio;
     double actualTicksPerRotation = 0.0;
     int matLength = 24; // inches
     int turn90DegTicks = 0;
@@ -76,11 +80,11 @@ public class MidAttemptLeftGoesRight extends LinearOpMode
     // the variable is meant to hold how many ticks to drive forward 24 inches
 
     // c^2 = a^2 + b^2 -> c = sqrt(a^2 + b^2)
-    double robotDiameter = Math.sqrt(Math.pow(trackWidth,2)+Math.pow(robotLength,2));
-    double robotRadius = robotDiameter/2.0;
+    double robotDiameter = Math.sqrt(Math.pow(trackWidth, 2) + Math.pow(robotLength, 2));
+    double robotRadius = robotDiameter / 2.0;
     // C = 2PIr
-    double robotCircumference = 2*Math.PI*robotRadius;
-    double robotHalfCircumference = robotCircumference/2.0;
+    double robotCircumference = 2 * Math.PI * robotRadius;
+    double robotHalfCircumference = robotCircumference / 2.0;
 
     // END MCODE
 
@@ -109,8 +113,7 @@ public class MidAttemptLeftGoesRight extends LinearOpMode
     AprilTagDetection tagOfInterest = null;
 
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() {
         // MCODE
         actualGearRatio.put(9, 8.4);
         actualGearRatio.put(12, 10.5);
@@ -121,10 +124,10 @@ public class MidAttemptLeftGoesRight extends LinearOpMode
         // END MCODE
 
         // MCODE
-        actualTicksPerRotation = (double)(revMotorTicksPerRotation*actualGearRatio.get(gearRatio));
-        forwardTicksForMat = (int)((matLength/wheelCircumference) * actualTicksPerRotation);
-        forwardTicksForHalfMat = forwardTicksForMat/2;
-        turn90DegTicks = (int)((robotHalfCircumference/wheelCircumference) * actualTicksPerRotation);
+        actualTicksPerRotation = (double) (revMotorTicksPerRotation * actualGearRatio.get(gearRatio));
+        forwardTicksForMat = (int) ((matLength / wheelCircumference) * actualTicksPerRotation);
+        forwardTicksForHalfMat = forwardTicksForMat / 2;
+        turn90DegTicks = (int) ((robotHalfCircumference / wheelCircumference) * actualTicksPerRotation);
         // END MCODE
 
         //MCODE
@@ -132,6 +135,14 @@ public class MidAttemptLeftGoesRight extends LinearOpMode
         frontRight = hardwareMap.get(DcMotorEx.class, frontRightM);
         backLeft = hardwareMap.get(DcMotorEx.class, backLeftM);
         backRight = hardwareMap.get(DcMotorEx.class, backRightM);
+
+        //Lift and intake hardware map
+        lift = hardwareMap.get(DcMotorEx.class, "lift");
+        lift = hardwareMap.get(DcMotorEx.class, "lift");
+        intake = hardwareMap.get(Servo.class, "intake");
+        aligner = hardwareMap.get(Servo.class, "aligner");
+
+
         // END MCODE
 
         // CHANGE CODE
@@ -141,10 +152,12 @@ public class MidAttemptLeftGoesRight extends LinearOpMode
         if I set power of 1 on strafe variable it should strafe right
         if I set power of 1 on turn variable it should turn right
          */
-        frontLeft.setDirection(DcMotorEx.Direction.FORWARD);
-        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
-        backLeft.setDirection(DcMotorEx.Direction.FORWARD);
-        backRight.setDirection(DcMotorEx.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        frontRight.setDirection(DcMotorEx.Direction.FORWARD);
+        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        backRight.setDirection(DcMotorEx.Direction.FORWARD);
+
+        lift.setDirection(DcMotor.Direction.FORWARD);
         // END CHANGE CODE
 
         // MCODE
@@ -153,15 +166,22 @@ public class MidAttemptLeftGoesRight extends LinearOpMode
         backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         frontLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+        lift.setTargetPosition(0);
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         // END MCODE
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -169,17 +189,14 @@ public class MidAttemptLeftGoesRight extends LinearOpMode
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
-                camera.startStreaming(1280,720, OpenCvCameraRotation.UPRIGHT);
+            public void onOpened() {
+                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
-            public void onError(int errorCode)
-            {
+            public void onError(int errorCode) {
 
             }
         });
@@ -190,55 +207,40 @@ public class MidAttemptLeftGoesRight extends LinearOpMode
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
-        while (!isStarted() && !isStopRequested())
-        {
+        while (!isStarted() && !isStopRequested()) {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
-            if(currentDetections.size() != 0)
-            {
+            if (currentDetections.size() != 0) {
                 boolean tagFound = false;
 
-                for(AprilTagDetection tag : currentDetections)
-                {
-                    if(tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT)
-                    {
+                for (AprilTagDetection tag : currentDetections) {
+                    if (tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT) {
                         tagOfInterest = tag;
                         tagFound = true;
                         break;
                     }
                 }
 
-                if(tagFound)
-                {
+                if (tagFound) {
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
-                }
-                else
-                {
+                } else {
                     telemetry.addLine("Don't see tag of interest :(");
 
-                    if(tagOfInterest == null)
-                    {
+                    if (tagOfInterest == null) {
                         telemetry.addLine("(The tag has never been seen)");
-                    }
-                    else
-                    {
+                    } else {
                         telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                         tagToTelemetry(tagOfInterest);
                     }
                 }
 
-            }
-            else
-            {
+            } else {
                 telemetry.addLine("Don't see tag of interest :(");
 
-                if(tagOfInterest == null)
-                {
+                if (tagOfInterest == null) {
                     telemetry.addLine("(The tag has never been seen)");
-                }
-                else
-                {
+                } else {
                     telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                     tagToTelemetry(tagOfInterest);
                 }
@@ -255,88 +257,133 @@ public class MidAttemptLeftGoesRight extends LinearOpMode
          */
 
         /* Update the telemetry */
-        if(tagOfInterest != null)
-        {
+        if (tagOfInterest != null) {
             telemetry.addLine("Tag snapshot:\n");
             tagToTelemetry(tagOfInterest);
             telemetry.update();
-        }
-        else
-        {
+        } else {
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
         }
 
+        //aligner, claw setup
+        {
+            intake.setPosition(1);
+            intake.setPosition(1);
+            intake.setPosition(1);
+
+            lift.setTargetPosition(1500);
+
+            lift.setPower(1);
+            sleep(3);
+
+            lift.setPower(0);
+
+            aligner.setPosition(1);
+            aligner.setPosition(1);
+            aligner.setPosition(1);
+        }
+
+        // MOVE TO JUNCTION
+        {
+            frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+            frontLeft.setTargetPosition(700);
+            frontRight.setTargetPosition(1000);
+            backLeft.setTargetPosition(700);
+            backRight.setTargetPosition(1000);
+            lift.setTargetPosition(2800);
+
+            frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+            frontLeft.setPower(.3);
+            frontRight.setPower(.3);
+            backLeft.setPower(.3);
+            backRight.setPower(.3);
+            lift.setPower(1);
 
 
+            sleep(5000);
+
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backLeft.setPower(0);
+            backRight.setPower(0);
+        }
+
+        //drop cone
+        {
+            lift.setTargetPosition(2000);
+            lift.setPower(-1);
+            sleep(1);
+            intake.setPosition(0.7);
+        }
+
+        //raise aligner
+        {
+            frontLeft.setTargetPosition(700 * (4 / 5));
+            frontRight.setTargetPosition(1000 * (4 / 5));
+            backLeft.setTargetPosition(700 * (4 / 5));
+            backRight.setTargetPosition(1000 * (4 / 5));
+            lift.setTargetPosition(1750);
+
+            frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+            frontLeft.setPower(-.3);
+            frontRight.setPower(-.3);
+            backLeft.setPower(-.3);
+            backRight.setPower(-.3);
+            lift.setPower(-1);
+
+            sleep(1000);
+
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backLeft.setPower(0);
+            backRight.setPower(0);
+            lift.setPower(-1);
+            aligner.setPosition(0);
+        }
+
+        //MOVE BACK to start
+        {
+            frontLeft.setTargetPosition(0);
+            frontRight.setTargetPosition(0);
+            backLeft.setTargetPosition(0);
+            backRight.setTargetPosition(0);
+            lift.setTargetPosition(0);
+
+            frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+            frontLeft.setPower(-.3);
+            frontRight.setPower(-.3);
+            backLeft.setPower(-.3);
+            backRight.setPower(-.3);
+            lift.setPower(-1);
 
 
+            sleep(5000);
 
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backLeft.setPower(0);
+            backRight.setPower(0);
+            lift.setPower(0);
+        }
 
-        frontLeft.setTargetPosition(-1150);
-        frontRight.setTargetPosition(1150);
-        backLeft.setTargetPosition(1150);
-        backRight.setTargetPosition(-1150);
-
-        frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-        frontLeft.setPower(-.3);
-        frontRight.setPower(.3);
-        backLeft.setPower(.3);
-        backRight.setPower(-.3);
-        // END MCODE
-
-        // CHANGE CODE
-        // change value according to how long it takes robot to reach wanted position
-        sleep(5000); // 5 seconds
-        // END CHANGE CODE
-
-        // MCODE
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
-        // END MCODE
-
-        // MOVE FORWARD 1.5 MAT LENGTH (END)
-
-        frontLeft.setTargetPosition(0);
-        frontRight.setTargetPosition(0);
-        backLeft.setTargetPosition(0);
-        backRight.setTargetPosition(0);
-
-        frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-        frontLeft.setPower(.3);
-        frontRight.setPower(-.3);
-        backLeft.setPower(-.3);
-        backRight.setPower(.3);
-        // END MCODE
-
-        // CHANGE CODE
-        // change value according to how long it takes robot to reach wanted position
-        sleep(5000); // 5 seconds
-        // END CHANGE CODE
-
-        // MCODE
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
-        // END MCODE
-
-        // MOVE FORWARD 1.5 MAT LENGTH (END)
-
-
-
-        /* Actually do something useful */
-        if (tagOfInterest == null || tagOfInterest.id == LEFT) {
+        if (tagOfInterest.id == LEFT) {
             // MOVE FORWARD 1.5 MAT LENGTH (START)
             frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
             frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -452,7 +499,7 @@ public class MidAttemptLeftGoesRight extends LinearOpMode
             // END MCODE
 
             // MOVE FORWARD 1.5 MAT LENGTH (END)
-        } else if (tagOfInterest.id == MIDDLE) {
+        } else if (tagOfInterest == null || tagOfInterest.id == MIDDLE) {
             frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
             frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
             backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
