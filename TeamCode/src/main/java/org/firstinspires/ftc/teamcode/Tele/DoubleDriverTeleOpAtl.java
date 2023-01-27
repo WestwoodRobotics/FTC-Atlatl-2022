@@ -53,9 +53,7 @@ public class DoubleDriverTeleOpAtl extends OpMode {
         intake = hardwareMap.get(Servo.class, "intake");
 
         lift.setDirection(DcMotor.Direction.FORWARD);
-        intake.setDirection(Servo.Direction.REVERSE);
 
-        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setTargetPosition(liftTarget);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -143,9 +141,9 @@ public class DoubleDriverTeleOpAtl extends OpMode {
                     }
                     liftTarget = 1800;
                 } else if (gamepad2.x) {
-                    if (liftTarget > 2750){
+                    if (liftTarget > 2800){
                         isUp = false;
-                    }else if (liftTarget < 4100){
+                    }else if (liftTarget < 2800){
                         isUp = true;
                     }
                     liftTarget = 2750;
@@ -201,9 +199,9 @@ public class DoubleDriverTeleOpAtl extends OpMode {
         }
 
         //aligner zone
-        if(isUp && liftPos >= 1500){
+        if(isUp && liftPos >= 2000){
             aligner.setPosition(1);
-        }else if (!isUp && liftPos <= 2000){
+        }else if (!isUp && liftPos <= 2500){
             aligner.setPosition(0);
         }
 
