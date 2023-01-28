@@ -51,6 +51,7 @@ public class DoubleDriverTeleOpAtl extends OpMode {
         //Lift and intake hardware map
         lift = hardwareMap.get(DcMotor.class, "lift");
         intake = hardwareMap.get(Servo.class, "intake");
+        aligner = hardwareMap.get(Servo.class, "aligner");
 
         lift.setDirection(DcMotor.Direction.FORWARD);
 
@@ -58,7 +59,6 @@ public class DoubleDriverTeleOpAtl extends OpMode {
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        aligner.setPosition(1);
 
     }
 
@@ -175,10 +175,10 @@ public class DoubleDriverTeleOpAtl extends OpMode {
         //intake
         {
             if ((gamepad2.left_bumper || gamepad2.right_bumper) && intakePressed == 0) {
-                if (intake.getPosition() == 0.7) {
-                    intake.setPosition(1);
+                if (intake.getPosition() == 0.6) {
+                    intake.setPosition(0);
                 } else {
-                    intake.setPosition(0.7);
+                    intake.setPosition(0.6);
                 }
                 intakePressed++;
             }
@@ -200,18 +200,16 @@ public class DoubleDriverTeleOpAtl extends OpMode {
 
         //aligner zone
         if(isUp && liftPos >= 2000){
-            aligner.setPosition(1);
-        }else if (!isUp && liftPos <= 2500){
             aligner.setPosition(0);
+        }else if (!isUp && liftPos <= 1800){
+            aligner.setPosition(1);
         }
 
 
         //telemetry
         telemetry.addData("slow Mode", slowMode);
         telemetry.addData("lift position: ", liftPos);
-        telemetry.addData("servo state: ", intake.getPosition());
         telemetry.addData("Lift Error", liftTarget-liftPos);
-        telemetry.addData("aligner", aligner.getPosition());
         telemetry.update();
 
     }

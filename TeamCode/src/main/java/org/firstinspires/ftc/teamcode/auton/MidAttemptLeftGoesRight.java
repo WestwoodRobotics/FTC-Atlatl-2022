@@ -297,10 +297,10 @@ public class MidAttemptLeftGoesRight extends LinearOpMode {
             backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
             backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-            frontLeft.setTargetPosition(1400);
-            backLeft.setTargetPosition(1400);
-            frontRight.setTargetPosition(1800);
-            backRight.setTargetPosition(1800);
+            frontRight.setTargetPosition(1400);
+            backRight.setTargetPosition(1400);
+            frontLeft.setTargetPosition(1800);
+            backLeft.setTargetPosition(1800);
             lift.setTargetPosition(3000);
 
             frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -308,10 +308,10 @@ public class MidAttemptLeftGoesRight extends LinearOpMode {
             backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-            frontLeft.setPower(0.5*10/15);
-            frontRight.setPower(.5);
-            backLeft.setPower(0.5*10/15);
-            backRight.setPower(.5);
+            frontLeft.setPower(0.5);
+            frontRight.setPower(0.5*10/15);
+            backLeft.setPower(0.5);
+            backRight.setPower(0.5*10/15);
             lift.setPower(1);
 
 
@@ -373,10 +373,10 @@ public class MidAttemptLeftGoesRight extends LinearOpMode {
         frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-        frontLeft.setTargetPosition(220);
-        backLeft.setTargetPosition(220);
-        frontRight.setTargetPosition(-220);
-        backRight.setTargetPosition(-220);
+        frontLeft.setTargetPosition(-220);
+        backLeft.setTargetPosition(-220);
+        frontRight.setTargetPosition(220);
+        backRight.setTargetPosition(220);
         lift.setTargetPosition(0);
 
         frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -428,6 +428,11 @@ public class MidAttemptLeftGoesRight extends LinearOpMode {
         backRight.setPower(0);
 
         if (tagOfInterest == null || tagOfInterest.id == LEFT) {
+            frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
             frontLeft.setTargetPosition(-500);
             frontRight.setTargetPosition(500);
             backLeft.setTargetPosition(500);
@@ -456,40 +461,12 @@ public class MidAttemptLeftGoesRight extends LinearOpMode {
             backRight.setPower(0);
             // END MCODE
 
-            // MOVE FORWARD 1.5 MAT LENGTH (END)
 
-            frontLeft.setTargetPosition(0);
-            frontRight.setTargetPosition(0);
-            backLeft.setTargetPosition(0);
-            backRight.setTargetPosition(0);
-
-            frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-            frontLeft.setPower(.3);
-            frontRight.setPower(-.3);
-            backLeft.setPower(-.3);
-            backRight.setPower(.3);
-            // END MCODE
-
-            // CHANGE CODE
-            // change value according to how long it takes robot to reach wanted position
-            sleep(5000); // 5 seconds
-            // END CHANGE CODE
-
-            // MCODE
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-            backLeft.setPower(0);
-            backRight.setPower(0);
-            // END MCODE
         } else if ( tagOfInterest.id == MIDDLE) {
-            frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
             frontLeft.setTargetPosition(690);
             frontRight.setTargetPosition(-690);
@@ -521,38 +498,16 @@ public class MidAttemptLeftGoesRight extends LinearOpMode {
 
             // MOVE FORWARD 1.5 MAT LENGTH (END)
 
-            frontLeft.setTargetPosition(0);
-            frontRight.setTargetPosition(0);
-            backLeft.setTargetPosition(0);
-            backRight.setTargetPosition(0);
-
-            frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-            frontLeft.setPower(.3);
-            frontRight.setPower(-.3);
-            backLeft.setPower(-.3);
-            backRight.setPower(.3);
-            // END MCODE
-
-            // CHANGE CODE
-            // change value according to how long it takes robot to reach wanted position
-            sleep(5000); // 5 seconds
-            // END CHANGE CODE
-
-            // MCODE
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-            backLeft.setPower(0);
-            backRight.setPower(0);
-            // END MCODE
         } else {
-            frontLeft.setTargetPosition(690);
-            frontRight.setTargetPosition(-690);
-            backLeft.setTargetPosition(-690);
-            backRight.setTargetPosition(690);
+            frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+            frontLeft.setTargetPosition(-690);
+            frontRight.setTargetPosition(690);
+            backLeft.setTargetPosition(690);
+            backRight.setTargetPosition(-690);
 
             frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -577,35 +532,7 @@ public class MidAttemptLeftGoesRight extends LinearOpMode {
             backRight.setPower(0);
             // END MCODE
 
-            // MOVE FORWARD 1.5 MAT LENGTH (END)
 
-            frontLeft.setTargetPosition(0);
-            frontRight.setTargetPosition(0);
-            backLeft.setTargetPosition(0);
-            backRight.setTargetPosition(0);
-
-            frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-            frontLeft.setPower(.3);
-            frontRight.setPower(-.3);
-            backLeft.setPower(-.3);
-            backRight.setPower(.3);
-            // END MCODE
-
-            // CHANGE CODE
-            // change value according to how long it takes robot to reach wanted position
-            sleep(5000); // 5 seconds
-            // END CHANGE CODE
-
-            // MCODE
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-            backLeft.setPower(0);
-            backRight.setPower(0);
-            // END MCODE
         }
 
 
