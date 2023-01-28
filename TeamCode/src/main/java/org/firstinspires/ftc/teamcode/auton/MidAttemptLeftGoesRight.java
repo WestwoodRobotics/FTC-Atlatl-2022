@@ -266,22 +266,28 @@ public class MidAttemptLeftGoesRight extends LinearOpMode {
             telemetry.update();
         }
 
+
+        aligner.setPosition(1);
+        aligner.setPosition(1);
+        aligner.setPosition(1);
+        intake.setPosition(0);
+        intake.setPosition(0);
+        intake.setPosition(0);
+        intake.setPosition(0);
+        sleep(1000);
         //aligner, claw setup
         {
-            intake.setPosition(1);
-            intake.setPosition(1);
-            intake.setPosition(1);
+            intake.setPosition(0);
+            intake.setPosition(0);
+            intake.setPosition(0);
 
             lift.setTargetPosition(1500);
 
             lift.setPower(1);
             sleep(3);
 
-            lift.setPower(0);
+            aligner.setPosition(0);
 
-            aligner.setPosition(1);
-            aligner.setPosition(1);
-            aligner.setPosition(1);
         }
 
         // MOVE TO JUNCTION
@@ -291,25 +297,25 @@ public class MidAttemptLeftGoesRight extends LinearOpMode {
             backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
             backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-            frontLeft.setTargetPosition(700);
-            frontRight.setTargetPosition(1000);
-            backLeft.setTargetPosition(700);
-            backRight.setTargetPosition(1000);
-            lift.setTargetPosition(2800);
+            frontLeft.setTargetPosition(1400);
+            backLeft.setTargetPosition(1400);
+            frontRight.setTargetPosition(1800);
+            backRight.setTargetPosition(1800);
+            lift.setTargetPosition(3000);
 
             frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-            frontLeft.setPower(.3);
-            frontRight.setPower(.3);
-            backLeft.setPower(.3);
-            backRight.setPower(.3);
+            frontLeft.setPower(0.5*10/15);
+            frontRight.setPower(.5);
+            backLeft.setPower(0.5*10/15);
+            backRight.setPower(.5);
             lift.setPower(1);
 
 
-            sleep(5000);
+            sleep(6000);
 
             frontLeft.setPower(0);
             frontRight.setPower(0);
@@ -322,15 +328,21 @@ public class MidAttemptLeftGoesRight extends LinearOpMode {
             lift.setTargetPosition(2000);
             lift.setPower(-1);
             sleep(1);
-            intake.setPosition(0.7);
+            intake.setPosition(0.6);
         }
 
         //raise aligner
         {
-            frontLeft.setTargetPosition(700 * (4 / 5));
-            frontRight.setTargetPosition(1000 * (4 / 5));
-            backLeft.setTargetPosition(700 * (4 / 5));
-            backRight.setTargetPosition(1000 * (4 / 5));
+            frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+
+            frontLeft.setTargetPosition(-150);
+            frontRight.setTargetPosition(-150);
+            backLeft.setTargetPosition(-150);
+            backRight.setTargetPosition(-150);
             lift.setTargetPosition(1750);
 
             frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -338,10 +350,10 @@ public class MidAttemptLeftGoesRight extends LinearOpMode {
             backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-            frontLeft.setPower(-.3);
-            frontRight.setPower(-.3);
-            backLeft.setPower(-.3);
-            backRight.setPower(-.3);
+            frontLeft.setPower(0.5);
+            frontRight.setPower(.5);
+            backLeft.setPower(0.5);
+            backRight.setPower(.5);
             lift.setPower(-1);
 
             sleep(1000);
@@ -351,16 +363,75 @@ public class MidAttemptLeftGoesRight extends LinearOpMode {
             backLeft.setPower(0);
             backRight.setPower(0);
             lift.setPower(-1);
-            aligner.setPosition(0);
+            aligner.setPosition(1);
+            intake.setPosition(0);
         }
 
-        //MOVE BACK to start
-        {
-            frontLeft.setTargetPosition(0);
-            frontRight.setTargetPosition(0);
-            backLeft.setTargetPosition(0);
-            backRight.setTargetPosition(0);
-            lift.setTargetPosition(0);
+
+        frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontLeft.setTargetPosition(220);
+        backLeft.setTargetPosition(220);
+        frontRight.setTargetPosition(-220);
+        backRight.setTargetPosition(-220);
+        lift.setTargetPosition(0);
+
+        frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        frontLeft.setPower(.3);
+        frontRight.setPower(.3);
+        backLeft.setPower(.3);
+        backRight.setPower(.3);
+        lift.setPower(-1);
+
+        sleep(1000);
+
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+
+
+        frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontLeft.setTargetPosition(-180);
+        backLeft.setTargetPosition(-180);
+        frontRight.setTargetPosition(-180);
+        backRight.setTargetPosition(-180);
+        lift.setTargetPosition(0);
+
+        frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        frontLeft.setPower(.3);
+        frontRight.setPower(.3);
+        backLeft.setPower(.3);
+        backRight.setPower(.3);
+        lift.setPower(-1);
+
+        sleep(1000);
+
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+
+        if (tagOfInterest == null || tagOfInterest.id == LEFT) {
+            frontLeft.setTargetPosition(-500);
+            frontRight.setTargetPosition(500);
+            backLeft.setTargetPosition(500);
+            backRight.setTargetPosition(-500);
 
             frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -368,172 +439,107 @@ public class MidAttemptLeftGoesRight extends LinearOpMode {
             backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
             frontLeft.setPower(-.3);
+            frontRight.setPower(.3);
+            backLeft.setPower(.3);
+            backRight.setPower(-.3);
+            // END MCODE
+
+            // CHANGE CODE
+            // change value according to how long it takes robot to reach wanted position
+            sleep(5000); // 5 seconds
+            // END CHANGE CODE
+
+            // MCODE
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backLeft.setPower(0);
+            backRight.setPower(0);
+            // END MCODE
+
+            // MOVE FORWARD 1.5 MAT LENGTH (END)
+
+            frontLeft.setTargetPosition(0);
+            frontRight.setTargetPosition(0);
+            backLeft.setTargetPosition(0);
+            backRight.setTargetPosition(0);
+
+            frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+            frontLeft.setPower(.3);
+            frontRight.setPower(-.3);
+            backLeft.setPower(-.3);
+            backRight.setPower(.3);
+            // END MCODE
+
+            // CHANGE CODE
+            // change value according to how long it takes robot to reach wanted position
+            sleep(5000); // 5 seconds
+            // END CHANGE CODE
+
+            // MCODE
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backLeft.setPower(0);
+            backRight.setPower(0);
+            // END MCODE
+        } else if ( tagOfInterest.id == MIDDLE) {
+            frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+            frontLeft.setTargetPosition(690);
+            frontRight.setTargetPosition(-690);
+            backLeft.setTargetPosition(-690);
+            backRight.setTargetPosition(690);
+
+            frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+            frontLeft.setPower(-.3);
+            frontRight.setPower(.3);
+            backLeft.setPower(.3);
+            backRight.setPower(-.3);
+            // END MCODE
+
+            // CHANGE CODE
+            // change value according to how long it takes robot to reach wanted position
+            sleep(5000); // 5 seconds
+            // END CHANGE CODE
+
+            // MCODE
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backLeft.setPower(0);
+            backRight.setPower(0);
+            // END MCODE
+
+            // MOVE FORWARD 1.5 MAT LENGTH (END)
+
+            frontLeft.setTargetPosition(0);
+            frontRight.setTargetPosition(0);
+            backLeft.setTargetPosition(0);
+            backRight.setTargetPosition(0);
+
+            frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+            frontLeft.setPower(.3);
             frontRight.setPower(-.3);
             backLeft.setPower(-.3);
-            backRight.setPower(-.3);
-            lift.setPower(-1);
-
-
-            sleep(5000);
-
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-            backLeft.setPower(0);
-            backRight.setPower(0);
-            lift.setPower(0);
-        }
-
-        if (tagOfInterest.id == LEFT) {
-            // MOVE FORWARD 1.5 MAT LENGTH (START)
-            frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            // MCODE
-            frontLeft.setTargetPosition(forwardTicksForMat+forwardTicksForMat/6);
-            frontRight.setTargetPosition(forwardTicksForMat+forwardTicksForMat/6);
-            backLeft.setTargetPosition(forwardTicksForMat+forwardTicksForMat/6);
-            backRight.setTargetPosition(forwardTicksForMat+forwardTicksForMat/6);
-
-            frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-            frontLeft.setPower(.3);
-            frontRight.setPower(.3);
-            backLeft.setPower(.3);
             backRight.setPower(.3);
             // END MCODE
 
             // CHANGE CODE
             // change value according to how long it takes robot to reach wanted position
             sleep(5000); // 5 seconds
-            // END CHANGE CODE
-
-            // MCODE
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-            backLeft.setPower(0);
-            backRight.setPower(0);
-            // END MCODE
-
-            // MOVE FORWARD 1.5 MAT LENGTH (END)
-
-            // MCODE
-            frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            // END MCODE
-
-            // TURN 180 DEGREES LEFT (START)
-
-            // MCODE
-            frontLeft.setTargetPosition((int)(-turn90DegTicks/1.4));
-            frontRight.setTargetPosition((int)(turn90DegTicks/1.4));
-            backLeft.setTargetPosition((int)(-turn90DegTicks/1.4));
-            backRight.setTargetPosition((int)(turn90DegTicks/1.4));
-
-            frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-            frontLeft.setPower(.3);
-            frontRight.setPower(-.3);
-            backLeft.setPower(.3);
-            backRight.setPower(-.3);
-            // END MCODE
-
-            // CHANGE CODE
-            // change value according to how long it takes robot to reach wanted position
-            sleep(5000); // 5 seconds
-            // END CHANGE CODE
-
-            // MCODE
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-            backLeft.setPower(0);
-            backRight.setPower(0);
-            // END MCODE
-
-            // TURN 180 DEGREES LEFT (END)
-
-            // MCODE
-            frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            // END MCODE
-
-            // MOVE FORWARD 1.5 MAT LENGTH (START)
-
-            // MCODE
-            frontLeft.setTargetPosition(forwardTicksForMat);
-            frontRight.setTargetPosition(forwardTicksForMat);
-            backLeft.setTargetPosition(forwardTicksForMat);
-            backRight.setTargetPosition(forwardTicksForMat);
-
-            frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-            frontLeft.setPower(.3);
-            frontRight.setPower(.3);
-            backLeft.setPower(.3);
-            backRight.setPower(.3);
-            // END MCODE
-
-            // CHANGE CODE
-            // change value according to how long it takes robot to reach wanted position
-            sleep(5000); // 5 seconds
-            // END CHANGE CODE
-
-            // MCODE
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-            backLeft.setPower(0);
-            backRight.setPower(0);
-            // END MCODE
-
-            // MOVE FORWARD 1.5 MAT LENGTH (END)
-        } else if (tagOfInterest == null || tagOfInterest.id == MIDDLE) {
-            frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-
-            // MCODE
-            frontLeft.setTargetPosition(forwardTicksForMat+forwardTicksForMat/6);
-            frontRight.setTargetPosition(forwardTicksForMat+forwardTicksForMat/6);
-            backLeft.setTargetPosition(forwardTicksForMat+forwardTicksForMat/6);
-            backRight.setTargetPosition(forwardTicksForMat+forwardTicksForMat/6);
-
-            frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-            frontLeft.setPower(.3);
-            frontRight.setPower(.3);
-            backLeft.setPower(.3);
-            backRight.setPower(.3);
-            // END MCODE
-
-            // CHANGE CODE
-            // change value according to how long it takes robot to reach wanted position
-            telemetry.addData("backLeft: ", backLeft.getCurrentPosition());
-            telemetry.addData("backRight: ", backRight.getCurrentPosition());
-            telemetry.addData("frontLeft: ", frontLeft.getCurrentPosition());
-            telemetry.addData("frontRight: ", frontRight.getCurrentPosition());
-            telemetry.addData("ticksForward: ", forwardTicksForMat+(forwardTicksForHalfMat/2));
-            sleep(5000); // 5 seconds
-            telemetry.addData("backLeftN: ", backLeft.getCurrentPosition());
-            telemetry.addData("backRightN: ", backRight.getCurrentPosition());
-            telemetry.addData("frontLeftN: ", frontLeft.getCurrentPosition());
-            telemetry.addData("frontRightN: ", frontRight.getCurrentPosition());
             // END CHANGE CODE
 
             // MCODE
@@ -543,26 +549,20 @@ public class MidAttemptLeftGoesRight extends LinearOpMode {
             backRight.setPower(0);
             // END MCODE
         } else {
-            // MOVE FORWARD 1.5 MAT LENGTH (START)
-            frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            // MCODE
-            frontLeft.setTargetPosition(forwardTicksForMat+forwardTicksForMat/6);
-            frontRight.setTargetPosition(forwardTicksForMat+forwardTicksForMat/6);
-            backLeft.setTargetPosition(forwardTicksForMat+forwardTicksForMat/6);
-            backRight.setTargetPosition(forwardTicksForMat+forwardTicksForMat/6);
+            frontLeft.setTargetPosition(690);
+            frontRight.setTargetPosition(-690);
+            backLeft.setTargetPosition(-690);
+            backRight.setTargetPosition(690);
 
             frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-            frontLeft.setPower(.3);
+            frontLeft.setPower(-.3);
             frontRight.setPower(.3);
             backLeft.setPower(.3);
-            backRight.setPower(.3);
+            backRight.setPower(-.3);
             // END MCODE
 
             // CHANGE CODE
@@ -579,28 +579,18 @@ public class MidAttemptLeftGoesRight extends LinearOpMode {
 
             // MOVE FORWARD 1.5 MAT LENGTH (END)
 
-            // MCODE
-            frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            // END MCODE
-
-            // TURN 180 DEGREES RIGHT (START)
-
-            // MCODE
-            frontLeft.setTargetPosition((int)(turn90DegTicks/1.4));
-            frontRight.setTargetPosition((int)(-turn90DegTicks/1.4));
-            backLeft.setTargetPosition((int)(turn90DegTicks/1.4));
-            backRight.setTargetPosition((int)(-turn90DegTicks/1.4));
+            frontLeft.setTargetPosition(0);
+            frontRight.setTargetPosition(0);
+            backLeft.setTargetPosition(0);
+            backRight.setTargetPosition(0);
 
             frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-            frontLeft.setPower(-.3);
-            frontRight.setPower(.3);
+            frontLeft.setPower(.3);
+            frontRight.setPower(-.3);
             backLeft.setPower(-.3);
             backRight.setPower(.3);
             // END MCODE
@@ -616,48 +606,6 @@ public class MidAttemptLeftGoesRight extends LinearOpMode {
             backLeft.setPower(0);
             backRight.setPower(0);
             // END MCODE
-
-            // TURN 180 DEGREES LEFT (END)
-
-            // MCODE
-            frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            // END MCODE
-
-            // MOVE FORWARD 1.5 MAT LENGTH (START)
-
-            // MCODE
-            frontLeft.setTargetPosition(forwardTicksForMat);
-            frontRight.setTargetPosition(forwardTicksForMat);
-            backLeft.setTargetPosition(forwardTicksForMat);
-            backRight.setTargetPosition(forwardTicksForMat);
-
-            frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-            frontLeft.setPower(.3);
-            frontRight.setPower(.3);
-            backLeft.setPower(.3);
-            backRight.setPower(.3);
-            // END MCODE
-
-            // CHANGE CODE
-            // change value according to how long it takes robot to reach wanted position
-            sleep(5000); // 5 seconds
-            // END CHANGE CODE
-
-            // MCODE
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-            backLeft.setPower(0);
-            backRight.setPower(0);
-            // END MCODE
-
-            // MOVE FORWARD 1.5 MAT LENGTH (END)
         }
 
 

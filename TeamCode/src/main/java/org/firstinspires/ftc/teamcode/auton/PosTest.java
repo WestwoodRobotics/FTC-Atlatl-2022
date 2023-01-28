@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.util.jar.Attributes;
 
@@ -22,10 +23,10 @@ public class PosTest extends OpMode {
         leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
         rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
 
-        leftFront.setDirection(DcMotorEx.Direction.FORWARD);
-        rightFront.setDirection(DcMotorEx.Direction.REVERSE);
-        leftBack.setDirection(DcMotorEx.Direction.FORWARD);
-        rightBack.setDirection(DcMotorEx.Direction.REVERSE);
+        leftFront.setDirection(DcMotorEx.Direction.REVERSE);
+        rightFront.setDirection(DcMotorEx.Direction.FORWARD);
+        leftBack.setDirection(DcMotorEx.Direction.REVERSE);
+        rightBack.setDirection(DcMotorEx.Direction.FORWARD);
 
         leftFront.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -46,18 +47,18 @@ public class PosTest extends OpMode {
 
     @Override
     public void loop() {
-        leftFront.setTargetPosition(750);
-        leftBack.setTargetPosition(750);
-        rightFront.setTargetPosition(1000);
-        rightBack.setTargetPosition(1000);
+        leftFront.setTargetPosition(1200);
+        leftBack.setTargetPosition(1200);
+        rightFront.setTargetPosition(1600);
+        rightBack.setTargetPosition(1600);
 
         leftFront.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         leftBack.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         rightBack.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         rightFront.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        leftFront.setPower(0.5);
-        leftBack.setPower(0.5);
+        leftFront.setPower(0.5*10/15);
+        leftBack.setPower(0.5*10/15);
         rightFront.setPower(0.5);
         rightBack.setPower(0.5);
 
