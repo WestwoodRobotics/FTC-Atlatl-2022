@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "DoubleAtl")
 
-public class DoubleDriverTeleOpAtl extends OpMode {
+public class DoubleIntakeFixTest extends OpMode {
     //wheels
     public DcMotor leftFront = null;
     public DcMotor rightFront = null;
@@ -21,7 +21,6 @@ public class DoubleDriverTeleOpAtl extends OpMode {
     public DcMotor lift = null;
     public Servo intake = null;
 
-    public int intakePressed = 0;
     public int slowModePressed = 0;
     public boolean slowMode;
     public int liftTarget = 0;
@@ -156,18 +155,11 @@ public class DoubleDriverTeleOpAtl extends OpMode {
 
         //intake
         telemetry.addData("rightBumper: ", gamepad2.right_bumper);
-        telemetry.addData("intakePressed: ", intakePressed);
         {
-            if ((gamepad2.left_bumper || gamepad2.right_bumper) && intakePressed == 0) {
-                if (intake.getPosition() >= 0.6) {
-                    intake.setPosition(0);
-                } else {
-                    intake.setPosition(0.6);
-                }
-                intakePressed++;
-            }
-            if ((!gamepad2.left_bumper && !gamepad2.right_bumper) && intakePressed > 0) {
-                intakePressed = 0;
+            if ((gamepad2.left_bumper || gamepad2.right_bumper)) {
+                intake.setPosition(0.6);
+            }else{
+                intake.setPosition(0);
             }
         }
 

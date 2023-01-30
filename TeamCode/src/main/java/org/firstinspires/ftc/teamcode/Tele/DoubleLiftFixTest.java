@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "DoubleAtl")
 
-public class DoubleDriverTeleOpAtl extends OpMode {
+public class DoubleLiftFixTest extends OpMode {
     //wheels
     public DcMotor leftFront = null;
     public DcMotor rightFront = null;
@@ -151,6 +151,12 @@ public class DoubleDriverTeleOpAtl extends OpMode {
                 lift.setPower(-.8);
             } else if (liftPos == liftTarget) {
                 lift.setPower(0);
+            }
+
+            if(Math.round(liftPos-liftTarget) > 400){
+                lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            }else{
+                lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             }
         }
 
