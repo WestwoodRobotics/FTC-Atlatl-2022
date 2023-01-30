@@ -98,15 +98,15 @@ public class GoofyAhhFieldCentricTest extends OpMode
         telemetry.addData("Status", "Initialized");
 
 
-        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
-        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
-        backRight = hardwareMap.get(DcMotorEx.class, "backRight");
+        frontLeft = hardwareMap.get(DcMotorEx.class, "leftFront");
+        frontRight = hardwareMap.get(DcMotorEx.class, "rightFront");
+        backLeft = hardwareMap.get(DcMotorEx.class, "leftBack");
+        backRight = hardwareMap.get(DcMotorEx.class, "rightBack");
 
-        frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
-        frontRight.setDirection(DcMotorEx.Direction.FORWARD);
-        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
-        backRight.setDirection(DcMotorEx.Direction.FORWARD);
+        frontLeft.setDirection(DcMotorEx.Direction.FORWARD);
+        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
+        backLeft.setDirection(DcMotorEx.Direction.FORWARD);
+        backRight.setDirection(DcMotorEx.Direction.REVERSE);
 
         //Zero Power Behavior
         frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -164,10 +164,6 @@ public class GoofyAhhFieldCentricTest extends OpMode
         double drive = this.getNewXY(gamepad1.left_stick_x, gamepad1.left_stick_y, "Y");
         double turn = gamepad1.right_stick_x;
 
-        double frontLeftPower = drive + strafe + turn;
-        double frontRightPower = drive - strafe - turn;
-        double backLeftPower = drive - strafe + turn;
-        double backRightPower = drive + strafe - turn;
 
         frontLeft.setVelocity(leftFrontPower*2000);
         frontRight.setVelocity(rightBackPower*2000);
