@@ -160,10 +160,14 @@ public class GoofyAhhFieldCentricTest extends OpMode
     public void loop() {
         this.calculateCurAngle();
 
-        double strafe = this.getNewXY(gamepad1.left_stick_x, gamepad1.left_stick_y, "X");
-        double drive = this.getNewXY(gamepad1.left_stick_x, gamepad1.left_stick_y, "Y");
-        double turn = gamepad1.right_stick_x;
+        double strafe = this.getNewXY(gamepad1.right_stick_x, gamepad1.right_stick_y, "X");
+        double drive = this.getNewXY(gamepad1.right_stick_x, gamepad1.right_stick_y, "Y");
+        double turn = gamepad1.left_stick_x;
 
+        leftFrontPower = (drive - strafe - turn);
+        rightFrontPower = (drive + strafe + turn);
+        leftBackPower = (drive + strafe - turn);
+        rightBackPower = (drive - strafe + turn);
 
         frontLeft.setVelocity(leftFrontPower*2000);
         frontRight.setVelocity(rightBackPower*2000);
@@ -192,18 +196,6 @@ public class GoofyAhhFieldCentricTest extends OpMode
     }
 
     public double getDegreesAngle() {
-        // TODO: This must be changed to match your configuration
-        //                           | Z axis
-        //                           |
-        //     (Motor Port Side)     |   / X axis
-        //                       ____|__/____
-        //          Y axis     / *   | /    /|   (IO Side)
-        //          _________ /______|/    //      I2C
-        //                   /___________ //     Digital
-        //                  |____________|/      Analog
-        //
-        //                 (Servo Port Side)
-        //
         return imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZXY, AngleUnit.DEGREES).firstAngle;
     }
 
