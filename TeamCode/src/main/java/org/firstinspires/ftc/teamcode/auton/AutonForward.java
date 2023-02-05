@@ -24,7 +24,6 @@ package org.firstinspires.ftc.teamcode.auton;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
@@ -35,7 +34,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-@Autonomous(name="Auton Forward")
+@Autonomous(name="parking auton")
 public class AutonForward extends LinearOpMode
 {
     // CHANGE CODE(change string according to what you named your motors)
@@ -70,7 +69,7 @@ public class AutonForward extends LinearOpMode
     int revMotorTicksPerRotation = 28;
     int ticksPerRotation = revMotorTicksPerRotation*gearRatio;
     double actualTicksPerRotation = 0.0;
-    int matLength = 24; // inches
+    int matLength = 24; // inch-es
     int turn90DegTicks = 0;
     int forwardTicksForMat = 0; // mat is 24x24 inches
     int forwardTicksForHalfMat = 0;
@@ -86,7 +85,7 @@ public class AutonForward extends LinearOpMode
     // END MCODE
 
     OpenCvCamera camera;
-    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+    TagDetection aprilTagDetectionPipeline;
 
     static final double FEET_PER_METER = 3.28084;
 
@@ -167,7 +166,7 @@ public class AutonForward extends LinearOpMode
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+        aprilTagDetectionPipeline = new TagDetection(tagsize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
