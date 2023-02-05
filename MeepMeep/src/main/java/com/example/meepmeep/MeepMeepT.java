@@ -7,6 +7,8 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepT {
+    public int inchesPerMat = 24;
+
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
@@ -14,43 +16,10 @@ public class MeepMeepT {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(35.5, -60, Math.toRadians(90)))
+                        drive.trajectorySequenceBuilder(new Pose2d(72 ,0, Math.toRadians(90)))
                                 //setup
                                 .waitSeconds(1)
-                                .turn(Math.toRadians(45))
-                                //first cone
-                                .lineToLinearHeading(new Pose2d(35.5, -23.8, Math.toRadians(180)))
-                                .forward(5)
-                                .waitSeconds(1)
-                                .back(5)
-                                //head to stack
-                                .lineToLinearHeading(new Pose2d(35.5, -12, Math.toRadians(100)))
-                                .lineToLinearHeading(new Pose2d(60, -12, Math.toRadians(0)))
-
-                                .waitSeconds(1)
-
-                                .lineToLinearHeading(new Pose2d(35.5, -12, Math.toRadians(100)))
-                                .lineToLinearHeading(new Pose2d(35.5, -23.8, Math.toRadians(180)))
-                                .forward(5)
-                                .waitSeconds(1)
-                                .back(5)
-
-                                //head to stack
-                                .lineToLinearHeading(new Pose2d(35.5, -12, Math.toRadians(100)))
-                                .lineToLinearHeading(new Pose2d(60, -12, Math.toRadians(0)))
-
-                                .waitSeconds(1)
-
-                                .lineToLinearHeading(new Pose2d(35.5, -12, Math.toRadians(100)))
-                                .lineToLinearHeading(new Pose2d(35.5, -23.8, Math.toRadians(180)))
-                                .forward(5)
-                                .waitSeconds(1)
-                                .back(5)
-
-                                .strafeLeft(11.5)
-
-                                .forward(23)
-
+                                .turn(Math.toRadians(0.01))
                                 .build()
                 );
 
@@ -61,4 +30,27 @@ public class MeepMeepT {
                 .start();
     }
 
+    public double xCord(double x){
+        if (x > 0){
+            x = (x * 24) - 12;
+        }else if (x < 0){
+            x = (x * 24) + 12;
+        }else{
+            x = 0;
+        }
+
+        return x;
+    }
+
+    public double yCord(double y){
+        if (y > 0){
+            y = (y * 24) - 12;
+        }else if (y < 0){
+            y = (y * 24) + 12;
+        }else{
+            y = 1;
+        }
+
+        return y;
+    }
 }
