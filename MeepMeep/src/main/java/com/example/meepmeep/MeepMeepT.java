@@ -48,7 +48,7 @@ public class MeepMeepT {
         }else if (y < 0){
             y = (y * 24) + 12;
         }else{
-            y = 0;
+            y = 1;
         }
 
         return y;
