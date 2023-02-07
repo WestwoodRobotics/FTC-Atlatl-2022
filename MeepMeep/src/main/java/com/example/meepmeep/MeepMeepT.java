@@ -12,15 +12,45 @@ public class MeepMeepT {
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(57, 30, Math.toRadians(180), Math.toRadians(180), 13.369)
+                .setConstraints(65, 32, Math.toRadians(180), Math.toRadians(180), 13.369)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(Cord(2) ,Cord(-3), Math.toRadians(90)))
-                                //setup
-                                .waitSeconds(0.5)
-                                .turn(Math.toRadians(45))
+                                .forward(60)
+                                .back(12)
 
-                                .lineToLinearHeading(new Pose2d(Cord(2) ,Cord(-1), Math.toRadians(180)))
+                                //first cone
+                                .lineToLinearHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
+                                .forward(5)
+                                .waitSeconds(0.2)
+                                .back(5)
 
+
+                                //1st stack
+                                .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
+                                .waitSeconds(0.3)
+                                .lineToSplineHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
+                                .forward(5)
+                                .waitSeconds(0.2)
+                                .back(5)
+
+
+                                //2nd stack
+                                .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
+                                .waitSeconds(0.3)
+                                .lineToSplineHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
+                                .forward(5)
+                                .back(5)
+                                .waitSeconds(0.2)
+
+                                //3rd stack
+                                .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
+                                .waitSeconds(0.3)
+                                .lineToSplineHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
+                                .forward(5)
+                                .back(5)
+                                .waitSeconds(0.2)
+
+                                .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
 
                                 .build()
                 );
@@ -32,15 +62,15 @@ public class MeepMeepT {
                 .start();
     }
 
-    public static double Cord(double x){
-        if (x > 0){
-            x = (x * 24) - 12;
-        }else if (x < 0){
-            x = (x * 24) + 12;
+    public static double Cord(double mat){
+        if (mat > 0){
+            mat = (mat * 24) - 12;
+        }else if (mat < 0){
+            mat = (mat * 24) + 12;
         }else{
-            x = 0;
+            mat = 0;
         }
 
-        return x;
+        return mat;
     }
 }
