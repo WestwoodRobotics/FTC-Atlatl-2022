@@ -16,39 +16,10 @@ public class MeepMeepT {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(Cord(2) ,Cord(-3), Math.toRadians(90)))
                                 //setup
-                                .waitSeconds(1)
+                                .waitSeconds(0.5)
                                 .turn(Math.toRadians(45))
 
                                 .lineToLinearHeading(new Pose2d(Cord(2) ,Cord(-1), Math.toRadians(180)))
-                                //first cone
-                                .lineToLinearHeading(new Pose2d(Cord(2) ,Cord(-1.5), Math.toRadians(180)))
-                                .forward(5)
-                                .waitSeconds(1)
-                                .back(5)
-                                //head to stack
-                                .lineToLinearHeading(new Pose2d(Cord(2) ,Cord(-1), Math.toRadians(100)))
-                                .lineToLinearHeading(new Pose2d(Cord(3) ,Cord(-1), Math.toRadians(0)))
-
-                                .waitSeconds(1)
-
-                                .lineToLinearHeading(new Pose2d(Cord(2) ,Cord(-1), Math.toRadians(100)))
-                                .lineToLinearHeading(new Pose2d(Cord(2) ,Cord(-1.5), Math.toRadians(180)))
-                                .forward(5)
-                                .waitSeconds(1)
-                                .back(5)
-
-                                //head to stack
-                                .lineToLinearHeading(new Pose2d(Cord(2) ,Cord(-1), Math.toRadians(100)))
-                                .lineToLinearHeading(new Pose2d(Cord(3) ,Cord(-1), Math.toRadians(0)))
-
-                                .waitSeconds(1)
-
-                                .lineToLinearHeading(new Pose2d(Cord(2) ,Cord(-1), Math.toRadians(100)))
-                                .lineToLinearHeading(new Pose2d(Cord(2) ,Cord(-1.5), Math.toRadians(180)))
-                                .forward(5)
-                                .waitSeconds(1)
-                                .back(5)
-
 
 
                                 .build()
