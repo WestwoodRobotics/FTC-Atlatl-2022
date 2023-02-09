@@ -23,6 +23,7 @@ package org.firstinspires.ftc.teamcode.auton;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -54,7 +55,7 @@ public class AutonForward extends LinearOpMode
     // CHANGE CODE
     // if you have a 1:4 and then a 1:5 then you gear ratio is 1:20
     // in that case just type 20 in the gear ratio variable value
-    int gearRatio = 20;
+    int gearRatio = 19;
     double wheelRadius = 3.77953/2; // value in inches
     double wheelCircumference = 2*Math.PI*wheelRadius;
     double trackWidth = 13.5; // value in inches
@@ -141,10 +142,10 @@ public class AutonForward extends LinearOpMode
         if I set power of 1 on strafe variable it should strafe right
         if I set power of 1 on turn variable it should turn right
          */
-        frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
-        frontRight.setDirection(DcMotorEx.Direction.FORWARD);
-        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
-        backRight.setDirection(DcMotorEx.Direction.FORWARD);
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.FORWARD);
         // END CHANGE CODE
 
         // MCODE
