@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode.Tele;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.Range;
@@ -98,10 +99,10 @@ public class GoofyAhhFieldCentricTest extends OpMode
         backLeft = hardwareMap.get(DcMotorEx.class, "leftBack");
         backRight = hardwareMap.get(DcMotorEx.class, "rightBack");
 
-        frontLeft.setDirection(DcMotorEx.Direction.FORWARD);
-        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
-        backLeft.setDirection(DcMotorEx.Direction.FORWARD);
-        backRight.setDirection(DcMotorEx.Direction.REVERSE);
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.FORWARD);
 
         //Zero Power Behavior
         frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);

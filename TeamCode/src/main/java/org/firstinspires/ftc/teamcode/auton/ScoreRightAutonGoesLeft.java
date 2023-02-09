@@ -26,34 +26,71 @@ public class ScoreRightAutonGoesLeft extends LinearOpMode {
                 //first cone
                 .lineToLinearHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
                 .forward(5)
-                .waitSeconds(0.2)
+
+                .addTemporalMarker(0.25, () -> {
+
+                })
+
+                .waitSeconds(0.5)
+
                 .back(5)
 
 
                 //1st stack
                 .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
-                .waitSeconds(0.3)
+
+                .addTemporalMarker(0.25, () -> {
+
+                })
+
+                .waitSeconds(0.5)
                 .lineToSplineHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
                 .forward(5)
-                .waitSeconds(0.2)
+
+                .addTemporalMarker(0.25, () -> {
+
+                })
+
+                .waitSeconds(0.5)
                 .back(5)
 
 
                 //2nd stack
                 .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
-                .waitSeconds(0.3)
+
+                .addTemporalMarker(0.25, () -> {
+
+                })
+
+                .waitSeconds(0.5)
                 .lineToSplineHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
                 .forward(5)
                 .back(5)
-                .waitSeconds(0.2)
+
+                .addTemporalMarker(0.25, () -> {
+
+                })
+
+                .waitSeconds(0.5)
 
                 //3rd stack
                 .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
-                .waitSeconds(0.3)
+
+                .addTemporalMarker(0.25, () -> {
+
+                })
+
+                .waitSeconds(0.5)
                 .lineToSplineHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
                 .forward(5)
                 .back(5)
-                .waitSeconds(0.2)
+
+                .addTemporalMarker(0.25, () -> {
+
+                })
+
+                .waitSeconds(0.5)
+
 
                 .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
 

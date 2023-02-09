@@ -12,7 +12,7 @@ public class MeepMeepT {
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(65, 32, Math.toRadians(180), Math.toRadians(180), 13.369)
+                .setConstraints(52.48291908330528, 52.48291908330528, Math.toRadians(224.92705213553745), Math.toRadians(224.92705213553745), 13.369)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(Cord(2) ,Cord(-3), Math.toRadians(90)))
                                 .forward(60)
@@ -21,34 +21,71 @@ public class MeepMeepT {
                                 //first cone
                                 .lineToLinearHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
                                 .forward(5)
-                                .waitSeconds(0.2)
+
+                                .addTemporalMarker(0.25, () -> {
+
+                                })
+
+                                .waitSeconds(0.5)
+
                                 .back(5)
 
 
                                 //1st stack
                                 .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
-                                .waitSeconds(0.3)
+
+                                .addTemporalMarker(0.25, () -> {
+
+                                })
+
+                                .waitSeconds(0.5)
                                 .lineToSplineHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
                                 .forward(5)
-                                .waitSeconds(0.2)
+
+                                .addTemporalMarker(0.25, () -> {
+
+                                })
+
+                                .waitSeconds(0.5)
                                 .back(5)
 
 
                                 //2nd stack
                                 .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
-                                .waitSeconds(0.3)
+
+                                .addTemporalMarker(0.25, () -> {
+
+                                })
+
+                                .waitSeconds(0.5)
                                 .lineToSplineHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
                                 .forward(5)
                                 .back(5)
-                                .waitSeconds(0.2)
+
+                                .addTemporalMarker(0.25, () -> {
+
+                                })
+
+                                .waitSeconds(0.5)
 
                                 //3rd stack
                                 .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
-                                .waitSeconds(0.3)
+
+                                .addTemporalMarker(0.25, () -> {
+
+                                })
+
+                                .waitSeconds(0.5)
                                 .lineToSplineHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
                                 .forward(5)
                                 .back(5)
-                                .waitSeconds(0.2)
+
+                                .addTemporalMarker(0.25, () -> {
+
+                                })
+
+                                .waitSeconds(0.5)
+
 
                                 .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
 
