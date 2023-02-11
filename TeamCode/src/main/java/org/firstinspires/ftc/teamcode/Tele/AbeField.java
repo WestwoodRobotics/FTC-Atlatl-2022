@@ -36,8 +36,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -65,17 +68,17 @@ import java.lang.Math;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Field test")
+@TeleOp(name="FieldCentricDriving", group="Iterative Opmode")
 
-public class GoofyAhhFieldCentricTest extends OpMode
+public class AbeField extends OpMode
 
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotorEx frontLeft;
-    private DcMotorEx frontRight;
-    private DcMotorEx backLeft;
-    private DcMotorEx backRight;
+    private DcMotorEx leftFront = null;
+    private DcMotorEx rightFront = null;
+    private DcMotorEx leftBack = null;
+    private DcMotorEx rightBack = null;
     public BNO055IMU imu;
 
     double leftFrontPower;
@@ -95,30 +98,30 @@ public class GoofyAhhFieldCentricTest extends OpMode
         telemetry.addData("Status", "Initialized");
 
 
-        frontLeft = hardwareMap.get(DcMotorEx.class, "leftFront");
-        frontRight = hardwareMap.get(DcMotorEx.class, "rightFront");
-        backLeft = hardwareMap.get(DcMotorEx.class, "leftBack");
-        backRight = hardwareMap.get(DcMotorEx.class, "rightBack");
+        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
+        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
 
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        rightBack.setDirection(DcMotor.Direction.FORWARD);
 
-        //Zero Power Behavior
-        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-
-        frontLeft.setVelocityPIDFCoefficients(15, 0, 0, 0);
-        frontRight.setVelocityPIDFCoefficients(15, 0, 0, 0);
-        backLeft.setVelocityPIDFCoefficients(15, 0, 0, 0);
-        backRight.setVelocityPIDFCoefficients(15, 0, 0, 0);
+        leftFront.setVelocityPIDFCoefficients(15, 0, 0, 0);
+        rightFront.setVelocityPIDFCoefficients(15, 0, 0, 0);
+        leftBack.setVelocityPIDFCoefficients(15, 0, 0, 0);
+        rightBack.setVelocityPIDFCoefficients(15, 0, 0, 0);
 
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
+
+        //Setting Zero Power behaviour
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
@@ -155,30 +158,35 @@ public class GoofyAhhFieldCentricTest extends OpMode
      */
     @Override
     public void loop() {
-        this.CurAngle();
+        this.calculateCurAngle();
 
-        double strafe = this.NewXY(gamepad1.left_stick_x, gamepad1.left_stick_x, "X");
-        double drive = this.NewXY(gamepad1.left_stick_x, gamepad1.left_stick_x, "Y");
-        double turn = gamepad1.right_stick_x;
+        double strafe;
+        double drive;
+        double turn;
 
-        leftFrontPower = (drive - strafe - turn);
-        rightFrontPower = (drive + strafe + turn);
-        leftBackPower = (drive + strafe - turn);
-        rightBackPower = (drive - strafe + turn);
+        strafe = this.getNewXY(gamepad1.left_stick_x, gamepad1.left_stick_y, "X");
+        drive = this.getNewXY(gamepad1.left_stick_x, gamepad1.left_stick_y, "Y");
+        turn  =  gamepad1.right_stick_x;
 
-        frontLeft.setPower(leftFrontPower);
-        frontRight.setPower(rightBackPower);
-        backLeft.setPower(leftBackPower);
-        backRight.setPower(rightFrontPower);
+        leftFrontPower   = -drive + strafe + turn;
+        leftBackPower    = drive + strafe - turn;
+        rightFrontPower  = -drive - strafe - turn;
+        rightBackPower   = -drive + strafe - turn;
 
-        telemetry.addData("newX: ", strafe);
-        telemetry.addData("newY: ", drive);
+        leftFront.setVelocity(leftFrontPower*2000);
+        rightBack.setVelocity(rightBackPower*2000);
+        leftBack.setVelocity(leftBackPower*2000);
+        rightFront.setVelocity(rightFrontPower*2000);
+
+        telemetry.addData("IMU: ", getAngle());
+        telemetry.addData("zxy axis:", imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZXY, AngleUnit.DEGREES).firstAngle);
+        telemetry.addData("xzx axis:", imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.XZX, AngleUnit.DEGREES).firstAngle);
+        telemetry.addData("yxy axis:", imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.YXY, AngleUnit.DEGREES).firstAngle);
+        telemetry.addData("strafe: ", strafe);
+        telemetry.addData("drive: ", drive);
         telemetry.addData("turn: ", turn);
         telemetry.addData("currentAngle: ", currentActualAngle);
 
-        if (gamepad1.dpad_down && gamepad1.a){
-            OffSet();
-        }
     }
 
     /*
@@ -189,6 +197,22 @@ public class GoofyAhhFieldCentricTest extends OpMode
     }
 
     public double getAngle() {
+        // TODO: This must be changed to match your configuration
+        //                           | Z axis
+        //                           |
+        //     (Motor Port Side)     |   / X axis
+        //                       ____|__/____
+        //          Y axis     / *   | /    /|   (IO Side)
+        //          _________ /______|/    //      I2C
+        //                   /___________ //     Digital
+        //                  |____________|/      Analog
+        //
+        //                 (Servo Port Side)
+        //
+        return imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.XYZ, AngleUnit.RADIANS).firstAngle;
+    }
+
+    public double getDegreesAngle() {
         return imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.XYZ, AngleUnit.DEGREES).firstAngle;
     }
 
@@ -196,9 +220,9 @@ public class GoofyAhhFieldCentricTest extends OpMode
         return imu.getAngularOrientation().firstAngle;
     }
 
-    public double NewXY(double x, double y, String xy) {
-        double newX = (x*Math.sin(currentActualAngleRadians))-(y*Math.cos(currentActualAngleRadians));
-        double newY = (x*Math.cos(currentActualAngleRadians))+(y*Math.sin(currentActualAngleRadians));
+    public double getNewXY(double gamePadX, double gamePadY, String xy) {
+        double newX = (gamePadX)*Math.cos(currentActualAngleRadians)-(gamePadY-0)*Math.sin(currentActualAngleRadians)+0;
+        double newY = (gamePadX)*Math.sin(currentActualAngleRadians)+(gamePadY-0)*Math.cos(currentActualAngleRadians)+0;
 
         if (xy.equals("X")) {
             return newX;
@@ -207,12 +231,12 @@ public class GoofyAhhFieldCentricTest extends OpMode
             return newY;
         }
         else {
-            return 69420;
+            return newY;
         }
     }
 
-    public void CurAngle() {
-        double imuAngle = this.getAngle() + offSetAngle;
+    public void calculateCurAngle() {
+        double imuAngle = this.getDegreesAngle() + offSetAngle;
 //        currentAngle = imuAngle < 0? 360 + imuAngle: imuAngle;
         if (imuAngle < 0) {
             currentActualAngle = 360 + imuAngle;
@@ -220,12 +244,12 @@ public class GoofyAhhFieldCentricTest extends OpMode
         else {
             currentActualAngle = imuAngle;
         }
-        // to convert degrees to radians you multiply degrees by pi/180
+
         currentActualAngleRadians = currentActualAngle*(Math.PI/180);
     }
 
-    public void OffSet(){
-        offSetAngle = 0 - this.getAngle();
+    public void OffSetAngle(){
+        offSetAngle = 90 - this.getDegreesAngle();
     }
 
 }
