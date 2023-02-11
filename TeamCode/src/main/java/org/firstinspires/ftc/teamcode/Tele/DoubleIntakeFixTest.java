@@ -156,11 +156,8 @@ public class DoubleIntakeFixTest extends OpMode {
         //intake
         telemetry.addData("rightBumper: ", gamepad2.right_bumper);
         {
-            if ((gamepad2.left_bumper || gamepad2.right_bumper)) {
-                intake.setPosition(0.6);
-            }else{
-                intake.setPosition(0);
-            }
+
+
         }
 
         //slow mode toggle

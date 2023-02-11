@@ -33,6 +33,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.Range;
@@ -131,7 +132,7 @@ public class GoofyAhhFieldCentricTest extends OpMode
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         imu.initialize(parameters);
-        BNO055IMUUtil.remapAxes(imu, AxesOrder.ZXY, AxesSigns.NPN);
+        BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
     }
 
     /*
@@ -165,10 +166,10 @@ public class GoofyAhhFieldCentricTest extends OpMode
         leftBackPower = (drive + strafe - turn);
         rightBackPower = (drive - strafe + turn);
 
-        frontLeft.setVelocity(leftFrontPower*2000);
-        frontRight.setVelocity(rightBackPower*2000);
-        backLeft.setVelocity(leftBackPower*2000);
-        backRight.setVelocity(rightFrontPower*2000);
+        frontLeft.setPower(leftFrontPower);
+        frontRight.setPower(rightBackPower);
+        backLeft.setPower(leftBackPower);
+        backRight.setPower(rightFrontPower);
 
         telemetry.addData("IMU: ", getDegreesAngle());
         telemetry.addData("zxy axis:", imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZXY, AngleUnit.DEGREES).firstAngle);
