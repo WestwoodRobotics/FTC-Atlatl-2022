@@ -70,6 +70,15 @@ import java.lang.Math;
 public class GoofyAhhFieldCentricTest extends OpMode
 
 {
+    double jTheta = 0;
+    double rTheta = 0;
+    double fTheta = 0;
+    double rThetaRad = 0;
+    double fRadTheta = 0.0;
+    double mag = 0;
+    double nX = 0;
+    double nY = 0;
+    double orgAngle;
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotorEx frontLeft;
@@ -85,11 +94,7 @@ public class GoofyAhhFieldCentricTest extends OpMode
     double offSetAngle;
     double currentActualAngle = 0;
     double currentActualAngleRadians = 0;
-    double theta;
 
-    /*
-     * Code to run ONCE when the driver hits INIT
-     */
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
@@ -104,7 +109,6 @@ public class GoofyAhhFieldCentricTest extends OpMode
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.FORWARD);
-
         //Zero Power Behavior
         frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -155,30 +159,48 @@ public class GoofyAhhFieldCentricTest extends OpMode
      */
     @Override
     public void loop() {
-        this.CurAngle();
+        double straight = -gamepad1.left_stick_y;
+        double strafing = gamepad1.left_stick_x;
+        double turn = (gamepad1.right_stick_x);
 
-        double strafe = this.NewXY(gamepad1.left_stick_x, gamepad1.left_stick_x, "X");
-        double drive = this.NewXY(gamepad1.left_stick_x, gamepad1.left_stick_x, "Y");
-        double turn = gamepad1.right_stick_x;
+        this.calcNewXY(strafing, straight);
 
-        leftFrontPower = (drive - strafe - turn);
-        rightFrontPower = (drive + strafe + turn);
-        leftBackPower = (drive + strafe - turn);
-        rightBackPower = (drive - strafe + turn);
+        leftFrontPower = (-nY - nX - turn);
+        rightFrontPower = (-nY - nX + turn);
+        leftBackPower = (-nY + nX - turn);
+        rightBackPower = (-nY + nX + turn);
 
-        frontLeft.setPower(leftFrontPower);
-        frontRight.setPower(rightBackPower);
-        backLeft.setPower(leftBackPower);
-        backRight.setPower(rightFrontPower);
+        frontLeft.setVelocity(leftFrontPower*3000);
+        frontRight.setVelocity(rightBackPower*3000);
+        backLeft.setVelocity(leftBackPower*3000);
+        backRight.setVelocity(rightFrontPower*3000);
 
-        telemetry.addData("newX: ", strafe);
-        telemetry.addData("newY: ", drive);
+        telemetry.addData("newX: ", strafing);
+        telemetry.addData("newY: ", straight);
         telemetry.addData("turn: ", turn);
         telemetry.addData("currentAngle: ", currentActualAngle);
 
         if (gamepad1.dpad_down && gamepad1.a){
             OffSet();
         }
+    }
+
+    public void calcNewXY(double x, double y) {
+        orgAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        orgAngle = orgAngle + 90;
+        if (orgAngle < 0) {
+            orgAngle = orgAngle + 360;
+        }
+
+        if (orgAngle > 360) {
+            orgAngle = orgAngle - 360;
+        }
+        rTheta = orgAngle;
+        rThetaRad = rTheta * (Math.PI / 180.0);
+        double cosTheta = Math.cos(rThetaRad);
+        double sinTheta = Math.sin(rThetaRad);
+        nX = (x * sinTheta) - (y * cosTheta);
+        nY = (x * cosTheta) + (y * sinTheta);
     }
 
     /*
@@ -197,8 +219,14 @@ public class GoofyAhhFieldCentricTest extends OpMode
     }
 
     public double NewXY(double x, double y, String xy) {
-        double newX = (x*Math.sin(currentActualAngleRadians))-(y*Math.cos(currentActualAngleRadians));
-        double newY = (x*Math.cos(currentActualAngleRadians))+(y*Math.sin(currentActualAngleRadians));
+        //old equations, I think X and Y was flipped
+        //double newX = (x*Math.sin(currentActualAngleRadians))-(y*Math.cos(currentActualAngleRadians));
+        //double newY = (x*Math.cos(currentActualAngleRadians))+(y*Math.sin(currentActualAngleRadians));
+
+
+        //I think this might fix the problem, If it does not, change the Mecanum and directions
+        double newX = (x)*Math.sin(currentActualAngleRadians)-(y-0)*Math.cos(currentActualAngleRadians)+0;
+        double newY = (x)*Math.cos(currentActualAngleRadians)+(y-0)*Math.sin(currentActualAngleRadians)+0;
 
         if (xy.equals("X")) {
             return newX;
