@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.auton;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -92,14 +93,19 @@ public class ScoreRightAutonGoesLeft extends LinearOpMode {
                 .waitSeconds(0.5)
 
 
-                .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
 
+
+                .build();
+
+        Trajectory park3 = drive.trajectoryBuilder(startPose)
+                .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
                 .build();
 
         waitForStart();
 
         if (!isStopRequested())
             drive.followTrajectorySequence(trajSeq);
+            drive.followTrajectory(park3);
         }
 
     public double Cord(double mat){

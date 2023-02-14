@@ -91,7 +91,7 @@ public class GoofyAhhFieldCentricTest extends OpMode
     double rightFrontPower;
     double leftBackPower;
     double rightBackPower;
-    double offSetAngle;
+    double offSetAngle = 0;
     double currentActualAngle = 0;
     double currentActualAngleRadians = 0;
 
@@ -187,7 +187,7 @@ public class GoofyAhhFieldCentricTest extends OpMode
 
     public void calcNewXY(double x, double y) {
         orgAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        orgAngle = orgAngle + 90;
+        orgAngle = orgAngle + 90 + offSetAngle;
         if (orgAngle < 0) {
             orgAngle = orgAngle + 360;
         }
@@ -214,43 +214,6 @@ public class GoofyAhhFieldCentricTest extends OpMode
         return imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.XYZ, AngleUnit.DEGREES).firstAngle;
     }
 
-    public double getRawExternalHeading() {
-        return imu.getAngularOrientation().firstAngle;
-    }
-
-    public double NewXY(double x, double y, String xy) {
-        //old equations, I think X and Y was flipped
-        //double newX = (x*Math.sin(currentActualAngleRadians))-(y*Math.cos(currentActualAngleRadians));
-        //double newY = (x*Math.cos(currentActualAngleRadians))+(y*Math.sin(currentActualAngleRadians));
-
-
-        //I think this might fix the problem, If it does not, change the Mecanum and directions
-        double newX = (x)*Math.sin(currentActualAngleRadians)-(y-0)*Math.cos(currentActualAngleRadians)+0;
-        double newY = (x)*Math.cos(currentActualAngleRadians)+(y-0)*Math.sin(currentActualAngleRadians)+0;
-
-        if (xy.equals("X")) {
-            return newX;
-        }
-        else if (xy.equals("Y")) {
-            return newY;
-        }
-        else {
-            return 69420;
-        }
-    }
-
-    public void CurAngle() {
-        double imuAngle = this.getAngle() + offSetAngle;
-//        currentAngle = imuAngle < 0? 360 + imuAngle: imuAngle;
-        if (imuAngle < 0) {
-            currentActualAngle = 360 + imuAngle;
-        }
-        else {
-            currentActualAngle = imuAngle;
-        }
-        // to convert degrees to radians you multiply degrees by pi/180
-        currentActualAngleRadians = currentActualAngle*(Math.PI/180);
-    }
 
     public void OffSet(){
         offSetAngle = 0 - this.getAngle();
