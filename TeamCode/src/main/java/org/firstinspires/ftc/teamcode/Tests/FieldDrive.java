@@ -27,24 +27,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.Tele;
+package org.firstinspires.ftc.teamcode.Tests;
 
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.util.AxesSigns;
 import org.firstinspires.ftc.teamcode.util.BNO055IMUUtil;
 
@@ -65,9 +59,9 @@ import java.lang.Math;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Field test")
+@TeleOp(name="Field centric chassis")
 
-public class GoofyAhhFieldCentricTest extends OpMode
+public class FieldDrive extends OpMode
 
 {
     double jTheta = 0;
@@ -161,7 +155,7 @@ public class GoofyAhhFieldCentricTest extends OpMode
     public void loop() {
         double straight = -gamepad1.left_stick_y;
         double strafing = gamepad1.left_stick_x;
-        double turn = (gamepad1.right_stick_x);
+        double turn = (gamepad1.right_stick_x)*0.6;
 
         this.calcNewXY(strafing, straight);
 
@@ -187,7 +181,7 @@ public class GoofyAhhFieldCentricTest extends OpMode
 
     public void calcNewXY(double x, double y) {
         orgAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        orgAngle = orgAngle + 90 + offSetAngle;
+        orgAngle = orgAngle + 90;
         if (orgAngle < 0) {
             orgAngle = orgAngle + 360;
         }
@@ -195,7 +189,7 @@ public class GoofyAhhFieldCentricTest extends OpMode
         if (orgAngle > 360) {
             orgAngle = orgAngle - 360;
         }
-        rTheta = orgAngle;
+        rTheta = orgAngle + offSetAngle;
         rThetaRad = rTheta * (Math.PI / 180.0);
         double cosTheta = Math.cos(rThetaRad);
         double sinTheta = Math.sin(rThetaRad);
@@ -203,9 +197,7 @@ public class GoofyAhhFieldCentricTest extends OpMode
         nY = (x * cosTheta) + (y * sinTheta);
     }
 
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
+
     @Override
     public void stop() {
     }
