@@ -59,17 +59,13 @@ import java.lang.Math;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Field centric chassis")
+@TeleOp(name="Field test")
 
 public class FieldDrive extends OpMode
 
 {
-    double jTheta = 0;
     double rTheta = 0;
-    double fTheta = 0;
     double rThetaRad = 0;
-    double fRadTheta = 0.0;
-    double mag = 0;
     double nX = 0;
     double nY = 0;
     double orgAngle;
@@ -87,7 +83,6 @@ public class FieldDrive extends OpMode
     double rightBackPower;
     double offSetAngle = 0;
     double currentActualAngle = 0;
-    double currentActualAngleRadians = 0;
 
     @Override
     public void init() {
