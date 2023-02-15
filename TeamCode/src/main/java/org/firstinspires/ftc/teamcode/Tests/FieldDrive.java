@@ -208,7 +208,7 @@ public class FieldDrive extends OpMode
 
 
     public void OffSet(){
-        offSetAngle = 0 - this.getAngle();
+        offSetAngle = 90 - orgAngle;
     }
 
 }
