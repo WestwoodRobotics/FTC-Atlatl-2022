@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 
-@Autonomous(name = "Score right(left)")
-public class ScoreRightAutonGoesLeft extends LinearOpMode {
+@Autonomous(name = "Score left(right)")
+public class ScoreLefttAutonGoesRIght extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -24,35 +24,35 @@ public class ScoreRightAutonGoesLeft extends LinearOpMode {
                 .forward(54)
                 //high
                 .back(6)
-                .strafeLeft(12)
+                .strafeRight(12)
                 //preload drop
                 .forward(5)
                 .waitSeconds(0.5)
                 .back(5)
                 //go to stack
-                .turn(Math.toRadians(-90))
+                .turn(Math.toRadians(90))
                 .forward(40)
                 .waitSeconds(0.5)
                 //high
                 .back(40)
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-90))
                 //1st drop
                 .forward(5)
                 .waitSeconds(0.5)
                 .back(5)
                 //go to stack
-                .turn(Math.toRadians(-90))
+                .turn(Math.toRadians(90))
                 .forward(40)
                 .waitSeconds(0.5)
                 //high
                 .back(40)
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-90))
                 //2nd drop
                 .forward(5)
                 .waitSeconds(0.5)
                 .back(5)
-                //right park
-                .strafeRight(36)
+                //left park
+                .strafeLeft(36)
                 .build();
 
 
