@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.Tele;
+package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -37,7 +37,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.sun.tools.javac.comp.Todo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -60,9 +59,9 @@ import org.firstinspires.ftc.teamcode.util.BNO055IMUUtil;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Scott FieldDoubleAtl")
+@TeleOp(name="autotest")
 
-public class FieldDoubleAtl extends OpMode {
+public class autoturntest extends OpMode {
     double rTheta = 0;
     double rThetaRad = 0;
     double nX = 0;
@@ -80,22 +79,13 @@ public class FieldDoubleAtl extends OpMode {
     double rightFrontPower;
     double leftBackPower;
     double rightBackPower;
-    double offSetAngle = 0;
-    double currentActualAngle = 0;
+
 
     private DcMotorEx lift = null;
     private Servo claw1 = null;
     private Servo claw2 = null;
 
-
-    public int liftPos = 0;
-    public int liftTarget = 0;
-    public double powerPorportion = 1.4;
-
     public boolean autoTurn = false;
-
-    double straight = -gamepad1.right_stick_y;
-    double strafing = gamepad1.right_stick_x;
     double turn = (gamepad1.left_stick_x) * 0.6;
     public double turnTarget = 0;
 
@@ -143,17 +133,6 @@ public class FieldDoubleAtl extends OpMode {
             BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
         }
 
-        //Mechanisms
-        lift = hardwareMap.get(DcMotorEx.class, "lift");
-        claw1 = hardwareMap.get(Servo.class, "claw1");
-        claw2 = hardwareMap.get(Servo.class, "claw2");
-
-        lift.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        lift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        lift.setTargetPosition(0);
-        lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        lift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
     }
 
     /*
@@ -178,8 +157,6 @@ public class FieldDoubleAtl extends OpMode {
     public void loop() {
         //drivetrain
         {
-            straight = -gamepad1.right_stick_y;
-            strafing = gamepad1.right_stick_x;
             //turn
             {
                 if (gamepad1.left_stick_x != 0){
@@ -201,9 +178,9 @@ public class FieldDoubleAtl extends OpMode {
                 telemetry.addData("auto turn", autoTurn);
                 if (autoTurn){
                     if((turnTarget+(90-orgAngle))<=180){
-                        turn = -0.4;
+                        turn = -1;
                     }else if((turnTarget+(90-orgAngle))>180){
-                        turn = 0.4;
+                        turn = 1;
                     }else {
                         autoTurn = false;
                     }
@@ -211,111 +188,22 @@ public class FieldDoubleAtl extends OpMode {
                     turn = (gamepad1.left_stick_x) * 0.6;
                 }
             }
+                leftFrontPower = (-turn);
+                rightFrontPower = (turn);
+                leftBackPower = (-turn);
+                rightBackPower = (turn);
 
-
-            this.calcNewXY(strafing, straight);
-
-            if (liftPos > 1500) {
-                leftFrontPower = (-nY - nX - turn)*(powerPorportion-liftPos/3000.0);
-                rightFrontPower = (-nY - nX + turn)*(powerPorportion-liftPos/3000.0);
-                leftBackPower = (-nY + nX - turn)*(powerPorportion-liftPos/3000.0);
-                rightBackPower = (-nY + nX + turn)*(powerPorportion-liftPos/3000.0);
-            }else {
-
-                leftFrontPower = (-nY - nX - turn);
-                rightFrontPower = (-nY - nX + turn);
-                leftBackPower = (-nY + nX - turn);
-                rightBackPower = (-nY + nX + turn);
-            }
             frontLeft.setVelocity(leftFrontPower * 3000);
             frontRight.setVelocity(rightBackPower * 3000);
             backLeft.setVelocity(leftBackPower * 3000);
             backRight.setVelocity(rightFrontPower * 3000);
-
-            telemetry.addData("newX: ", strafing);
-            telemetry.addData("newY: ", straight);
-            telemetry.addData("turn: ", turn);
-            telemetry.addData("currentAngle: ", currentActualAngle);
-
-            if (gamepad1.dpad_down && gamepad1.a) {
-                OffSet();
-            }
         }
 
-        //claw
-        {
-            if (gamepad1.right_bumper || gamepad1.left_bumper) {
-                claw1.setPosition(1);
-                claw2.setPosition(0);
-                telemetry.addData("claw", "open");
-            } else {
-                claw1.setPosition(0);
-                claw2.setPosition(1);
-                telemetry.addData("claw", "closed");
-            }
-        }
-
-        //lift
-        {
-            liftPos = lift.getCurrentPosition();
-
-
-            if(!(-gamepad2.left_trigger + gamepad2.right_trigger == 0)){
-                liftTarget += Math.round(-gamepad2.left_trigger + gamepad2.right_trigger);
-            }
-
-            if (liftTarget > 3000){
-                liftTarget = 3000;
-            }else if(liftTarget < 0) {
-                liftTarget = 0;
-            }
-
-            lift.setTargetPosition(liftTarget);
-
-            if (!(liftTarget == liftPos)){
-                lift.setVelocity(500);
-            }else{
-                lift.setVelocity(0);
-            }
-
-
-
-
-
-            //add presets
-
-
-        }
     }
 
     @Override
     public void stop() {
     }
 
-
-
-
-    public void calcNewXY(double x, double y) {
-        orgAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        orgAngle = orgAngle + 90;
-        if (orgAngle < 0) {
-            orgAngle = orgAngle + 360;
-        }
-
-        if (orgAngle > 360) {
-            orgAngle = orgAngle - 360;
-        }
-        rTheta = orgAngle + offSetAngle;
-        rThetaRad = rTheta * (Math.PI / 180.0);
-        double cosTheta = Math.cos(rThetaRad);
-        double sinTheta = Math.sin(rThetaRad);
-        nX = (x * sinTheta) - (y * cosTheta);
-        nY = (x * cosTheta) + (y * sinTheta);
-    }
-
-
-    public void OffSet(){
-        offSetAngle = 90 - orgAngle;
-    }
 
 }
