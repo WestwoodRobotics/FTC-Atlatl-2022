@@ -53,6 +53,13 @@ public class ScoreRightAutonGoesLeft extends LinearOpMode {
                 .back(5)
                 //right park
                 .strafeRight(36)
+
+
+
+                //confuse the enemy team and assert dominance
+                .turn(Math.toRadians(1000000))
+
+
                 .build();
 
 
