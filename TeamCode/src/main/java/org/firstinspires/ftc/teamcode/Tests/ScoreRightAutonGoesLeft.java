@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -21,51 +19,49 @@ public class ScoreRightAutonGoesLeft extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
-                .forward(60)
-                .back(12)
+                //setup
+                .waitSeconds(0.5)
+                .forward(54)
 
-                //first cone
-                .lineToLinearHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
+                //high
+                .back(6)
+                .strafeLeft(12)
+
+                //preload drop
                 .forward(5)
-
                 .waitSeconds(0.5)
-
                 .back(5)
 
-
-                //1st stack
-                .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
-
+                //go to stack
+                .turn(Math.toRadians(-90))
+                .forward(40)
                 .waitSeconds(0.5)
-                .lineToSplineHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
+
+                //high
+                .back(40)
+                .turn(Math.toRadians(90))
+
+                //1st drop
                 .forward(5)
-
                 .waitSeconds(0.5)
                 .back(5)
 
-
-                //2nd stack
-                .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-0.8), Math.toRadians(0)))
-
+                //go to stack
+                .turn(Math.toRadians(-90))
+                .forward(40)
                 .waitSeconds(0.5)
-                .lineToSplineHeading(new Pose2d(Cord(1.5) ,Cord(-0.8), Math.toRadians(90)))
+
+                //high
+                .back(40)
+                .turn(Math.toRadians(90))
+
+                //2nd drop
                 .forward(5)
+                .waitSeconds(0.5)
                 .back(5)
 
-                .waitSeconds(0.5)
-
-                //3rd stack
-                .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-0.8), Math.toRadians(0)))
-
-                .waitSeconds(0.5)
-                .lineToSplineHeading(new Pose2d(Cord(1.5) ,Cord(-0.5), Math.toRadians(90)))
-                .forward(2.5)
-                .back(5)
-
-                .waitSeconds(0.5)
-
-
-                .lineToSplineHeading(new Pose2d(Cord(3) ,Cord(-0.75), Math.toRadians(90)))
+                //right park
+                .strafeRight(36)
 
                 .build();
 

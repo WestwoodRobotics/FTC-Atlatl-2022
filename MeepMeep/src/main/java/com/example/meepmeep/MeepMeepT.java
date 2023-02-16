@@ -15,54 +15,42 @@ public class MeepMeepT {
                 .setConstraints(57.01908330528, 52.48291908330528, Math.toRadians(224.92705213553745), Math.toRadians(224.92705213553745), 12.6)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(Cord(2) ,Cord(-3), Math.toRadians(90)))
-                                .forward(60)
-                                .back(12)
-
-                                //first cone
-                                .lineToLinearHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
-                                .forward(5)
-
+                                //setup
                                 .waitSeconds(0.5)
-
-                                .back(5)
-
-
-                                //1st stack
-                                .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
-
-                                .waitSeconds(0.5)
-                                .lineToSplineHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
+                                .forward(54)
+                                //high
+                                .back(6)
+                                .strafeLeft(12)
+                                //preload drop
                                 .forward(5)
-
                                 .waitSeconds(0.5)
                                 .back(5)
-
-
-                                //2nd stack
-                                .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
-
+                                //go to stack
+                                .turn(Math.toRadians(-90))
+                                .forward(40)
                                 .waitSeconds(0.5)
-                                .lineToSplineHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
+                                //high
+                                .back(40)
+                                .turn(Math.toRadians(90))
+                                //1st drop
                                 .forward(5)
+                                .waitSeconds(0.5)
                                 .back(5)
-
+                                //go to stack
+                                .turn(Math.toRadians(-90))
+                                .forward(40)
                                 .waitSeconds(0.5)
-
-                                //3rd stack
-                                .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
-
-                                .waitSeconds(0.5)
-                                .lineToSplineHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
+                                //high
+                                .back(40)
+                                .turn(Math.toRadians(90))
+                                //2nd drop
                                 .forward(5)
-                                .back(5)
-
                                 .waitSeconds(0.5)
-
-
-                                .lineToSplineHeading(new Pose2d(Cord(3) ,Cord(-1), Math.toRadians(90)))
+                                .back(5)
+                                //right park
+                                .strafeRight(36)
 
                                 .build()
-
                 );
 
 
