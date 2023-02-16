@@ -28,10 +28,6 @@ public class ScoreRightAutonGoesLeft extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
                 .forward(5)
 
-                .addTemporalMarker(0.25, () -> {
-
-                })
-
                 .waitSeconds(0.5)
 
                 .back(5)
@@ -40,72 +36,44 @@ public class ScoreRightAutonGoesLeft extends LinearOpMode {
                 //1st stack
                 .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
 
-                .addTemporalMarker(0.25, () -> {
-
-                })
-
                 .waitSeconds(0.5)
                 .lineToSplineHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
                 .forward(5)
-
-                .addTemporalMarker(0.25, () -> {
-
-                })
 
                 .waitSeconds(0.5)
                 .back(5)
 
 
                 //2nd stack
-                .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
-
-                .addTemporalMarker(0.25, () -> {
-
-                })
+                .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-0.8), Math.toRadians(0)))
 
                 .waitSeconds(0.5)
-                .lineToSplineHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
+                .lineToSplineHeading(new Pose2d(Cord(1.5) ,Cord(-0.8), Math.toRadians(90)))
                 .forward(5)
                 .back(5)
-
-                .addTemporalMarker(0.25, () -> {
-
-                })
 
                 .waitSeconds(0.5)
 
                 //3rd stack
-                .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
-
-                .addTemporalMarker(0.25, () -> {
-
-                })
+                .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-0.8), Math.toRadians(0)))
 
                 .waitSeconds(0.5)
-                .lineToSplineHeading(new Pose2d(Cord(1.5) ,Cord(-1), Math.toRadians(90)))
-                .forward(5)
+                .lineToSplineHeading(new Pose2d(Cord(1.5) ,Cord(-0.5), Math.toRadians(90)))
+                .forward(2.5)
                 .back(5)
 
-                .addTemporalMarker(0.25, () -> {
-
-                })
-
                 .waitSeconds(0.5)
 
 
-
+                .lineToSplineHeading(new Pose2d(Cord(3) ,Cord(-0.75), Math.toRadians(90)))
 
                 .build();
 
-        Trajectory park3 = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(Cord(3.1) ,Cord(-1), Math.toRadians(0)))
-                .build();
 
         waitForStart();
 
         if (!isStopRequested())
             drive.followTrajectorySequence(trajSeq);
-            drive.followTrajectory(park3);
         }
 
     public double Cord(double mat){

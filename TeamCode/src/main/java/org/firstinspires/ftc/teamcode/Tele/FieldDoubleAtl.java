@@ -92,6 +92,13 @@ public class FieldDoubleAtl extends OpMode {
     public int liftTarget = 0;
     public double powerPorportion = 1.4;
 
+    public boolean autoTurn = false;
+
+    double straight = -gamepad1.right_stick_y;
+    double strafing = gamepad1.right_stick_x;
+    double turn = (gamepad1.left_stick_x) * 0.6;
+    public double turnTarget = 0;
+
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
@@ -171,9 +178,10 @@ public class FieldDoubleAtl extends OpMode {
     public void loop() {
         //drivetrain
         {
-            double straight = -gamepad1.right_stick_y;
-            double strafing = gamepad1.right_stick_x;
-            double turn = (gamepad1.left_stick_x) * 0.6;
+            straight = -gamepad1.right_stick_y;
+            strafing = gamepad1.right_stick_x;
+            turn = (gamepad1.left_stick_x) * 0.6;
+            AutoTurn();
 
             this.calcNewXY(strafing, straight);
 
@@ -277,6 +285,37 @@ public class FieldDoubleAtl extends OpMode {
 
     public double getAngle() {
         return imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.XYZ, AngleUnit.DEGREES).firstAngle;
+    }
+
+    public void AutoTurn(){
+
+        if (gamepad1.left_stick_x != 0){
+            autoTurn = false;
+
+        }else if(gamepad1.dpad_up){
+            autoTurn = true;
+            turnTarget = 0;
+        }else if(gamepad1.dpad_down){
+            autoTurn = true;
+            turnTarget = 180;
+        }else if(gamepad1.dpad_left){
+            autoTurn = true;
+            turnTarget = 90;
+        }else if(gamepad1.dpad_right){
+            autoTurn = true;
+            turnTarget = 270; // TODO: These are missaligned
+        }
+
+
+        if (autoTurn = true){
+            if((turnTarget+(90-orgAngle))<=180){
+                turn = -0.4;
+            }else if((turnTarget+(90-orgAngle))>180){
+                turn = 0.4;
+            }else {
+                turn = (gamepad1.left_stick_x) * 0.6;
+            }
+        }
     }
 
     public void OffSet(){
