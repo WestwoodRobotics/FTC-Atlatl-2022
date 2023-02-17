@@ -19,12 +19,12 @@ public class IntakeTest extends OpMode {
     @Override
     public void loop() {
         if(gamepad1.right_bumper || gamepad1.left_bumper){
-            claw1.setPosition(1);
-            claw2.setPosition(0);
+            claw1.setPosition(0.57);
+            claw2.setPosition(0.38);
             telemetry.addData("claw", "open");
         }else{
-            claw1.setPosition(0);
-            claw2.setPosition(1);
+            claw1.setPosition(0.02);
+            claw2.setPosition(0.98);
             telemetry.addData("claw", "closed");
         }
     }

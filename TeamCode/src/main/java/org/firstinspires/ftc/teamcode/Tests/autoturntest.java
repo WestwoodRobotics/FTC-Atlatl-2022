@@ -59,7 +59,7 @@ import org.firstinspires.ftc.teamcode.util.BNO055IMUUtil;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="autotest")
+@TeleOp(name="autoTurntest")
 
 public class autoturntest extends OpMode {
     double rTheta = 0;
@@ -86,7 +86,7 @@ public class autoturntest extends OpMode {
     private Servo claw2 = null;
 
     public boolean autoTurn = false;
-    double turn = (gamepad1.left_stick_x) * 0.6;
+    double turn = 0.0;
     public double turnTarget = 0;
 
     @Override
