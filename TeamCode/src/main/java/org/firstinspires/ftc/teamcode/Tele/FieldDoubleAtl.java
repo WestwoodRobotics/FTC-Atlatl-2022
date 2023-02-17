@@ -94,10 +94,12 @@ public class FieldDoubleAtl extends OpMode {
 
     public boolean autoTurn = false;
 
-    double straight = -gamepad1.right_stick_y;
-    double strafing = gamepad1.right_stick_x;
-    double turn = (gamepad1.left_stick_x) * 0.6;
+    double straight = 0.0;
+    double strafing = 0.0;
+    double turn = 0.0;
     public double turnTarget = 0;
+
+    public double tempAngle = 0;
 
     @Override
     public void init() {
@@ -199,18 +201,29 @@ public class FieldDoubleAtl extends OpMode {
                 }
 
                 telemetry.addData("auto turn", autoTurn);
+
+
+
                 if (autoTurn){
-                    if((turnTarget+(90-orgAngle))<=180){
-                        turn = -0.4;
-                    }else if((turnTarget+(90-orgAngle))>180){
+                    tempAngle = (orgAngle-turnTarget);
+                    if (tempAngle< 0) {
+                        tempAngle = tempAngle + 360;
+                    }
+
+                    if (tempAngle >= 180){
                         turn = 0.4;
-                    }else {
-                        autoTurn = false;
+                    }else if (tempAngle < 180){
+                        turn = 0.4;
+                    }else{
+                        turn = 0;
                     }
                 }else {
                     turn = (gamepad1.left_stick_x) * 0.6;
                 }
             }
+
+
+        }
 
 
             this.calcNewXY(strafing, straight);
@@ -232,6 +245,11 @@ public class FieldDoubleAtl extends OpMode {
             backLeft.setVelocity(leftBackPower * 3000);
             backRight.setVelocity(rightFrontPower * 3000);
 
+            frontLeft.setVelocity(leftFrontPower * 3000);
+            frontRight.setVelocity(rightBackPower * 3000);
+            backLeft.setVelocity(leftBackPower * 3000);
+            backRight.setVelocity(rightFrontPower * 3000);
+
             telemetry.addData("newX: ", strafing);
             telemetry.addData("newY: ", straight);
             telemetry.addData("turn: ", turn);
@@ -240,53 +258,46 @@ public class FieldDoubleAtl extends OpMode {
             if (gamepad1.dpad_down && gamepad1.a) {
                 OffSet();
             }
-        }
 
-        //claw
-        {
-            if (gamepad1.right_bumper || gamepad1.left_bumper) {
-                claw1.setPosition(1);
-                claw2.setPosition(0);
-                telemetry.addData("claw", "open");
-            } else {
-                claw1.setPosition(0);
-                claw2.setPosition(1);
-                telemetry.addData("claw", "closed");
+            //claw
+            {
+                if (gamepad1.right_bumper || gamepad1.left_bumper) {
+                    claw1.setPosition(1);
+                    claw2.setPosition(0);
+                    telemetry.addData("claw", "open");
+                } else {
+                    claw1.setPosition(0);
+                    claw2.setPosition(1);
+                    telemetry.addData("claw", "closed");
+                }
+            }
+
+            //lift
+            {
+                liftPos = lift.getCurrentPosition();
+
+
+                if(!(-gamepad2.left_trigger + gamepad2.right_trigger == 0)){
+                    liftTarget += Math.round(-gamepad2.left_trigger + gamepad2.right_trigger);
+                }
+
+                if (liftTarget > 3000){
+                    liftTarget = 3000;
+                }else if(liftTarget < 0) {
+                    liftTarget = 0;
+                }
+
+                lift.setTargetPosition(liftTarget);
+
+                if (!(liftTarget == liftPos)){
+                    lift.setVelocity(500);
+                }else{
+                    lift.setVelocity(0);
+                }
             }
         }
 
-        //lift
-        {
-            liftPos = lift.getCurrentPosition();
 
-
-            if(!(-gamepad2.left_trigger + gamepad2.right_trigger == 0)){
-                liftTarget += Math.round(-gamepad2.left_trigger + gamepad2.right_trigger);
-            }
-
-            if (liftTarget > 3000){
-                liftTarget = 3000;
-            }else if(liftTarget < 0) {
-                liftTarget = 0;
-            }
-
-            lift.setTargetPosition(liftTarget);
-
-            if (!(liftTarget == liftPos)){
-                lift.setVelocity(500);
-            }else{
-                lift.setVelocity(0);
-            }
-
-
-
-
-
-            //add presets
-
-
-        }
-    }
 
     @Override
     public void stop() {

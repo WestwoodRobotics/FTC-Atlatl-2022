@@ -89,6 +89,8 @@ public class autoturntest extends OpMode {
     double turn = 0.0;
     public double turnTarget = 0;
 
+    public double tempAngle = 0;
+
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
@@ -155,6 +157,19 @@ public class autoturntest extends OpMode {
      */
     @Override
     public void loop() {
+        //organgle calculation
+        {
+            orgAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            orgAngle = orgAngle + 90;
+            if (orgAngle < 0) {
+                orgAngle = orgAngle + 360;
+            }
+
+            if (orgAngle > 360) {
+                orgAngle = orgAngle - 360;
+            }
+        }
+
         //drivetrain
         {
             //turn
@@ -176,13 +191,24 @@ public class autoturntest extends OpMode {
                 }
 
                 telemetry.addData("auto turn", autoTurn);
+
+
+
                 if (autoTurn){
-                    if((turnTarget+(90-orgAngle))<=180){
-                        turn = -1;
-                    }else if((turnTarget+(90-orgAngle))>180){
-                        turn = 1;
-                    }else {
-                        autoTurn = false;
+                    tempAngle = (orgAngle-turnTarget);
+                    if (tempAngle< 0) {
+                        tempAngle = tempAngle + 360;
+                    }
+
+
+                    if (Math.abs(turnTarget-orgAngle) >3){
+                        if (tempAngle >= 180){
+                            turn = -0.4;
+                        }else if (tempAngle < 180) {
+                            turn = 0.4;
+                        }
+                    }else{
+                        turn = 0;
                     }
                 }else {
                     turn = (gamepad1.left_stick_x) * 0.6;
@@ -204,6 +230,7 @@ public class autoturntest extends OpMode {
     @Override
     public void stop() {
     }
+
 
 
 }
