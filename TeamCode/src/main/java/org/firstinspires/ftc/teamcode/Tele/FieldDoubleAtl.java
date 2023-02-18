@@ -92,7 +92,6 @@ public class FieldDoubleAtl extends OpMode {
     public int liftTarget = 0;
     public double powerPorportion = 1;
 
-    public boolean autoTurn = false;
 
     double straight = 0.0;
     double strafing = 0.0;
@@ -100,6 +99,9 @@ public class FieldDoubleAtl extends OpMode {
     public double turnTarget = 0;
 
     public double tempAngle = 0;
+
+    public int slowModePressed = 0;
+    public boolean slowMode;
 
     @Override
     public void init() {
@@ -187,51 +189,42 @@ public class FieldDoubleAtl extends OpMode {
             //turn
             {
                 if (gamepad1.left_stick_x != 0) {
-                    autoTurn = false;
+                    turnTarget = orgAngle + offSetAngle + (gamepad1.left_stick_x * 5);
                 } else if (gamepad1.dpad_up) {
-                    autoTurn = true;
                     turnTarget = 90+offSetAngle;
                 } else if (gamepad1.dpad_down) {
-                    autoTurn = true;
                     turnTarget = 270+offSetAngle;
                 } else if (gamepad1.dpad_left) {
-                    autoTurn = true;
                     turnTarget = 180+offSetAngle;
                 } else if (gamepad1.dpad_right) {
-                    autoTurn = true;
                     turnTarget = 0+offSetAngle;
                 }
 
-                telemetry.addData("auto turn", autoTurn);
 
 
-                if (autoTurn) {
-                    tempAngle = (orgAngle - turnTarget);
-                    if (tempAngle < 0) {
-                        tempAngle = tempAngle + 360;
-                    }
 
+                tempAngle = (orgAngle - turnTarget);
+                if (tempAngle < 0) {
+                    tempAngle = tempAngle + 360;
+                }
 
-                    if (Math.abs(turnTarget - orgAngle) > 3) {
-                        if (tempAngle >= 180) {
-                            if (Math.abs(turnTarget - orgAngle) > 25) {
-                                turn = -1;
-                            } else {
-                                turn = -0.2;
-                            }
-                        } else if (tempAngle < 180) {
-                            if (Math.abs(turnTarget - orgAngle) > 25) {
-                                turn = 1;
-                            } else {
-                                turn = 0.2;
-                            }
-
+                if (Math.abs(turnTarget - orgAngle) > 3) {
+                    if (tempAngle >= 180) {
+                        if (Math.abs(turnTarget - orgAngle) > 25) {
+                            turn = -1;
+                        } else {
+                            turn = -0.2;
                         }
-                    } else {
-                        turn = 0;
+                    } else if (tempAngle < 180) {
+                        if (Math.abs(turnTarget - orgAngle) > 25) {
+                            turn = 1;
+                        } else {
+                            turn = 0.2;
+                        }
+
                     }
                 } else {
-                    turn = (gamepad1.left_stick_x) * 0.6;
+                    turn = 0;
                 }
             }
         }
@@ -244,12 +237,17 @@ public class FieldDoubleAtl extends OpMode {
                 rightFrontPower = (-nY - nX + turn)*(powerPorportion-liftPos/3000.0);
                 leftBackPower = (-nY + nX - turn)*(powerPorportion-liftPos/3000.0);
                 rightBackPower = (-nY + nX + turn)*(powerPorportion-liftPos/3000.0);
-            }else {
 
+            }else if (!slowMode) {
                 leftFrontPower = (-nY - nX - turn);
                 rightFrontPower = (-nY - nX + turn);
                 leftBackPower = (-nY + nX - turn);
                 rightBackPower = (-nY + nX + turn);
+            }else{
+                leftFrontPower = 0.5*(-nY - nX - turn);
+                rightFrontPower = 0.5*(-nY - nX + turn);
+                leftBackPower = 0.5*(-nY + nX - turn);
+                rightBackPower = 0.5*(-nY + nX + turn);
             }
             frontLeft.setVelocity(leftFrontPower * 3000);
             frontRight.setVelocity(rightBackPower * 3000);
@@ -268,7 +266,7 @@ public class FieldDoubleAtl extends OpMode {
 
             //claw
             {
-                if(gamepad1.right_bumper || gamepad1.left_bumper){
+                if(gamepad2.right_bumper || gamepad2.left_bumper){
                     claw1.setPosition(0.57);
                     claw2.setPosition(0.38);
                     telemetry.addData("claw", "open");
@@ -320,7 +318,19 @@ public class FieldDoubleAtl extends OpMode {
                 lift.setPower(0);
             }
         }
+
+        //slow mode toggle
+        {
+            if ((gamepad1.right_bumper || gamepad1.left_bumper) && slowModePressed == 0) {
+                slowMode = !slowMode;
+                slowModePressed++;
+            }
+            if ((!gamepad1.right_bumper && !gamepad1.left_bumper) && slowModePressed > 0) {
+                slowModePressed = 0;
+            }
         }
+
+    }
 
 
 
