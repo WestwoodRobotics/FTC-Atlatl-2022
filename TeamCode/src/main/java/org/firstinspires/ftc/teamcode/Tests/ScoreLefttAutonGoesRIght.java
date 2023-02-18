@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.Tests;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -32,7 +34,7 @@ public class ScoreLefttAutonGoesRIght extends LinearOpMode {
 
         lift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        lift.setDirection(DcMotorEx.Direction.FORWARD);
+        lift.setDirection(DcMotorEx.Direction.REVERSE);
 
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -136,18 +138,18 @@ public class ScoreLefttAutonGoesRIght extends LinearOpMode {
     }
 
     public void clawToggle(){
-        if (clawOpen){
-            claw1.setPosition(0);
-            claw2.setPosition(1);
+        if (!clawOpen){
+            claw1.setPosition(0.57);
+            claw2.setPosition(0.38);
         }else{
-            claw1.setPosition(1);
-            claw2.setPosition(0);
+            claw1.setPosition(0.02);
+            claw2.setPosition(0.98);
         }
         clawOpen = !clawOpen;
     }
 
     public void liftMove(int pos){
         lift.setTargetPosition(pos);
-        lift.setPower(0.8);
+        lift.setPower(1);
     }
 }

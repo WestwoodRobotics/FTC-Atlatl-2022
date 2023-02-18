@@ -203,9 +203,18 @@ public class autoturntest extends OpMode {
 
                     if (Math.abs(turnTarget-orgAngle) >3){
                         if (tempAngle >= 180){
-                            turn = -0.4;
+                            if(Math.abs(turnTarget-orgAngle) > 25) {
+                                turn = -2;
+                            }else{
+                                turn = -0.2;
+                            }
                         }else if (tempAngle < 180) {
-                            turn = 0.4;
+                            if(Math.abs(turnTarget-orgAngle) > 25) {
+                                turn = 2 ;
+                            }else{
+                                turn = 0.2;
+                            }
+
                         }
                     }else{
                         turn = 0;
