@@ -3,17 +3,15 @@ package org.firstinspires.ftc.teamcode.Tests;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 
-@Autonomous(name = "Score left(right)")
-public class ScoreLefttAutonGoesRIght extends LinearOpMode {
+@Autonomous(name = "rightTest")
+public class ScoreRightAuton extends LinearOpMode {
 
     public boolean clawOpen = true;
     public Servo claw1 = null;
@@ -46,28 +44,34 @@ public class ScoreLefttAutonGoesRIght extends LinearOpMode {
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
                 //setup
                 .addTemporalMarker(0, () -> {
-                    clawToggle();
+                    claw1.setPosition(0.02);
+                    claw2.setPosition(0.98);
+                    claw1.setPosition(0.02);
+                    claw2.setPosition(0.98);
+                    claw1.setPosition(0.02);
+                    claw2.setPosition(0.98);
+                    clawOpen = false;
                 })
-                .forward(54)
+                .forward(64)
                 .addTemporalMarker(1, () -> {
-                    liftMove(1000);
+                    liftMove(2750);
                 })
+                .back(11)
                 //high
-                .back(6)
-                .strafeRight(12)
+                .strafeLeft(12)
                 //preload drop
                 .forward(5)
                 .addTemporalMarker(0, () -> {
-                    liftMove(800);
+                    liftMove(2000);
                     clawToggle();
                 })
                 .waitSeconds(0.5)
                 .back(5)
                 //go to stack
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-90))
 
                 .addTemporalMarker(0, () -> {
-                    liftMove(100);
+                    liftMove(800);
                 })
 
                 .forward(40)
@@ -77,22 +81,22 @@ public class ScoreLefttAutonGoesRIght extends LinearOpMode {
                 .waitSeconds(0.5)
                 //high
                 .addTemporalMarker(0, () -> {
-                    liftMove(1000);
+                    liftMove(2750);
                 })
                 .back(40)
-                .turn(Math.toRadians(-90))
+                .turn(Math.toRadians(90))
                 //1st drop
                 .forward(5)
                 .addTemporalMarker(0, () -> {
-                    liftMove(800);
+                    liftMove(2000);
                     clawToggle();
                 })
                 .waitSeconds(0.5)
                 .back(5)
                 //go to stack
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-90))
                 .addTemporalMarker(0, () -> {
-                    liftMove(150);
+                    liftMove(750);
                 })
                 .forward(40)
                 .addTemporalMarker(0, () -> {
@@ -101,20 +105,20 @@ public class ScoreLefttAutonGoesRIght extends LinearOpMode {
                 .waitSeconds(0.5)
                 //high
                 .addTemporalMarker(0, () -> {
-                    liftMove(1000);
+                    liftMove(2750);
                 })
                 .back(40)
-                .turn(Math.toRadians(-90))
+                .turn(Math.toRadians(90))
                 //2nd drop
                 .forward(5)
                 .addTemporalMarker(0, () -> {
-                    liftMove(800);
+                    liftMove(0);
                     clawToggle();
                 })
                 .waitSeconds(0.5)
                 .back(5)
                 //left park
-                .strafeLeft(36)
+                .strafeRight(40)
 
                 .build();
 
