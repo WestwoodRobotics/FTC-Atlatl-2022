@@ -59,8 +59,7 @@ import java.lang.Math;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Field test")
-
+@TeleOp
 public class FieldDrive extends OpMode
 
 {

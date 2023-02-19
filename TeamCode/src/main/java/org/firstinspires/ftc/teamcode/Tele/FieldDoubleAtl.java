@@ -37,8 +37,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.sun.tools.javac.comp.Todo;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -46,28 +44,18 @@ import org.firstinspires.ftc.teamcode.util.AxesSigns;
 import org.firstinspires.ftc.teamcode.util.BNO055IMUUtil;
 
 
-/**
- * This file contains an example of an iterative (Non-Linear) "OpMode".
- * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
- * The names of OpModes appear on the menu of the FTC Driver Station.
- * When an selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all iterative OpModes contain.
- *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
 
-@TeleOp(name="Scott FieldDoubleAtl")
+@TeleOp(name="DoubleAtlField")
 
 public class FieldDoubleAtl extends OpMode {
+
     double rTheta = 0;
     double rThetaRad = 0;
     double nX = 0;
     double nY = 0;
     double orgAngle;
+
+    public boolean autoTurn = false;
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotorEx frontLeft;
@@ -90,7 +78,7 @@ public class FieldDoubleAtl extends OpMode {
 
     public int liftPos = 0;
     public int liftTarget = 0;
-    public double powerPorportion = 1;
+    public double powerProportion = 1.3;
 
 
     double straight = 0.0;
@@ -186,45 +174,55 @@ public class FieldDoubleAtl extends OpMode {
         {
             straight = -gamepad1.right_stick_y;
             strafing = gamepad1.right_stick_x;
-            //turn
+            ///turn
+
             {
                 if (gamepad1.left_stick_x != 0) {
-                    turnTarget = orgAngle + offSetAngle + (gamepad1.left_stick_x * 5);
+                    autoTurn = false;
                 } else if (gamepad1.dpad_up) {
+                    autoTurn = true;
                     turnTarget = 90+offSetAngle;
                 } else if (gamepad1.dpad_down) {
+                    autoTurn = true;
                     turnTarget = 270+offSetAngle;
                 } else if (gamepad1.dpad_left) {
+                    autoTurn = true;
                     turnTarget = 180+offSetAngle;
                 } else if (gamepad1.dpad_right) {
+                    autoTurn = true;
                     turnTarget = 0+offSetAngle;
                 }
 
+                telemetry.addData("auto turn", autoTurn);
 
 
+                if (autoTurn) {
+                    tempAngle = (orgAngle - turnTarget);
+                    if (tempAngle < -10) {
+                        tempAngle = tempAngle + 350;
+                    }
 
-                tempAngle = (orgAngle - turnTarget);
-                if (tempAngle < 0) {
-                    tempAngle = tempAngle + 360;
-                }
 
-                if (Math.abs(turnTarget - orgAngle) > 3) {
-                    if (tempAngle >= 180) {
-                        if (Math.abs(turnTarget - orgAngle) > 25) {
-                            turn = -1;
-                        } else {
-                            turn = -0.2;
+                    if (Math.abs(turnTarget - orgAngle) > 3) {
+                        if (tempAngle >= 180) {
+                            if (Math.abs(turnTarget - orgAngle) > 25) {
+                                turn = -1;
+                            } else {
+                                turn = -0.1;
+                            }
+                        } else if (tempAngle < 180) {
+                            if (Math.abs(turnTarget - orgAngle) > 25) {
+                                turn = 1;
+                            } else {
+                                turn = 0.1;
+                            }
+
                         }
-                    } else if (tempAngle < 180) {
-                        if (Math.abs(turnTarget - orgAngle) > 25) {
-                            turn = 1;
-                        } else {
-                            turn = 0.2;
-                        }
-
+                    } else {
+                        turn = 0;
                     }
                 } else {
-                    turn = 0;
+                    turn = (gamepad1.left_stick_x) * 0.8;
                 }
             }
         }
@@ -233,10 +231,11 @@ public class FieldDoubleAtl extends OpMode {
             this.calcNewXY(strafing, straight);
 
             if (liftPos > 1500) {
-                leftFrontPower = (-nY - nX - turn)*(powerPorportion-liftPos/3000.0);
-                rightFrontPower = (-nY - nX + turn)*(powerPorportion-liftPos/3000.0);
-                leftBackPower = (-nY + nX - turn)*(powerPorportion-liftPos/3000.0);
-                rightBackPower = (-nY + nX + turn)*(powerPorportion-liftPos/3000.0);
+                leftFrontPower = (-nY - nX - turn)*(powerProportion -liftPos/3100.0);
+                rightFrontPower = (-nY - nX + turn)*(powerProportion -liftPos/3100.0);
+                leftBackPower = (-nY + nX - turn)*(powerProportion -liftPos/3100.0);
+                rightBackPower = (-nY + nX + turn)*(powerProportion -liftPos/3100.0);
+                slowMode = false;
 
             }else if (!slowMode) {
                 leftFrontPower = (-nY - nX - turn);
@@ -260,7 +259,7 @@ public class FieldDoubleAtl extends OpMode {
             telemetry.addData("turn: ", turn);
             telemetry.addData("currentAngle: ", currentActualAngle);
 
-            if (gamepad1.dpad_down && gamepad1.a) {
+            if (gamepad1.x && gamepad1.y) {
                 OffSet();
             }
 

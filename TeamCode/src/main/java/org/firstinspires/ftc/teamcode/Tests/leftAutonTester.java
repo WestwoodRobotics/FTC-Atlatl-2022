@@ -10,13 +10,12 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 
-@Autonomous(name = "rightTest")
-public class ScoreRightAuton extends LinearOpMode {
+@Autonomous(name = "leftTest")
+public class leftAutonTester extends LinearOpMode {
 
     public boolean clawOpen = true;
     public Servo claw1 = null;
     public Servo claw2 = null;
-
     public DcMotorEx lift = null;
 
 
@@ -34,6 +33,13 @@ public class ScoreRightAuton extends LinearOpMode {
 
         lift.setDirection(DcMotorEx.Direction.REVERSE);
 
+
+        claw1.setPosition(0.02);
+        claw2.setPosition(0.98);
+        claw1.setPosition(0.02);
+        claw2.setPosition(0.98);
+        claw1.setPosition(0.02);
+        claw2.setPosition(0.98);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
@@ -53,72 +59,79 @@ public class ScoreRightAuton extends LinearOpMode {
                     clawOpen = false;
                 })
                 .forward(64)
-                .addTemporalMarker(1, () -> {
-                    liftMove(2750);
+                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
+                    liftMove(3100);
                 })
                 .back(11)
                 //high
                 .strafeLeft(12)
                 //preload drop
-                .forward(5)
-                .addTemporalMarker(0, () -> {
-                    liftMove(2000);
-                    clawToggle();
-                })
-                .waitSeconds(0.5)
-                .back(5)
-                //go to stack
-                .turn(Math.toRadians(-90))
-
-                .addTemporalMarker(0, () -> {
-                    liftMove(800);
-                })
-
-                .forward(40)
-                .addTemporalMarker(0, () -> {
-                    clawToggle();
-                })
-                .waitSeconds(0.5)
-                //high
-                .addTemporalMarker(0, () -> {
-                    liftMove(2750);
-                })
-                .back(40)
-                .turn(Math.toRadians(90))
-                //1st drop
-                .forward(5)
-                .addTemporalMarker(0, () -> {
-                    liftMove(2000);
-                    clawToggle();
-                })
-                .waitSeconds(0.5)
-                .back(5)
-                //go to stack
-                .turn(Math.toRadians(-90))
-                .addTemporalMarker(0, () -> {
-                    liftMove(750);
-                })
-                .forward(40)
-                .addTemporalMarker(0, () -> {
-                    clawToggle();
-                })
-                .waitSeconds(0.5)
-                //high
-                .addTemporalMarker(0, () -> {
-                    liftMove(2750);
-                })
-                .back(40)
-                .turn(Math.toRadians(90))
-                //2nd drop
-                .forward(5)
-                .addTemporalMarker(0, () -> {
+                .forward(6.5)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     liftMove(0);
+
+                })
+                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
                     clawToggle();
                 })
                 .waitSeconds(0.5)
-                .back(5)
-                //left park
-                .strafeRight(40)
+                .back(7)
+                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
+                    liftMove(0);
+                })
+//                //go to stack
+//                .turn(Math.toRadians(-90))
+//
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    liftMove(600);
+//                })
+//
+//                .forward(40)
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    clawToggle();
+//                })
+//                .waitSeconds(0.5)
+//                //high
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    liftMove(3100);
+//                })
+//                .back(40)
+//                .turn(Math.toRadians(90))
+//                //1st drop]
+//
+//                .forward(9)
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    liftMove(2000);
+//                    clawToggle();
+//                })
+//                .waitSeconds(0.5)
+//                .back(9)
+//                //go to stack
+//                .turn(Math.toRadians(-90))
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    liftMove(580);
+//                })
+//                .forward(40)
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    clawToggle();
+//                })
+//                .waitSeconds(0.5)
+//                //high
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    liftMove(3000);
+//                })
+//                .back(40)
+//                .turn(Math.toRadians(90))
+//                //2nd drop
+//                .forward(9)
+//                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
+//                    liftMove(0);
+//                    clawToggle();
+//                })
+//                .waitSeconds(0.5)
+//                .back(9)
+//                //left park
+                .strafeRight(37)
 
                 .build();
 
@@ -127,6 +140,7 @@ public class ScoreRightAuton extends LinearOpMode {
 
         if (!isStopRequested())
             drive.followTrajectorySequence(trajSeq);
+            sleep(10000);
         }
 
     public double Cord(double mat){

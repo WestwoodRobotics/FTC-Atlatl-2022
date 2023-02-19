@@ -36,16 +36,14 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-@Autonomous(name="parking auton")
+@Autonomous(name="right auton")
 public class leftAuton extends LinearOpMode
 {
 
     OpenCvCamera camera;
     TagDetection aprilTagDetectionPipeline;
 
-    static final double FEET_PER_METER = 3.28084;
 
     // Lens intrinsics
     // UNITS ARE PIXELS
@@ -106,260 +104,6 @@ public class leftAuton extends LinearOpMode
 
         lift.setDirection(DcMotorEx.Direction.REVERSE);
 
-
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
-        Pose2d startPose = new Pose2d(Cord(2) ,Cord(-3), Math.toRadians(90));
-
-        //scoring trajectory
-
-        TrajectorySequence park1 = drive.trajectorySequenceBuilder(startPose)
-                //setup
-                .addTemporalMarker(0, () -> {
-                    claw1.setPosition(0.02);
-                    claw2.setPosition(0.98);
-                    claw1.setPosition(0.02);
-                    claw2.setPosition(0.98);
-                    claw1.setPosition(0.02);
-                    claw2.setPosition(0.98);
-                    clawOpen = false;
-                })
-                .forward(64)
-                .addTemporalMarker(1, () -> {
-                    liftMove(2750);
-                })
-                .back(11)
-                //high
-                .strafeRight(12)
-                //preload drop
-                .forward(5)
-                .addTemporalMarker(0, () -> {
-                    liftMove(2000);
-                    clawToggle();
-                })
-                .waitSeconds(0.5)
-                .back(5)
-                //go to stack
-                .turn(Math.toRadians(90))
-
-                .addTemporalMarker(0, () -> {
-                    liftMove(800);
-                })
-
-                .forward(40)
-                .addTemporalMarker(0, () -> {
-                    clawToggle();
-                })
-                .waitSeconds(0.5)
-                //high
-                .addTemporalMarker(0, () -> {
-                    liftMove(2750);
-                })
-                .back(40)
-                .turn(Math.toRadians(-90))
-                //1st drop
-                .forward(5)
-                .addTemporalMarker(0, () -> {
-                    liftMove(2000);
-                    clawToggle();
-                })
-                .waitSeconds(0.5)
-                .back(5)
-                //go to stack
-                .turn(Math.toRadians(90))
-                .addTemporalMarker(0, () -> {
-                    liftMove(750);
-                })
-                .forward(40)
-                .addTemporalMarker(0, () -> {
-                    clawToggle();
-                })
-                .waitSeconds(0.5)
-                //high
-                .addTemporalMarker(0, () -> {
-                    liftMove(2750);
-                })
-                .back(40)
-                .turn(Math.toRadians(-90))
-                //2nd drop
-                .forward(5)
-                .addTemporalMarker(0, () -> {
-                    liftMove(0);
-                    clawToggle();
-                })
-                .waitSeconds(0.5)
-                .back(5)
-                //left park
-                .strafeLeft(40)
-
-                .build();
-
-        TrajectorySequence park2 = drive.trajectorySequenceBuilder(startPose)
-                //setup
-                .addTemporalMarker(0, () -> {
-                    claw1.setPosition(0.02);
-                    claw2.setPosition(0.98);
-                    claw1.setPosition(0.02);
-                    claw2.setPosition(0.98);
-                    claw1.setPosition(0.02);
-                    claw2.setPosition(0.98);
-                    clawOpen = false;
-                })
-                .forward(64)
-                .addTemporalMarker(1, () -> {
-                    liftMove(2750);
-                })
-                .back(11)
-                //high
-                .strafeRight(12)
-                //preload drop
-                .forward(5)
-                .addTemporalMarker(0, () -> {
-                    liftMove(2000);
-                    clawToggle();
-                })
-                .waitSeconds(0.5)
-                .back(5)
-                //go to stack
-                .turn(Math.toRadians(90))
-
-                .addTemporalMarker(0, () -> {
-                    liftMove(800);
-                })
-
-                .forward(40)
-                .addTemporalMarker(0, () -> {
-                    clawToggle();
-                })
-                .waitSeconds(0.5)
-                //high
-                .addTemporalMarker(0, () -> {
-                    liftMove(2750);
-                })
-                .back(40)
-                .turn(Math.toRadians(-90))
-                //1st drop
-                .forward(5)
-                .addTemporalMarker(0, () -> {
-                    liftMove(2000);
-                    clawToggle();
-                })
-                .waitSeconds(0.5)
-                .back(5)
-                //go to stack
-                .turn(Math.toRadians(90))
-                .addTemporalMarker(0, () -> {
-                    liftMove(750);
-                })
-                .forward(40)
-                .addTemporalMarker(0, () -> {
-                    clawToggle();
-                })
-                .waitSeconds(0.5)
-                //high
-                .addTemporalMarker(0, () -> {
-                    liftMove(2750);
-                })
-                .back(40)
-                .turn(Math.toRadians(-90))
-                //2nd drop
-                .forward(5)
-                .addTemporalMarker(0, () -> {
-                    liftMove(0);
-                    clawToggle();
-                })
-                .waitSeconds(0.5)
-                .back(5)
-                //left park
-                .strafeLeft(12)
-
-                .build();
-
-        TrajectorySequence park3 = drive.trajectorySequenceBuilder(startPose)
-                //setup
-                .addTemporalMarker(0, () -> {
-                    claw1.setPosition(0.02);
-                    claw2.setPosition(0.98);
-                    claw1.setPosition(0.02);
-                    claw2.setPosition(0.98);
-                    claw1.setPosition(0.02);
-                    claw2.setPosition(0.98);
-                    clawOpen = false;
-                })
-                .forward(64)
-                .addTemporalMarker(1, () -> {
-                    liftMove(2750);
-                })
-                .back(11)
-                //high
-                .strafeRight(12)
-                //preload drop
-                .forward(5)
-                .addTemporalMarker(0, () -> {
-                    liftMove(2000);
-                    clawToggle();
-                })
-                .waitSeconds(0.5)
-                .back(5)
-                //go to stack
-                .turn(Math.toRadians(90))
-
-                .addTemporalMarker(0, () -> {
-                    liftMove(800);
-                })
-
-                .forward(40)
-                .addTemporalMarker(0, () -> {
-                    clawToggle();
-                })
-                .waitSeconds(0.5)
-                //high
-                .addTemporalMarker(0, () -> {
-                    liftMove(2750);
-                })
-                .back(40)
-                .turn(Math.toRadians(-90))
-                //1st drop
-                .forward(5)
-                .addTemporalMarker(0, () -> {
-                    liftMove(2000);
-                    clawToggle();
-                })
-                .waitSeconds(0.5)
-                .back(5)
-                //go to stack
-                .turn(Math.toRadians(90))
-                .addTemporalMarker(0, () -> {
-                    liftMove(750);
-                })
-                .forward(40)
-                .addTemporalMarker(0, () -> {
-                    clawToggle();
-                })
-                .waitSeconds(0.5)
-                //high
-                .addTemporalMarker(0, () -> {
-                    liftMove(2750);
-                })
-                .back(40)
-                .turn(Math.toRadians(-90))
-                //2nd drop
-                .forward(5)
-                .addTemporalMarker(0, () -> {
-                    liftMove(0);
-                    clawToggle();
-                })
-                .waitSeconds(0.5)
-                .back(5)
-                //left park
-                .build();
-
-
-
-
-
-
-
         /*
          * The INIT-loop:
          * This REPLACES waitForStart!
@@ -419,15 +163,294 @@ public class leftAuton extends LinearOpMode
             tagToTelemetry(tagOfInterest);
             telemetry.update();
         } else {
-            telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
+            telemetry.addLine("No tag snapshot available, it was never sighted during the init loop ");
             telemetry.update();
         }
+
+        claw1.setPosition(0.02);
+        claw2.setPosition(0.98);
+        claw1.setPosition(0.02);
+        claw2.setPosition(0.98);
+        claw1.setPosition(0.02);
+        claw2.setPosition(0.98);
+
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        Pose2d startPose = new Pose2d(36 ,60, Math.toRadians(90));
+
+        drive.setPoseEstimate(startPose);
+
+        TrajectorySequence park1 = drive.trajectorySequenceBuilder(startPose)
+                //setup
+                .addTemporalMarker(0, () -> {
+                    claw1.setPosition(0.02);
+                    claw2.setPosition(0.98);
+                    claw1.setPosition(0.02);
+                    claw2.setPosition(0.98);
+                    claw1.setPosition(0.02);
+                    claw2.setPosition(0.98);
+                    clawOpen = false;
+                })
+                .forward(64)
+                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
+                    liftMove(3100);
+                })
+                .back(11)
+                //high
+                .strafeRight(12)
+                //preload drop
+                .forward(6.5)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    liftMove(0);
+
+                })
+                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
+                    clawToggle();
+                })
+                .waitSeconds(0.5)
+                .back(7)
+                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
+                    liftMove(0);
+                })
+//                //go to stack
+//                .turn(Math.toRadians(-90))
+//
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    liftMove(600);
+//                })
+//
+//                .forward(40)
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    clawToggle();
+//                })
+//                .waitSeconds(0.5)
+//                //high
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    liftMove(3100);
+//                })
+//                .back(40)
+//                .turn(Math.toRadians(90))
+//                //1st drop]
+//
+//                .forward(9)
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    liftMove(2000);
+//                    clawToggle();
+//                })
+//                .waitSeconds(0.5)
+//                .back(9)
+//                //go to stack
+//                .turn(Math.toRadians(-90))
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    liftMove(580);
+//                })
+//                .forward(40)
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    clawToggle();
+//                })
+//                .waitSeconds(0.5)
+//                //high
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    liftMove(3000);
+//                })
+//                .back(40)
+//                .turn(Math.toRadians(90))
+//                //2nd drop
+//                .forward(9)
+//                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
+//                    liftMove(0);
+//                    clawToggle();
+//                })
+//                .waitSeconds(0.5)
+//                .back(9)
+//                //left park
+                .strafeRight(12)
+
+                .build();
+
+        TrajectorySequence park2 = drive.trajectorySequenceBuilder(startPose)
+                //setup
+                .addTemporalMarker(0, () -> {
+                    claw1.setPosition(0.02);
+                    claw2.setPosition(0.98);
+                    claw1.setPosition(0.02);
+                    claw2.setPosition(0.98);
+                    claw1.setPosition(0.02);
+                    claw2.setPosition(0.98);
+                    clawOpen = false;
+                })
+                .forward(64)
+                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
+                    liftMove(3100);
+                })
+                .back(11)
+                //high
+                .strafeRight(12)
+                //preload drop
+                .forward(6.5)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    liftMove(0);
+
+                })
+                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
+                    clawToggle();
+                })
+                .waitSeconds(0.5)
+                .back(7)
+                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
+                    liftMove(0);
+                })
+//                //go to stack
+//                .turn(Math.toRadians(-90))
+//
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    liftMove(600);
+//                })
+//
+//                .forward(40)
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    clawToggle();
+//                })
+//                .waitSeconds(0.5)
+//                //high
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    liftMove(3100);
+//                })
+//                .back(40)
+//                .turn(Math.toRadians(90))
+//                //1st drop]
+//
+//                .forward(9)
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    liftMove(2000);
+//                    clawToggle();
+//                })
+//                .waitSeconds(0.5)
+//                .back(9)
+//                //go to stack
+//                .turn(Math.toRadians(-90))
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    liftMove(580);
+//                })
+//                .forward(40)
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    clawToggle();
+//                })
+//                .waitSeconds(0.5)
+//                //high
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    liftMove(3000);
+//                })
+//                .back(40)
+//                .turn(Math.toRadians(90))
+//                //2nd drop
+//                .forward(9)
+//                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
+//                    liftMove(0);
+//                    clawToggle();
+//                })
+//                .waitSeconds(0.5)
+//                .back(9)
+//                //left park
+                .strafeLeft(12)
+
+                .build();
+
+        TrajectorySequence park3 = drive.trajectorySequenceBuilder(startPose)
+                //setup
+                .addTemporalMarker(0, () -> {
+                    claw1.setPosition(0.02);
+                    claw2.setPosition(0.98);
+                    claw1.setPosition(0.02);
+                    claw2.setPosition(0.98);
+                    claw1.setPosition(0.02);
+                    claw2.setPosition(0.98);
+                    clawOpen = false;
+                })
+                .forward(64)
+                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
+                    liftMove(3100);
+                })
+                .back(11)
+                //high
+                .strafeRight(12)
+                //preload drop
+                .forward(6.5)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    liftMove(0);
+
+                })
+                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
+                    clawToggle();
+                })
+                .waitSeconds(0.5)
+                .back(7)
+                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
+                    liftMove(0);
+                })
+//                //go to stack
+//                .turn(Math.toRadians(-90))
+//
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    liftMove(600);
+//                })
+//
+//                .forward(40)
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    clawToggle();
+//                })
+//                .waitSeconds(0.5)
+//                //high
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    liftMove(3100);
+//                })
+//                .back(40)
+//                .turn(Math.toRadians(90))
+//                //1st drop]
+//
+//                .forward(9)
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    liftMove(2000);
+//                    clawToggle();
+//                })
+//                .waitSeconds(0.5)
+//                .back(9)
+//                //go to stack
+//                .turn(Math.toRadians(-90))
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    liftMove(580);
+//                })
+//                .forward(40)
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    clawToggle();
+//                })
+//                .waitSeconds(0.5)
+//                //high
+//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+//                    liftMove(3000);
+//                })
+//                .back(40)
+//                .turn(Math.toRadians(90))
+//                //2nd drop
+//                .forward(9)
+//                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
+//                    liftMove(0);
+//                    clawToggle();
+//                })
+//                .waitSeconds(0.5)
+//                .back(9)
+//                //left park
+                .strafeLeft(37)
+
+                .build();
+
 
 
         if (tagOfInterest == null || tagOfInterest.id == LEFT) {
             drive.followTrajectorySequence(park1);
         } else if (tagOfInterest.id == MIDDLE) {
-            drive.followTrajectorySequence(park2);
+            drive.followTrajectorySequence(park2
+            );
         } else {
             drive.followTrajectorySequence(park3);
         }
@@ -443,29 +466,14 @@ public class leftAuton extends LinearOpMode
     void tagToTelemetry(AprilTagDetection detection)
     {
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-
-
-
-        //delete the lines below and see what happens
-        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
-        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
-        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
-        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+//        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
+//        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
+//        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
+//        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
+//        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
+//        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
     }
 
-    public double Cord(double mat){
-        if (mat > 0){
-            mat = (mat * 24) - 12;
-        }else if (mat < 0){
-            mat = (mat * 24) + 12;
-        }else{
-            mat = 0;
-        }
-
-        return mat;
-    }
 
     public void clawToggle(){
         if (!clawOpen){
