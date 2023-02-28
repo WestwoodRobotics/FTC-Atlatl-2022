@@ -174,55 +174,52 @@ public class FieldDoubleAtl extends OpMode {
         {
             straight = -gamepad1.right_stick_y;
             strafing = gamepad1.right_stick_x;
-            ///turn
-
+            //turn
             {
                 if (gamepad1.left_stick_x != 0) {
+                    turnTarget = orgAngle + offSetAngle + (gamepad1.left_stick_x * 25);
                     autoTurn = false;
                 } else if (gamepad1.dpad_up) {
-                    autoTurn = true;
                     turnTarget = 90+offSetAngle;
+                    autoTurn = true;
                 } else if (gamepad1.dpad_down) {
-                    autoTurn = true;
                     turnTarget = 270+offSetAngle;
+                    autoTurn = true;
                 } else if (gamepad1.dpad_left) {
-                    autoTurn = true;
                     turnTarget = 180+offSetAngle;
-                } else if (gamepad1.dpad_right) {
                     autoTurn = true;
+                } else if (gamepad1.dpad_right) {
                     turnTarget = 0+offSetAngle;
+                    autoTurn = true;
                 }
 
-                telemetry.addData("auto turn", autoTurn);
+                if (!autoTurn && (gamepad1.left_stick_x != 0)){
+                    turnTarget = orgAngle + offSetAngle;
+                }
 
 
-                if (autoTurn) {
-                    tempAngle = (orgAngle - turnTarget);
-                    if (tempAngle < -10) {
-                        tempAngle = tempAngle + 350;
-                    }
+                tempAngle = (orgAngle - turnTarget);
+                if (tempAngle < -10) {
+                    tempAngle = tempAngle + 350;
+                }
 
-
-                    if (Math.abs(turnTarget - orgAngle) > 3) {
-                        if (tempAngle >= 180) {
-                            if (Math.abs(turnTarget - orgAngle) > 25) {
-                                turn = -1;
-                            } else {
-                                turn = -0.1;
-                            }
-                        } else if (tempAngle < 180) {
-                            if (Math.abs(turnTarget - orgAngle) > 25) {
-                                turn = 1;
-                            } else {
-                                turn = 0.1;
-                            }
-
+                if (Math.abs(turnTarget - orgAngle) > 3) {
+                    if (tempAngle >= 180) {
+                        if (Math.abs(turnTarget - orgAngle) > 25) {
+                            turn = -1;
+                        } else {
+                            turn = -0.2;
                         }
-                    } else {
-                        turn = 0;
+                    } else if (tempAngle < 180) {
+                        if (Math.abs(turnTarget - orgAngle) > 25) {
+                            turn = 1;
+                        } else {
+                            turn = 0.2;
+                        }
+
                     }
                 } else {
-                    turn = (gamepad1.left_stick_x) * 0.8;
+                    turn = 0;
                 }
             }
         }

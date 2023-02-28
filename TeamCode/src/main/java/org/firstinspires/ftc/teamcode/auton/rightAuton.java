@@ -216,58 +216,7 @@ public class rightAuton extends LinearOpMode
                 .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
                     liftMove(0);
                 })
-//                //go to stack
-//                .turn(Math.toRadians(-90))
 //
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    liftMove(600);
-//                })
-//
-//                .forward(40)
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    clawToggle();
-//                })
-//                .waitSeconds(0.5)
-//                //high
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    liftMove(3100);
-//                })
-//                .back(40)
-//                .turn(Math.toRadians(90))
-//                //1st drop]
-//
-//                .forward(9)
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    liftMove(2000);
-//                    clawToggle();
-//                })
-//                .waitSeconds(0.5)
-//                .back(9)
-//                //go to stack
-//                .turn(Math.toRadians(-90))
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    liftMove(580);
-//                })
-//                .forward(40)
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    clawToggle();
-//                })
-//                .waitSeconds(0.5)
-//                //high
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    liftMove(3000);
-//                })
-//                .back(40)
-//                .turn(Math.toRadians(90))
-//                //2nd drop
-//                .forward(9)
-//                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
-//                    liftMove(0);
-//                    clawToggle();
-//                })
-//                .waitSeconds(0.5)
-//                .back(9)
-//                //left park
                 .strafeLeft(12)
 
                 .build();
@@ -304,58 +253,7 @@ public class rightAuton extends LinearOpMode
                 .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
                     liftMove(0);
                 })
-//                //go to stack
-//                .turn(Math.toRadians(-90))
 //
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    liftMove(600);
-//                })
-//
-//                .forward(40)
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    clawToggle();
-//                })
-//                .waitSeconds(0.5)
-//                //high
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    liftMove(3100);
-//                })
-//                .back(40)
-//                .turn(Math.toRadians(90))
-//                //1st drop]
-//
-//                .forward(9)
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    liftMove(2000);
-//                    clawToggle();
-//                })
-//                .waitSeconds(0.5)
-//                .back(9)
-//                //go to stack
-//                .turn(Math.toRadians(-90))
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    liftMove(580);
-//                })
-//                .forward(40)
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    clawToggle();
-//                })
-//                .waitSeconds(0.5)
-//                //high
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    liftMove(3000);
-//                })
-//                .back(40)
-//                .turn(Math.toRadians(90))
-//                //2nd drop
-//                .forward(9)
-//                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
-//                    liftMove(0);
-//                    clawToggle();
-//                })
-//                .waitSeconds(0.5)
-//                .back(9)
-//                //left park
                 .strafeRight(12)
 
                 .build();
@@ -392,58 +290,7 @@ public class rightAuton extends LinearOpMode
                 .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
                     liftMove(0);
                 })
-//                //go to stack
-//                .turn(Math.toRadians(-90))
 //
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    liftMove(600);
-//                })
-//
-//                .forward(40)
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    clawToggle();
-//                })
-//                .waitSeconds(0.5)
-//                //high
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    liftMove(3100);
-//                })
-//                .back(40)
-//                .turn(Math.toRadians(90))
-//                //1st drop]
-//
-//                .forward(9)
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    liftMove(2000);
-//                    clawToggle();
-//                })
-//                .waitSeconds(0.5)
-//                .back(9)
-//                //go to stack
-//                .turn(Math.toRadians(-90))
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    liftMove(580);
-//                })
-//                .forward(40)
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    clawToggle();
-//                })
-//                .waitSeconds(0.5)
-//                //high
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    liftMove(3000);
-//                })
-//                .back(40)
-//                .turn(Math.toRadians(90))
-//                //2nd drop
-//                .forward(9)
-//                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
-//                    liftMove(0);
-//                    clawToggle();
-//                })
-//                .waitSeconds(0.5)
-//                .back(9)
-//                //left park
                 .strafeRight(37)
 
                 .build();
