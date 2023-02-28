@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @Autonomous(name="parking auton")
-public class AutonForward extends LinearOpMode
+public class AutonPark extends LinearOpMode
 {
     // CHANGE CODE(change string according to what you named your motors)
     String frontLeftM = "leftFront";

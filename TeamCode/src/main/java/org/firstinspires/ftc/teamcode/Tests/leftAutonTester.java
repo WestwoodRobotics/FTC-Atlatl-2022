@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 
-@Autonomous(name = "leftTest")
+@Autonomous(name = "LeftTester")
 public class leftAutonTester extends LinearOpMode {
 
     public boolean clawOpen = true;
@@ -79,58 +79,7 @@ public class leftAutonTester extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
                     liftMove(0);
                 })
-//                //go to stack
-//                .turn(Math.toRadians(-90))
-//
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    liftMove(600);
-//                })
-//
-//                .forward(40)
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    clawToggle();
-//                })
-//                .waitSeconds(0.5)
-//                //high
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    liftMove(3100);
-//                })
-//                .back(40)
-//                .turn(Math.toRadians(90))
-//                //1st drop]
-//
-//                .forward(9)
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    liftMove(2000);
-//                    clawToggle();
-//                })
-//                .waitSeconds(0.5)
-//                .back(9)
-//                //go to stack
-//                .turn(Math.toRadians(-90))
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    liftMove(580);
-//                })
-//                .forward(40)
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    clawToggle();
-//                })
-//                .waitSeconds(0.5)
-//                //high
-//                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-//                    liftMove(3000);
-//                })
-//                .back(40)
-//                .turn(Math.toRadians(90))
-//                //2nd drop
-//                .forward(9)
-//                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
-//                    liftMove(0);
-//                    clawToggle();
-//                })
-//                .waitSeconds(0.5)
-//                .back(9)
-//                //left park
+                //park
                 .strafeRight(37)
 
                 .build();
@@ -140,7 +89,7 @@ public class leftAutonTester extends LinearOpMode {
 
         if (!isStopRequested())
             drive.followTrajectorySequence(trajSeq);
-            sleep(10000);
+            sleep(5000);
         }
 
     public double Cord(double mat){

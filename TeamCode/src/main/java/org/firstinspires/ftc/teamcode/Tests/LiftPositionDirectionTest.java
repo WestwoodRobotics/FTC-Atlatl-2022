@@ -13,7 +13,7 @@ public class LiftPositionDirectionTest extends OpMode {
         //Lift and intake hardware map
         lift = hardwareMap.get(DcMotor.class, "lift");
 
-        lift.setDirection(DcMotor.Direction.FORWARD);
+        lift.setDirection(DcMotor.Direction.REVERSE);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
