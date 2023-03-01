@@ -205,13 +205,13 @@ public class FieldDoubleAtl extends OpMode {
 
                 if (Math.abs(turnTarget - orgAngle) > 3) {
                     if (tempAngle >= 180) {
-                        if (Math.abs(turnTarget - orgAngle) > 25) {
+                        if (Math.abs(turnTarget - orgAngle) > 30) {
                             turn = -1;
                         } else {
                             turn = -0.2;
                         }
                     } else if (tempAngle < 180) {
-                        if (Math.abs(turnTarget - orgAngle) > 25) {
+                        if (Math.abs(turnTarget - orgAngle) > 30) {
                             turn = 1;
                         } else {
                             turn = 0.2;
