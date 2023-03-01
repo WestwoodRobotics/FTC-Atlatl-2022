@@ -84,7 +84,7 @@ public class FieldDoubleAtl extends OpMode {
     double straight = 0.0;
     double strafing = 0.0;
     double turn = 0.0;
-    public double turnTarget = 0;
+    public double turnTarget = 90;
 
     public double tempAngle = 0;
 
@@ -193,7 +193,7 @@ public class FieldDoubleAtl extends OpMode {
                     autoTurn = true;
                 }
 
-                if (!autoTurn && (gamepad1.left_stick_x != 0)){
+                if (!autoTurn && (gamepad1.left_stick_x == 0)){
                     turnTarget = orgAngle + offSetAngle;
                 }
 
@@ -203,18 +203,18 @@ public class FieldDoubleAtl extends OpMode {
                     tempAngle = tempAngle + 350;
                 }
 
-                if (Math.abs(turnTarget - orgAngle) > 3) {
+                if (Math.abs(turnTarget - orgAngle) > 5) {
                     if (tempAngle >= 180) {
-                        if (Math.abs(turnTarget - orgAngle) > 30) {
+                        if (Math.abs(turnTarget - orgAngle) > 25) {
                             turn = -1;
                         } else {
-                            turn = -0.2;
+                            turn = -0.1;
                         }
                     } else if (tempAngle < 180) {
-                        if (Math.abs(turnTarget - orgAngle) > 30) {
+                        if (Math.abs(turnTarget - orgAngle) > 25) {
                             turn = 1;
                         } else {
-                            turn = 0.2;
+                            turn = 0.1;
                         }
 
                     }
@@ -256,7 +256,7 @@ public class FieldDoubleAtl extends OpMode {
             telemetry.addData("turn: ", turn);
             telemetry.addData("currentAngle: ", currentActualAngle);
 
-            if (gamepad1.x && gamepad1.y) {
+            if (gamepad1.y && gamepad1.b) {
                 OffSet();
             }
 
