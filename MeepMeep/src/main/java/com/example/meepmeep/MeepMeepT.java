@@ -19,69 +19,73 @@ public class MeepMeepT {
 
                                 })
                                 .forward(64)
-                                .addTemporalMarker(1, () -> {
-
+                                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
+                                    liftMove(3100);
                                 })
                                 .back(11)
                                 //high
                                 .strafeLeft(12)
                                 //preload drop
-                                .forward(5)
-                                .addTemporalMarker(0, () -> {
+                                .forward(6.5)
+                                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                                    liftMove(2000);
 
                                 })
+                                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
+                                    clawToggle();
+                                })
                                 .waitSeconds(0.5)
-                                .back(5)
-                                //go to stack
+                                .back(7)
+
+
+                                //stack
+
+                                .strafeRight(30)
+                                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                                    liftMove(650);
+
+                                })
                                 .turn(Math.toRadians(-90))
-
-                                .addTemporalMarker(0, () -> {
-
-                                })
-
-                                .forward(40)
-                                .addTemporalMarker(0, () -> {
-
+                                .forward(10)
+                                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
+                                    clawToggle();
                                 })
                                 .waitSeconds(0.5)
+                                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                                    liftMove(2000);
+
+                                })
+
+
+
+                                .back(10)
+
+
                                 //high
-                                .addTemporalMarker(0, () -> {
-
-                                })
-                                .back(40)
                                 .turn(Math.toRadians(90))
-                                //1st drop
-                                .forward(5)
-                                .addTemporalMarker(0, () -> {
+                                .strafeLeft(30)
 
+                                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
+                                    liftMove(0);
+                                })
+
+                                .forward(6.5)
+                                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                                    liftMove(3100);
+
+                                })
+                                .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
+                                    clawToggle();
                                 })
                                 .waitSeconds(0.5)
-                                .back(5)
-                                //go to stack
-                                .turn(Math.toRadians(-90))
-                                .addTemporalMarker(0, () -> {
+                                .back(7)
+//
+                                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                                    liftMove(0);
 
                                 })
-                                .forward(40)
-                                .addTemporalMarker(0, () -> {
+                                .strafeRight(37)
 
-                                })
-                                .waitSeconds(0.5)
-                                //high
-                                .addTemporalMarker(0, () -> {
-
-                                })
-                                .back(40)
-                                .turn(Math.toRadians(90))
-                                //2nd drop
-                                .forward(5)
-                                .addTemporalMarker(0, () -> {
-
-                                })
-                                .waitSeconds(0.5)
-                                .back(5)
-                                //right park
-                                .strafeRight(12)
 
                                 .build()
                 );
@@ -103,5 +107,13 @@ public class MeepMeepT {
         }
 
         return mat;
+    }
+
+    public static void clawToggle(){
+        return;
+    }
+
+    public static void liftMove(int pos){
+        return;
     }
 }
